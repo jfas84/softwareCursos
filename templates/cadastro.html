@@ -1,0 +1,117 @@
+{% extends 'externas/base-login.html' %}
+{% load bootstrap4 %}
+{% block content %}
+{% load static %}
+
+    <!-- BEGIN LOADER -->
+    <div id="load_screen"> <div class="loader"> <div class="loader-content">
+        <div class="spinner-grow align-self-center"></div>
+    </div></div></div>
+    <!--  END LOADER -->
+
+    <div class="auth-container d-flex">
+
+        <div class="container mx-auto align-self-center">
+    
+            <div class="row">
+    
+                <div class="col-6 d-lg-flex d-none h-100 my-auto top-0 start-0 text-center justify-content-center flex-column">
+                    <div class="auth-cover-bg-image"></div>
+                    <div class="auth-overlay"></div>
+                        
+                    <div class="auth-cover">
+    
+                        <div class="position-relative">
+    
+                            <a href="{% url 'externaIndex' %}"><img src="{% static 'assets/img/logo.png' %}" height="200" alt="auth-img"></a>
+    
+                            <h2 class="mt-5 font-weight-bolder px-2">Software de Gestão Condominial</h2>
+                            <p class=" px-2">Desenvolvido para condomínios modernos em busca de praticidade e eficiência, nosso sistema oferece uma solução digital acessível para simplificar a administração. Com acesso online para todos os moradores, promove transparência e agilidade na gestão condominial. Simplifique. Modernize. Conecte-se.</p>
+                        </div>
+                        
+                    </div>
+
+                </div>
+
+                <div class="col-xxl-4 col-xl-5 col-lg-5 col-md-8 col-12 d-flex flex-column align-self-center ms-lg-auto me-lg-0 mx-auto">
+                    <div class="card">
+                        <div class="card-body">
+    
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    
+                                    <h2>Cadastro</h2>
+                                    <p>Entre com seu e-mail e senha para realizar seu cadastro.</p>
+                                    
+                                </div>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    {% bootstrap_form form %}
+                                    <div class="col-12">
+                                        <div class="mb-3">
+                                            <p>Completando seu cadastro, você concorda com os nossos <a href="{% url 'externaTermosCondicoes' %}" class='text-primary'>Termos e Condições</a> e confirma que leu e aceita a nossa <a href="{% url 'externaPrivacidade' %}" class='text-primary'>Política de Privacidade</a>.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    {% buttons %}
+                                    <div class="col-12 mt-4">
+                                        <div class="mb-4">
+                                            <button class="btn btn-secondary w-100">Cadastrar</button>
+                                        </div>
+                                    </div>
+                                    {% endbuttons %}
+                                </form>
+                                <!-- <div class="col-12 mb-4">
+                                    <div class="">
+                                        <div class="seperator">
+                                            <hr>
+                                            <div class="seperator-text"> <span>Ou Cadastre-se com:</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-sm-4 col-12">
+                                    <div class="mb-4">
+                                        <button class="btn  btn-social-login w-100 ">
+                                            <img src="{% static 'src/assets/img/google-gmail.svg' %}" alt="" class="img-fluid">
+                                            <span class="btn-text-inner">Google</span>
+                                        </button>
+                                    </div>
+                                </div>
+    
+                                <div class="col-sm-4 col-12">
+                                    <div class="mb-4">
+                                        <button class="btn  btn-social-login w-100">
+                                            <img src="{% static 'src/assets/img/github-icon.svg' %}" alt="" class="img-fluid">
+                                            <span class="btn-text-inner">Github</span>
+                                        </button>
+                                    </div>
+                                </div>
+    
+                                <div class="col-sm-4 col-12">
+                                    <div class="mb-4">
+                                        <button class="btn  btn-social-login w-100">
+                                            <img src="{% static 'src/assets/img/twitter.svg' %}" alt="" class="img-fluid">
+                                            <span class="btn-text-inner">Twitter</span>
+                                        </button>
+                                    </div>
+                                </div> -->
+
+                                <div class="col-12">
+                                    <div class="text-center">
+                                        <p class="mb-0">Já possui uma conta? <a href="{% url 'login' %}" class="text-warning"> Entre</a></p>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+        </div>
+
+    </div>
+{% endblock %}

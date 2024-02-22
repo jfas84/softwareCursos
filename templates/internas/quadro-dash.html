@@ -1,0 +1,220 @@
+{% load static %}
+{% load bootstrap4 %}
+<div class="row layout-top-spacing">
+    {% bootstrap_messages %}
+    {% if usuario.is_superuser %}
+    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+        <div class="widget widget-card-five">
+            <div class="widget-content">
+                <div class="account-box">
+
+                    <div class="info-box">
+                        <div class="icon">
+                            <span>
+                                <img src="{% static 'src/assets/img/condominio.png' %}" alt="condominio">
+                            </span>
+                        </div>
+
+                        <div class="balance-info">
+                            <h6>Total Condomínios</h6>
+                            <p>{{condominios}}</p>
+                        </div>
+                    </div>
+
+                    <div class="card-bottom-section">
+                        <div><span class="badge badge-light-success">+ {{percentualCondominiosMes}}% <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></span></div>
+                        <a href="{% url '' %}" class="">Ver</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+        <div class="widget widget-card-five">
+            <div class="widget-content">
+                <div class="account-box">
+
+                    <div class="info-box">
+                        <div class="icon">
+                            <span>
+                                <img src="{% static 'src/assets/img/apartamentos.png' %}" alt="apartamentos">
+                            </span>
+                        </div>
+
+                        <div class="balance-info">
+                            <h6>Total Apartamentos</h6>
+                            <p>{{apartamentos}}</p>
+                        </div>
+                    </div>
+
+                    <div class="card-bottom-section">
+                        <!-- <div><span class="badge badge-light-success">+ 13.6% <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></span></div> -->
+                        <a href="{% url '' %}" class="">Ver</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+        <div class="widget widget-card-five">
+            <div class="widget-content">
+                <div class="account-box">
+
+                    <div class="info-box">
+                        <div class="icon">
+                            <span>
+                                <img src="{% static 'src/assets/img/usuarios.png' %}" alt="usuarios">
+                            </span>
+                        </div>
+
+                        <div class="balance-info">
+                            <h6>Total Usuários</h6>
+                            <p>{{usuarios}}</p>
+                        </div>
+                    </div>
+
+                    <div class="card-bottom-section">
+                        <!-- <div><span class="badge badge-light-success">+ 13.6% <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></span></div> -->
+                        <a href="{% url '' %}" class="">Ver</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+        <div class="widget widget-card-five">
+            <div class="widget-content">
+                <div class="account-box">
+
+                    <div class="info-box">
+                        <div class="icon">
+                            <span>
+                                <img src="{% static 'src/assets/img/demandas.png' %}" alt="demandas">
+                            </span>
+                        </div>
+
+                        <div class="balance-info">
+                            <h6>Total Demandas</h6>
+                            <p>{{demandas}}</p>
+                        </div>
+                    </div>
+
+                    <div class="card-bottom-section">
+                        <!-- <div><span class="badge badge-light-success">+ 13.6% <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></span></div> -->
+                        <a href="{% url '' '1' %}" class="">Ver</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+        <div class="widget widget-card-five">
+            <div class="widget-content">
+                <div class="account-box">
+
+                    <div class="info-box">
+                        <div class="icon">
+                            <span>
+                                <img src="{% static 'src/assets/img/sugestoes.png' %}" alt="sugestoes">
+                            </span>
+                        </div>
+
+                        <div class="balance-info">
+                            <h6>Total Sugestões</h6>
+                            <p>{{sugestoes}}</p>
+                        </div>
+                    </div>
+
+                    <div class="card-bottom-section">
+                        <!-- <div><span class="badge badge-light-success">+ 13.6% <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></span></div> -->
+                        <a href="{% url '' '0' %}" class="">Ver</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+        <div class="widget-four">
+            <div class="widget-heading">
+                <h5 class="">Sugestões vs Demandas</h5>
+            </div>
+            <div class="widget-content">
+                <div class="vistorsBrowser">
+                    <div class="browser-list">
+                        <div class="w-icon">
+                            <img src="{% static 'src/assets/img/sugestoes.png' %}" alt="sugestoes">
+                        </div>
+                        <div class="w-browser-details">
+                            <div class="w-browser-info">
+                                <h6>Sugestões</h6>
+                                <p class="browser-count">{{sugestoes}}</p>
+                            </div>
+                            <div class="w-browser-stats">
+                                <div class="progress">
+                                    <div class="progress-bar bg-gradient-primary" role="progressbar" style="width: {{percentualSugestoes}}%" aria-valuenow="{{percentualSugestoes}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="browser-list">
+                        <div class="w-icon">
+                            <img src="{% static 'src/assets/img/demandas.png' %}" alt="demandas">
+                        </div>
+                        <div class="w-browser-details">
+                            
+                            <div class="w-browser-info">
+                                <h6>Demandas</h6>
+                                <p class="browser-count">{{demandas}}</p>
+                            </div>
+
+                            <div class="w-browser-stats">
+                                <div class="progress">
+                                    <div class="progress-bar bg-gradient-danger" role="progressbar" style="width: {{percentualDemandas}}%" aria-valuenow="{{percentualDemandas}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>                                        
+                </div>
+
+            </div>
+        </div>
+    </div>
+    
+    {% for informe in informes %}
+    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+        <div class="widget widget-card-one">
+            <div class="widget-content">
+
+                <div class="media">
+                    <div class="media-body">
+                        <h6>{{informe.usuario.nome}}</h6>
+                        <p class="meta-date-time">{{informe.data}}</p>
+                    </div>
+                </div>
+
+                <p>{{informe.assunto}}</p>
+
+                <div class="w-action">
+                    <!-- <div class="card-like">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-thumbs-up"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                        <span>551 Likes</span>
+                    </div> -->
+
+                    <div class="read-more">
+                        <a href="{% url '' informe.id %}">Veja mais... <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-right"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>

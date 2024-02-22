@@ -1,0 +1,93 @@
+{% extends 'externas/base-login.html' %}
+{% load bootstrap4 %}
+{% block content %}
+{% load static %}
+<!-- BEGIN LOADER -->
+<div id="load_screen"> <div class="loader"> <div class="loader-content">
+    <div class="spinner-grow align-self-center"></div>
+</div></div></div>
+<!--  END LOADER -->
+<div class="auth-container d-flex">
+
+    <div class="container mx-auto align-self-center">
+
+        <div class="row">
+
+            <div class="col-xxl-4 col-xl-5 col-lg-5 col-md-8 col-12 d-flex flex-column align-self-center mx-auto">
+                <div class="card mt-3 mb-3">
+                    <div class="card-body">
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <div class="text-center">
+                                    <a href="{% url 'externaIndex' %}">
+                                        <img src="{% static 'assets/img/logo.png' %}" alt="" height="80">
+                                    </a>
+                                </div>      
+                                <h2>Acesse</h2>
+                                <p>Entre com seu e-mail e senha para logar.</p>
+                            </div>
+                            <form method="post">
+                                {% csrf_token %}
+                                {% bootstrap_form form %}
+                                {% buttons %}
+                                <div class="col-12 mt-4">
+                                    <div class="mb-4">
+                                        <button class="btn btn-secondary w-100">Entrar</button>
+                                    </div>
+                                </div>
+                                {% endbuttons %}
+                            </form>
+                            <!-- <div class="col-12 mb-4">
+                                <div class="">
+                                    <div class="seperator">
+                                        <hr>
+                                        <div class="seperator-text"> <span>Ou acesse com:</span></div>
+                                    </div>
+                                </div>
+                            </div> -->
+                            
+                            <!-- <div class="col-sm-4 col-12">
+                                <div class="mb-4">
+                                    <button class="btn  btn-social-login w-100 ">
+                                        <img src="{% static 'src/assets/img/google-gmail.svg' %}" alt="" class="img-fluid">
+                                        <span class="btn-text-inner">Google</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4 col-12">
+                                <div class="mb-4">
+                                    <button class="btn  btn-social-login w-100">
+                                        <img src="{% static 'src/assets/img/github-icon.svg' %}" alt="" class="img-fluid">
+                                        <span class="btn-text-inner">Github</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4 col-12">
+                                <div class="mb-4">
+                                    <button class="btn  btn-social-login w-100">
+                                        <img src="{% static 'src/assets/img/twitter.svg' %}" alt="" class="img-fluid">
+                                        <span class="btn-text-inner">Twitter</span>
+                                    </button>
+                                </div>
+                            </div> -->
+
+                            <div class="col-12">
+                                <div class="text-center">
+                                    <p class="mb-0">Não está cadastrado?<a href="{% url 'externaCadastro' %}" class="text-warning"> Cadastre-se</a></p>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+    </div>
+</div>
+{% endblock %}

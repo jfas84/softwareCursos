@@ -1,0 +1,442 @@
+{% load static %}
+{% load bootstrap4 %}
+ <!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>{{title}}</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}" >
+    <!-- Icon -->
+    <link rel="stylesheet" href="{% static 'assets/fonts/line-icons.css' %}">
+    <!-- Owl carousel -->
+    <link rel="stylesheet" href="{% static 'assets/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/owl.theme.css' %}">
+    
+    <!-- Animate -->
+    <link rel="stylesheet" href="{% static 'assets/css/animate.css' %}">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="{% static 'assets/css/main.css' %}">
+    <!-- Responsive Style -->
+    <link rel="stylesheet" href="{% static 'assets/css/responsive.css' %}">
+
+  </head>
+  <body>
+
+    <!-- Header Area wrapper Starts -->
+    <header id="header-wrap">
+      <!-- Navbar Start -->
+      <nav class="navbar navbar-expand-md bg-inverse fixed-top scrolling-navbar">
+        <div class="container">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <a href="{% url 'externaIndex' %}" class="navbar-brand" style="display: flex; justify-content: center;">
+            <img src="{% static 'assets/img/logo.png' %}" alt="" class="logo-image">
+          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="lni-menu"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto w-100 justify-content-end clearfix">
+              <li class="nav-item active">
+                <a class="nav-link" href="#hero-area">
+                  Início
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#services">
+                  Funcionalidades
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#pricing">
+                  Preço
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'login' %}">
+                  Login
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <!-- Navbar End -->
+
+      <!-- Hero Area Start -->
+      <div id="hero-area" class="hero-area-bg">
+        <div class="container">      
+          <div class="row">
+            <div class="col-lg-7 col-md-12 col-sm-12 col-xs-12">
+              <div class="contents">
+                <h2 class="head-title">Software de Gestão Condominial</h2>
+                <p>Desenvolvido para condomínios modernos em busca de praticidade e eficiência, nosso sistema oferece uma solução digital acessível para simplificar a administração. Com acesso online para todos os moradores, promove transparência e agilidade na gestão condominial. Simplifique. Modernize. Conecte-se.</p>
+                <div class="header-button">
+                  <a href="https://api.whatsapp.com/send?phone=5521981393374" class="btn btn-common">Entre em contato</i></a>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-5 col-md-12 col-sm-12 col-xs-12">
+              <div class="intro-img">
+                <img class="img-fluid" src="{% static 'assets/img/intro-mobile.png' %}" alt="">
+              </div>            
+            </div>
+          </div> 
+        </div> 
+      </div>
+      <!-- Hero Area End -->
+
+    </header>
+    <!-- Header Area wrapper End -->
+
+    <!-- Services Section Start -->
+    <section id="services" class="section-padding">
+      <div class="container">
+        <div class="section-header text-center">
+          <h2 class="section-title wow fadeInDown" data-wow-delay="0.3s">Funcionalidades</h2>
+          <div class="shape wow fadeInDown" data-wow-delay="0.3s"></div>
+        </div>
+        <div class="row">
+          <!-- Services item -->
+          <div class="col-md-6 col-lg-4 col-xs-12">
+            <div class="services-item wow fadeInRight" data-wow-delay="0.3s">
+              <div class="icon">
+                <i class="lni-cog"></i>
+              </div>
+              <div class="services-content">
+                <h3><a href="#">Condomínio Conectado</a></h3>
+                <p>Modernize a Gestão do seu Condomínio: Abertura de Sugestões para Melhorias Coletivas</p>
+              </div>
+            </div>
+          </div>
+          <!-- Services item -->
+          <div class="col-md-6 col-lg-4 col-xs-12">
+            <div class="services-item wow fadeInRight" data-wow-delay="0.6s">
+              <div class="icon">
+                <i class="lni-stats-up"></i>
+              </div>
+              <div class="services-content">
+                <h3><a href="#">Modernize Agora!</a></h3>
+                <p>Modernize sua Gestão Condominial: Acesso Simplificado a Documentos Financeiros</p>
+              </div>
+            </div>
+          </div>
+          <!-- Services item -->
+          <div class="col-md-6 col-lg-4 col-xs-12">
+            <div class="services-item wow fadeInRight" data-wow-delay="0.9s">
+              <div class="icon">
+                <i class="lni-users"></i>
+              </div>
+              <div class="services-content">
+                <h3><a href="#">Acesso a boletos</a></h3>
+                <p>Otimize a Administração do Seu Condomínio: O morador acessa seu boleto com Facilidade! </p>
+              </div>
+            </div>
+          </div>
+          <!-- Services item -->
+          <div class="col-md-6 col-lg-4 col-xs-12">
+            <div class="services-item wow fadeInRight" data-wow-delay="1.2s">
+              <div class="icon">
+                <i class="lni-layers"></i>
+              </div>
+              <div class="services-content">
+                <h3><a href="#">Geração de Protocolos</a></h3>
+                <p>Conecte-se: Modernizando a Gestão Condominial com Eficiência e Transparência gerando protocolos para atendimentos</p>
+              </div>
+            </div>
+          </div>
+          <!-- Services item -->
+          <div class="col-md-6 col-lg-4 col-xs-12">
+            <div class="services-item wow fadeInRight" data-wow-delay="1.5s">
+              <div class="icon">
+                <i class="lni-mobile"></i>
+              </div>
+              <div class="services-content">
+                <h3><a href="#">Decisões Comunitárias</a></h3>
+                <p>Transforme Seu Condomínio: Votação de Demandas e Sugestões para Decisões Coletivas</p>
+              </div>
+            </div>
+          </div>
+          <!-- Services item -->
+          <div class="col-md-6 col-lg-4 col-xs-12">
+            <div class="services-item wow fadeInRight" data-wow-delay="1.8s">
+              <div class="icon">
+                <i class="lni-rocket"></i>
+              </div>
+              <div class="services-content">
+                <h3><a href="#">Votos Digitais</a></h3>
+                <p>Controle Total: Votos Digitais com Comprovante e Restrição de Votação Única</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Services Section End -->
+
+    <!-- About Section start -->
+    <div class="about-area section-padding bg-gray">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6 col-md-12 col-xs-12 info">
+            <div class="about-wrapper wow fadeInLeft" data-wow-delay="0.3s">
+              <div>
+                <div class="site-heading">
+                  <p class="mb-3">Software de Gestão Condominial</p>
+                  <h2 class="section-title">Transforme seu Condomínio: Gestão Eficiente e Transparente ao Alcance de Todos</h2>
+                </div>
+                <div class="content">
+                  <p>
+                    Com nosso software de gestão condominial, sua administração ganha uma nova dimensão. Acesso instantâneo para todos os moradores, transparência total, processos ágeis e assembleias virtuais sem complicações. Modernize seu condomínio e simplifique sua vida. Feche o negócio e dê um salto para o futuro da gestão condominial.
+                  </p>
+                  <a href="https://api.whatsapp.com/send?phone=5521981393374" class="btn btn-common mt-3">Entre em contato</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-12 col-xs-12 wow fadeInRight" data-wow-delay="0.3s">
+            <img class="img-fluid" src="{% static 'assets/img/about/img-1.png' %}" alt="" >
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- About Section End -->
+
+    <!-- Features Section Start -->
+    <section id="features" class="section-padding">
+      <div class="container">
+        <div class="section-header text-center">          
+          <h2 class="section-title wow fadeInDown" data-wow-delay="0.3s">Recursos Incríveis</h2>
+          <div class="shape wow fadeInDown" data-wow-delay="0.3s"></div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
+            <div class="content-left">
+              <div class="box-item wow fadeInLeft" data-wow-delay="0.3s">
+                <span class="icon">
+                  <i class="lni-check-mark-circle"></i>
+                </span>
+                <div class="text">
+                  <h4>Votos Digitais</h4>
+                  <p>Cada morador tem um voto por demanda/sugestão, com geração PDF para verificação.
+                    </p>
+                </div>
+              </div>
+              <div class="box-item wow fadeInLeft" data-wow-delay="0.6s">
+                <span class="icon">
+                  <i class="lni-laptop-phone"></i>
+                </span>
+                <div class="text">
+                  <h4>Modernize Agora!</h4>
+                  <p>Acesso Simplificado a Documentos Financeiros e Documento do Condomínio "atas e etc".</p>
+                </div>
+              </div>
+              <div class="box-item wow fadeInLeft" data-wow-delay="0.9s">
+                <span class="icon">
+                  <i class="lni-link"></i>
+                </span>
+                <div class="text">
+                  <h4>Condomínio Conectado</h4>
+                  <p>Nossa implantação é rápida e simples, garantindo uma transição suave para o sistema.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
+            <div class="show-box wow fadeInUp" data-wow-delay="0.3s">
+              <img src="{% static 'assets/img/feature/intro-mobile.png' %}" alt="">
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
+            <div class="content-right">
+              <div class="box-item wow fadeInRight" data-wow-delay="0.3s">
+                <span class="icon">
+                  <i class="lni-leaf"></i>
+                </span>
+                <div class="text">
+                  <h4>Economia</h4>
+                  <p>Nosso sistema gera economia mensal de ao menos uma resma de papel para o condomínio.</p>
+                </div>
+              </div>
+              <div class="box-item wow fadeInRight" data-wow-delay="0.6s">
+                <span class="icon">
+                  <i class="lni-rocket"></i>
+                </span>
+                <div class="text">
+                  <h4>Gestão Ágil</h4>
+                  <p>Nosso software agiliza processos administrativos, incluindo comunicação com os moradores.</p>
+                </div>
+              </div>
+              <div class="box-item wow fadeInRight" data-wow-delay="0.9s">
+                <span class="icon">
+                  <i class="lni lni-calendar"></i>
+                </span>
+                <div class="text">
+                  <h4>Reserva Inteligente</h4>
+                  <p>Reserva online de áreas comuns, como churrasqueiras e salões de festas, com calendário.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Pricing section Start --> 
+    <section id="pricing" class="section-padding">
+      <div class="container">
+        <div class="section-header text-center">          
+          <h2 class="section-title wow fadeInDown" data-wow-delay="0.3s">Valores</h2>
+          <div class="shape wow fadeInDown" data-wow-delay="0.3s"></div>
+        </div>
+        <div class="row">
+          {% for preco in precos %}
+          <div class="col-lg-4 col-md-6 col-xs-12">
+            <div class="{{preco.class}}" id="{{preco.id}}" data-wow-delay="1.2s">
+              <div class="icon-box">
+                <i class="lni-package"></i>
+              </div>
+              <div class="pricing-header">
+                <p>De <del>R${{preco.de}}</del> por R$ {{preco.por}}.</p>
+                <p>Antecipado de <del>R${{preco.antecipado_de}}</del> por R$ {{preco.antecipado_por}}.</p>
+                <p class="price-value">R$ {{preco.antecipado_por}}<span> /período</span></p>
+              </div>
+              <div class="title">
+                <h3>{{preco.titulo}}</h3>
+              </div>
+              <ul class="description">
+                <li>Usuários ilimitados</li>
+                <li>24/7 Suporte</li>
+                <li>Atualizações incluídas</li>
+              </ul>
+              <a href="https://api.whatsapp.com/send?phone=5521981393374" class="btn btn-common" target="_blank">Entre em Contato</a>
+            </div> 
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+    <!-- Pricing Table Section End -->
+  
+    <!-- Testimonial Section Start -->
+    <!-- <section id="testimonial" class="testimonial section-padding">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div id="testimonials" class="owl-carousel wow fadeInUp" data-wow-delay="1.2s">
+              <div class="item">
+                <div class="testimonial-item">
+                  <div class="img-thumb">
+                    <img src="{% static 'assets/img/testimonial/img1.jpg' %}" alt="">
+                  </div>
+                  <div class="info">
+                    <h2><a href="#">David Smith</a></h2>
+                    <h3><a href="#">Creative Head</a></h3>
+                  </div>
+                  <div class="content">
+                    <p class="description">Praesent cursus nulla non arcu tempor, ut egestas elit tempus. In ac ex fermentum, gravida felis nec, tincidunt ligula.</p>
+                    <div class="star-icon mt-3">
+                      <span><i class="lni-star-filled"></i></span>
+                      <span><i class="lni-star-filled"></i></span>
+                      <span><i class="lni-star-filled"></i></span>
+                      <span><i class="lni-star-filled"></i></span>
+                      <span><i class="lni-star-half"></i></span>
+                    </div>
+                  </div>
+                </div>
+              </div>              
+            </div>
+          </div>
+        </div>
+      </div>
+    </section> -->
+
+    <!-- Testimonial Section End -->
+
+    <!-- Call To Action Section Start -->
+    <section id="cta" class="section-padding">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6 col-md-6 col-xs-12 wow fadeInLeft" data-wow-delay="0.3s">           
+            <div class="cta-text">
+              <h4>Entre em contato e tire suas dúvidas</h4>
+              <p>Praesent imperdiet, tellus et euismod euismod, risus lorem euismod erat, at finibus neque odio quis metus. Donec vulputate arcu quam. </p>
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-6 col-xs-12 text-right wow fadeInRight" data-wow-delay="0.3s">
+            </br><a href="https://api.whatsapp.com/send?phone=5521981393374" class="btn btn-common">Entre em contato</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Call To Action Section Start -->
+
+    <!-- Footer Section Start -->
+    <footer id="footer" class="footer-area section-padding">
+      <div class="container">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 col-mb-12">
+              <div class="widget">
+                <h3 class="footer-logo"><a href="{% url 'externaIndex' %}" class="navbar-brand" style="display: flex; justify-content: center;">
+                  <img src="{% static 'assets/img/logo.png' %}" alt="" class="logo-image">
+                </a></h3>
+                <div class="textwidget">
+                  <p>
+                    Nosso software inovador para gestão de condomínios digitaliza processos para uma administração eficiente, proporcionando custo-benefício na transição do físico para o digital. Oferece um portal online acessível a todos os moradores, promovendo transparência com recursos como votação de sugestões, acesso a documentos financeiros e boletos, além de um canal direto de atendimento. Ideal para uma gestão transparente, comunicação efetiva e assembléias virtuais, otimiza tempo e melhora a gestão condominial.</p>
+                </div>
+                <div class="social-icon">
+                  <!-- <a class="facebook" href="#"><i class="lni-facebook-filled"></i></a>
+                  <a class="twitter" href="#"><i class="lni-twitter-filled"></i></a>
+                  <a class="instagram" href="#"><i class="lni-instagram-filled"></i></a>
+                  <a class="linkedin" href="#"><i class="lni-linkedin-filled"></i></a> -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>  
+      </div> 
+      <div id="copyright">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="copyright-content">
+                <p>Copyright © 2024 <a rel="nofollow" href="https://pandorainovacoes.com.br">Pandora</a> Todos os direitos reservados</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>   
+    </footer> 
+    <!-- Footer Section End -->
+
+    <!-- Go to Top Link -->
+    <a href="#" class="back-to-top">
+    	<i class="lni-arrow-up"></i>
+    </a>
+    
+    <!-- Preloader -->
+    <div id="preloader">
+      <div class="loader" id="loader-1"></div>
+    </div>
+    <!-- End Preloader -->
+    
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="{% static 'assets/js/jquery-min.js' %}"></script>
+    <script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'assets/js/wow.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.nav.js' %}"></script>
+    <script src="{% static 'assets/js/scrolling-nav.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.easing.min.js' %}"></script>  
+    <script src="{% static 'assets/js/main.js' %}"></script>
+    <script src="{% static 'assets/js/form-validator.min.js' %}"></script>
+    <script src="{% static 'assets/js/contact-form-script.min.js' %}"></script>
+      
+  </body>
+</html>

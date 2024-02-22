@@ -1,0 +1,54 @@
+{% load static %}
+{% load bootstrap4 %}
+
+<link rel="icon" type="image/x-icon" href="{% static 'src/assets/img/favicon.ico' %}" />
+<link href="{% static 'css/light/loader.css' %}" rel="stylesheet" type="text/css" />
+<link href="{% static 'css/dark/loader.css' %}" rel="stylesheet" type="text/css" />
+<script src="{% static 'loader.js' %}"></script>
+<!-- BEGIN GLOBAL MANDATORY STYLES -->
+<link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
+<link href="{% static 'src/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
+<link href="{% static 'css/light/plugins.css' %}" rel="stylesheet" type="text/css" />
+<link href="{% static 'css/dark/plugins.css' %}" rel="stylesheet" type="text/css" />
+<!-- END GLOBAL MANDATORY STYLES -->
+
+
+<link href="{% static 'src/assets/css/light/authentication/auth-boxed.css' %}" rel="stylesheet" type="text/css" />
+<link href="{% static 'src/assets/css/dark/authentication/auth-boxed.css' %}" rel="stylesheet" type="text/css" />
+
+<!-- Incluir quando for o index com os gráficos -->
+<link href="{% static 'src/plugins/src/apex/apexcharts.css' %}" rel="stylesheet" type="text/css">
+<link href="{% static 'src/assets/css/light/dashboard/dash_1.css' %}" rel="stylesheet" type="text/css" />
+<link href="{% static 'src/assets/css/dark/dashboard/dash_1.css' %}" rel="stylesheet" type="text/css" />
+<!-- Incluir quando for o index com os gráficos -->
+<!-- BEGIN PAGE LEVEL CUSTOM STYLES -->
+<link rel="stylesheet" type="text/css" href="{% static 'src/plugins/src/table/datatable/datatables.css' %}">
+
+<link rel="stylesheet" type="text/css" href="{% static 'src/plugins/css/light/table/datatable/dt-global_style.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'src/plugins/css/light/table/datatable/custom_dt_custom.css' %}">
+
+<link rel="stylesheet" type="text/css" href="{% static 'src/plugins/css/dark/table/datatable/dt-global_style.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'src/plugins/css/dark/table/datatable/custom_dt_custom.css' %}">
+
+<link href="{% static 'src/assets/css/light/scrollspyNav.css' %}" rel="stylesheet" type="text/css" />
+<link href="{% static 'src/assets/css/light/components/carousel.css' %}" rel="stylesheet" type="text/css">
+<link href="{% static 'src/assets/css/light/components/tabs.css' %}" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="{% static 'src/plugins/src/filepond/filepond.min.css' %} ">
+<link rel="stylesheet" href="{% static 'src/plugins/src/filepond/FilePondPluginImagePreview.min.css' %}">    
+<link href="{% static 'src/plugins/css/light/filepond/custom-filepond.css' %}" rel="stylesheet" type="text/css" />
+<link href="{% static 'src/assets/css/light/apps/invoice-preview.css' %}" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="{% static 'src/assets/css/light/elements/alert.css'%}">
+
+<link href="{% static 'src/plugins/src/fullcalendar/fullcalendar.min.css' %}" rel="stylesheet" type="text/css" />
+<link href="{% static 'src/plugins/css/light/fullcalendar/custom-fullcalendar.css' %}" rel="stylesheet" type="text/css" />
+<link href="{% static 'src/assets/css/light/components/modal.css' %}" rel="stylesheet" type="text/css" />
+<link href="{% static 'src/plugins/css/dark/fullcalendar/custom-fullcalendar.css' %}" rel="stylesheet" type="text/css" />
+<link href="{% static 'src/assets/css/light/components/list-group.css' %}" rel="stylesheet" type="text/css">
+<link href="{% static 'src/assets/css/light/users/user-profile.css' %}" rel="stylesheet" type="text/css" />
+{% if request.resolver_match.url_name == 'dashReservas' %}
+<style>
+    .fc--button {
+    display: none !important;
+    }
+   </style> 
+{% endif  %}

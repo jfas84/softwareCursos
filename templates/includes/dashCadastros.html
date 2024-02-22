@@ -1,0 +1,71 @@
+{% load static %}
+{% load bootstrap4 %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9 col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-center">{{title}}</h3>
+                    {% bootstrap_messages %}
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% bootstrap_form form %}
+                        {% buttons %}
+                        <div class="text-right mt-3">
+                            <button type="submit" class="btn btn-primary">
+                                Cadastrar
+                            </button>
+                            <a href="#" class="btn btn-secondary mt-2 mt-md-0" onclick="limparFormulario(event)">Limpar</a>
+                        </div>
+                        {% endbuttons %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% if request.resolver_match.url_name == 'internaCadastroInterno' %}
+<script>
+    function limparFormulario(event) {
+    event.preventDefault();
+
+    const campos = [
+        'id_nome',
+        'id_email',
+        'id_responsabilidades',
+        // Adicione mais campos conforme necessário, usando os IDs dos campos do seu formulário
+    ];
+
+    campos.forEach(campo => {
+        document.getElementById(campo).value = "";
+    });
+}
+</script>
+<!-- <script>
+    $(document).ready(function () {
+        $('#id_bloco').select2({
+            placeholder: 'Selecione um Bloco',
+            allowClear: true
+        });
+    });
+</script> -->
+{% if request.resolver_match.url_name == 'internaCadastrarEmpresas' %}
+<script>
+    function limparFormulario(event) {
+    event.preventDefault();
+
+    const campos = [
+        'id_nome',
+        'id_email',
+        'id_responsabilidades',
+        // Adicione mais campos conforme necessário, usando os IDs dos campos do seu formulário
+    ];
+
+    campos.forEach(campo => {
+        document.getElementById(campo).value = "";
+    });
+}
+</script>
+{% endif %}

@@ -76,7 +76,7 @@ WSGI_APPLICATION = 'softwareCursos.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ninhodef_condominio',
+        'NAME': 'ninhodef_softwareCursos',
         'USER': 'jean',
         # 'PASSWORD': 'sofia2607',
         'PASSWORD': '345275',
@@ -92,7 +92,7 @@ DATABASES = {
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'ninhodef_financasFamilia',
+#         'NAME': 'ninhodef_softwareCursos',
 #         'USER': 'ninhodef_jean',
 #         'PASSWORD': 'Sofi@2607Gisele1602',
 #         'HOST': 'localhost',
@@ -187,7 +187,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'areaUsuario'
+LOGIN_REDIRECT_URL = 'internaTableauGeral'
 LOGOUT_REDIRECT_URL = 'login'
 
 # SESSION_COOKIE_AGE = 1800
