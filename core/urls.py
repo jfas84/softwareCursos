@@ -26,6 +26,8 @@ urlpatterns = [
     # Internas Sede
     path('tableau/cadastro/usuario', login_required(views.internaCadastroInterno), name='internaCadastroInterno'),
     path('tableau/cadastro/empresa', login_required(views.internaCadastrarEmpresas), name='internaCadastrarEmpresas'),
+    path('tableau/cadastro/tipo-de-curso', login_required(views.internaCadastrarTipoCurso), name='internaCadastrarTipoCurso'),
+    
     path('tableau/importar/usuarios', login_required(views.internaImportarUsuarios), name='internaImportarUsuarios'),
     path('tableau/listar/usuarios', login_required(views.internaListarUsuarios), name='internaListarUsuarios'),
     

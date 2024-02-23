@@ -2,15 +2,15 @@ from django.test import TestCase
 from model_mommy import mommy
 from django.utils import timezone
 from django.contrib.auth import get_user_model
-from login.models import LogErro, Responsaveis
+from core.models import LogErro, Responsaveis
 
 class ResponsaveisModelTest(TestCase):
     def test_str_method_returns_descricao(self):
         # Cria uma instância do modelo Responsaveis com uma descrição específica
-        responsavel = Responsaveis.objects.create(descricao='SINDICO')
+        responsavel = Responsaveis.objects.create(descricao='GESTORCURSO')
         
         # Verifica se o método __str__ retorna a descrição correta
-        self.assertEqual(str(responsavel), 'SINDICO')
+        self.assertEqual(str(responsavel), 'GESTORCURSO')
 
 class UsuarioManagerTestCase(TestCase):
     def test_create_user(self):
@@ -51,10 +51,7 @@ class UsuarioManagerTestCase(TestCase):
 
 class LogErroModelTestCase(TestCase):
     def setUp(self):
-        self.condominio = mommy.make('Condominios')
-        self.bloco = mommy.make('Blocos', condominio=self.condominio)
-        self.apartamento = mommy.make('Apartamentos', bloco=self.bloco)
-        self.usuario = mommy.make('CustomUsuario', condominio=self.condominio, apartamento=self.apartamento, bloco=self.bloco)
+        self.usuario = mommy.make('CustomUsuario')
 
     def test_log_erro_str(self):
         log_erro = LogErro.objects.create(

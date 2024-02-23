@@ -7,22 +7,22 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.messages import get_messages
 from django.contrib.auth import get_user_model
 from model_mommy import mommy
-from login.forms import CustomUsuarioChangeForm, LoginCadastroInternoForm
-from login.views import obter_responsabilidades_usuario
+from core.forms import CustomUsuarioChangeForm, LoginCadastroInternoForm
+from core.views import obter_responsabilidades_usuario
 
 
 class ObterResponsabilidadesUsuarioTestCase(TestCase):
     def setUp(self):
         self.client = Client()
-        self.responsavel_1 = mommy.make('Responsaveis', descricao='SINDICO')
-        self.responsavel_2 = mommy.make('Responsaveis', descricao='ADMCONDOMINIO')
+        self.responsavel_1 = mommy.make('Responsaveis', descricao='GESTORCURSO')
+        self.responsavel_2 = mommy.make('Responsaveis', descricao='PROFESSOR')
         self.user = mommy.make('CustomUsuario', responsabilidades=[self.responsavel_1, self.responsavel_2])
         self.user_2 = mommy.make('CustomUsuario')
 
     def test_obter_responsabilidades_usuario_com_responsabilidades(self):
         self.client.force_login(self.user)     
         responsabilidades_obtidas = obter_responsabilidades_usuario(self.user)
-        self.assertListEqual(responsabilidades_obtidas, ['SINDICO', 'ADMCONDOMINIO'])
+        self.assertListEqual(responsabilidades_obtidas, ['GESTORCURSO', 'PROFESSOR'])
 
     def test_obter_responsabilidades_usuario_sem_responsabilidades(self):
         responsabilidades_obtidas = obter_responsabilidades_usuario(self.user_2)
@@ -30,9 +30,7 @@ class ObterResponsabilidadesUsuarioTestCase(TestCase):
 
 class RegisterViewTestCase(TestCase):
     def setUp(self):
-        # Cria um condomínio para usar no teste
-        self.condominio = mommy.make('Condominios')
-
+        xxxx
     def test_register_view_post_success(self):
         # Define a URL para a view que você está testando
         url = reverse_lazy('cadastro')  # Substitua 'register' pelo nome correto da sua URL, se necessário
@@ -43,7 +41,6 @@ class RegisterViewTestCase(TestCase):
             'email': 'test@example.com',
             'password1': 'TestPassword123',
             'password2': 'TestPassword123',
-            'condominio': self.condominio.id,
         }
         
         # Faz uma requisição POST para a view com os dados do formulário
@@ -92,8 +89,6 @@ class DashDadosPessoaisAtualizarTestCase(TestCase):
     def setUp(self):
         self.client = Client()
 
-        self.condominio = mommy.make('Condominios')
-
         self.responsavel = mommy.make('Responsaveis', descricao='GESTORGERAL')
         self.user = mommy.make('CustomUsuario', responsabilidades=[self.responsavel])
 
@@ -105,7 +100,6 @@ class DashDadosPessoaisAtualizarTestCase(TestCase):
             'email': 'test@example.com',
             'password1': 'TestPassword123',
             'password2': 'TestPassword123',
-            'condominio': self.condominio.id,
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 302) 
@@ -116,13 +110,13 @@ class DashDadosPessoaisAtualizarTestCase(TestCase):
         self.assertIsInstance(form, CustomUsuarioChangeForm)  
         self.assertEqual(response.context['usuario'], self.user)
     
-    @override_settings(ROOT_URLCONF='condominio.urls')
-    @patch('login.views.LogErro')
+    @override_settings(ROOT_URLCONF='softwareCursos.urls')
+    @patch('core.views.LogErro')
     def test_alterar_dados_pessoais_validation_error(self, mock_log_erro):
-        data = {'nome': '...', 'email': '...', 'condominio': '...'}
+        data = {'nome': '...', 'email': '...'}
         self.client.force_login(self.user)
         url = reverse_lazy('dashDadosPessoaisAtualizar')
-        with patch('login.views.CustomUsuarioChangeForm') as mock_form:
+        with patch('core.views.CustomUsuarioChangeForm') as mock_form:
             mock_form_instance = mock_form.return_value
             mock_form_instance.is_valid.side_effect = ValidationError('Erro de validação')
             response = self.client.post(url, data)
@@ -133,13 +127,13 @@ class DashDadosPessoaisAtualizarTestCase(TestCase):
         self.assertEqual(messages[0].tags, 'error')
         self.assertEqual(messages[0].message, 'Houve um erro. Por favor, abra um chamado.')
     
-    @override_settings(ROOT_URLCONF='condominio.urls')
-    @patch('login.views.LogErro')
+    @override_settings(ROOT_URLCONF='softwareCursos.urls')
+    @patch('core.views.LogErro')
     def test_alterar_dados_pessoais_unexpected_error(self, mock_log_erro):
-        data = {'nome': '...', 'email': '...', 'condominio': '...'}
+        data = {'nome': '...', 'email': '...'}
         self.client.force_login(self.user)
         url = reverse_lazy('dashDadosPessoaisAtualizar')
-        with patch('login.views.CustomUsuarioChangeForm') as mock_form:
+        with patch('core.views.CustomUsuarioChangeForm') as mock_form:
             mock_form.return_value.is_valid.side_effect = Exception('Erro inesperado')
             response = self.client.post(url, data)
         self.assertEqual(response.status_code, 302)
@@ -153,8 +147,6 @@ class LoginCadastroInternoTestCase(TestCase):
     def setUp(self):
         self.client = Client()
 
-        self.condominio = mommy.make('Condominios')
-
         self.responsavel = mommy.make('Responsaveis', descricao='GESTORGERAL')
         self.user = mommy.make('CustomUsuario', responsabilidades=[self.responsavel])
 
@@ -166,7 +158,6 @@ class LoginCadastroInternoTestCase(TestCase):
             'email': 'test@example.com',
             'password1': 'TestPassword123',
             'password2': 'TestPassword123',
-            'condominio': self.condominio.id,
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 302) 
@@ -177,13 +168,13 @@ class LoginCadastroInternoTestCase(TestCase):
         self.assertIsInstance(form, LoginCadastroInternoForm)  
         self.assertEqual(response.context['usuario'], self.user)
     
-    @override_settings(ROOT_URLCONF='condominio.urls')
-    @patch('login.views.LogErro')
+    @override_settings(ROOT_URLCONF='softwareCursos.urls')
+    @patch('core.views.LogErro')
     def test_cadastrar_usuario_interno_validation_error(self, mock_log_erro):
-        data = {'nome': '...', 'email': '...', 'condominio': '...'}
+        data = {'nome': '...', 'email': '...'}
         self.client.force_login(self.user)
         url = reverse_lazy('loginCadastroInterno')
-        with patch('login.views.LoginCadastroInternoForm') as mock_form:
+        with patch('core.views.LoginCadastroInternoForm') as mock_form:
             mock_form_instance = mock_form.return_value
             mock_form_instance.is_valid.side_effect = ValidationError('Erro de validação')
             response = self.client.post(url, data)
@@ -194,13 +185,13 @@ class LoginCadastroInternoTestCase(TestCase):
         self.assertEqual(messages[0].tags, 'error')
         self.assertEqual(messages[0].message, 'Houve um erro. Por favor, abra um chamado.')
     
-    @override_settings(ROOT_URLCONF='condominio.urls')
-    @patch('login.views.LogErro')
+    @override_settings(ROOT_URLCONF='softwareCursos.urls')
+    @patch('core.views.LogErro')
     def test_cadastrar_usuario_interno_unexpected_error(self, mock_log_erro):
-        data = {'nome': '...', 'email': '...', 'condominio': '...'}
+        data = {'nome': '...', 'email': '...'}
         self.client.force_login(self.user)
         url = reverse_lazy('loginCadastroInterno')
-        with patch('login.views.LoginCadastroInternoForm') as mock_form:
+        with patch('core.views.LoginCadastroInternoForm') as mock_form:
             mock_form.return_value.is_valid.side_effect = Exception('Erro inesperado')
             response = self.client.post(url, data)
         self.assertEqual(response.status_code, 302)

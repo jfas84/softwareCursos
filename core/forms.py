@@ -3,17 +3,6 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import CustomUsuario, Responsaveis
 from django.core.exceptions import ValidationError
 from core.models import *
-# from django.contrib.auth.models import User
-
-
-# class RegistrationForm(UserCreationForm):
-
-#     class Meta(UserCreationForm.Meta):
-#         # Defina o modelo de usuário como User
-#         model = CustomUsuario
-#         fields = ('nome', 'condominio', 'email', 'password1', 'password2')
-#         # labels = {'username': 'E-mail'}
-
 
 class RegistrationForm(UserCreationForm):
     nome = forms.CharField(max_length=180, required=True, help_text='Informe seu nome completo.')
@@ -111,10 +100,215 @@ class UploadCSVUsuariosForm(forms.Form):
     arquivo_csv = forms.FileField(label='Selecione um arquivo CSV')
 
 class EmpresasForm(forms.ModelForm):
-
     class Meta:
         model = Empresas
         fields = '__all__'
         widgets = {
             'dataFundacao': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+class TipoCursoForm(forms.ModelForm):
+    class Meta:
+        model = TiposCurso
+        fields = '__all__'
+
+class CursosForm(forms.ModelForm):
+    class Meta:
+        model = Cursos
+        fields = ['curso', 'valor', 'externo', 'tipoCurso', 'resumo', 'imagem', 'ativo']
+        labels = {
+            'curso': 'Nome do Curso',
+            'valor': 'Valor do Curso',
+            'externo': 'Curso é para cliente?',
+            'tipoCurso': 'Tipo de Curso',
+            'resumo': 'Resumo',
+            'imagem': 'Imagem',
+            'ativo': 'Ativo?',
+        }
+        widgets = {
+            'imagem': forms.ClearableFileInput(attrs={'accept': 'image/*'}),
+        }
+
+class CapitulosForm(forms.ModelForm):
+    class Meta:
+        model = Capitulos
+        fields = ['capitulo', 'objetivo', 'curso']
+        labels = {
+            'capitulo': 'Capítulo',
+            'objetivo': 'Objetivo',
+            'curso': 'Referente ao Curso',
+        }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)  # Obtém o usuário, se disponível
+        super(CapitulosForm, self).__init__(*args, **kwargs)
+
+        # Filtra as opções do campo 'curso' com base na empresa do usuário
+        if user and user.is_authenticated:
+            if user and user.is_superuser:
+                cursos_da_empresa = Cursos.objects.all()
+                self.fields['curso'].queryset = cursos_da_empresa
+            else:
+                cursos_da_empresa = Cursos.objects.filter(empresa=user.empresa)
+                self.fields['curso'].queryset = cursos_da_empresa
+
+class CapitulosCursoForm(forms.ModelForm):
+    class Meta:
+        model = Capitulos
+        fields = ['capitulo', 'objetivo']
+        labels = {
+            'capitulo': 'Capítulo',
+            'objetivo': 'Objetivo',
+        }
+
+class AulasForm(forms.ModelForm):
+    class Meta:
+        model = Aulas
+        fields = ['aula', 'objetivo', 'capitulo']
+        labels = {
+            'aula': 'Título da Aula',
+            'objetivo': 'Objetivo da Aula',
+        }
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)  # Obtém o usuário, se disponível
+        super(AulasForm, self).__init__(*args, **kwargs)
+
+        # Filtra as opções do campo 'curso' com base na empresa do usuário
+        if user and user.is_authenticated:
+            if user and user.is_superuser:
+                capitulosEmpresa = Capitulos.objects.all().order_by('curso', 'capitulo')
+                self.fields['capitulo'].queryset = capitulosEmpresa
+            else:
+                capitulosEmpresa = Capitulos.objects.filter(curso__empresa=user.empresa).order_by('curso', 'capitulo')
+                self.fields['capitulo'].queryset = capitulosEmpresa
+
+class AulasCapituloForm(forms.ModelForm):
+    class Meta:
+        model = Aulas
+        fields = ['aula', 'objetivo']
+        labels = {
+            'aula': 'Título da Aula',
+            'objetivo': 'Objetivo da Aula',
+        }
+
+class TemasForm(forms.ModelForm):
+    class Meta:
+        model = Temas
+        fields = ['tema', 'texto', 'aula']
+        labels = {
+            'tema': 'Nome do Tema',
+            'texto': 'Texto do Tema',
+        }
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)  # Obtém o usuário, se disponível
+        super(TemasForm, self).__init__(*args, **kwargs)
+
+        # Filtra as opções do campo 'curso' com base na empresa do usuário
+        if user and user.is_authenticated:
+            if user and user.is_superuser:
+                aulasEmpresa = Aulas.objects.all().order_by('capitulo__curso', 'capitulo', 'aula')
+                self.fields['aula'].queryset = aulasEmpresa
+            else:
+                aulasEmpresa = Aulas.objects.filter(capitulo__curso__empresa=user.empresa).order_by('capitulo__curso', 'capitulo', 'aula')
+                self.fields['aula'].queryset = aulasEmpresa
+
+class TemasAulaForm(forms.ModelForm):
+    class Meta:
+        model = Temas
+        fields = ['tema', 'texto']
+        labels = {
+            'tema': 'Nome do Tema',
+            'texto': 'Texto do Tema',
+        }
+
+class ApostilasForm(forms.ModelForm):
+    class Meta:
+        model = Apostilas
+        fields = ['apostila', 'arquivo', 'curso']  # Campos que estarão no formulário
+        labels = {
+            'apostila': 'Nome da Apostila',
+            'arquivo': 'Arquivo da Apostila',
+            'curso': 'Referente ao Curso'
+        }
+
+    def clean_arquivo(self):
+        arquivo = self.cleaned_data['arquivo']
+        # Faça suas validações necessárias para o campo 'arquivo' aqui, se aplicável
+        return arquivo
+
+class QuestoesForm(forms.ModelForm):
+    class Meta:
+        model = Questoes
+        fields = ['pergunta', 'imagem', 'resposta1', 'resposta2', 'resposta3', 'resposta4', 'resposta5', 'certoErrado', 'aula', 'apostila', 'resposta_correta']
+        labels = {
+            'pergunta': 'Pergunta',
+            'imagem': 'Imagem',
+            'resposta1': 'Resposta 1',
+            'resposta2': 'Resposta 2',
+            'resposta3': 'Resposta 3',
+            'resposta4': 'Resposta 4',
+            'resposta5': 'Resposta 5',
+            'certoErrado': 'Modelo Certo Errado?',
+            'aula': 'Aula',
+            'apostila': 'Apostila',
+            'resposta_correta': 'Resposta Correta',
+        }
+
+class QuestoesAulaForm(forms.ModelForm):
+    class Meta:
+        model = Questoes
+        fields = ['pergunta', 'imagem', 'resposta1', 'resposta2', 'resposta3', 'resposta4', 'resposta5', 'certoErrado', 'apostila', 'resposta_correta']
+        labels = {
+            'pergunta': 'Pergunta',
+            'imagem': 'Imagem',
+            'resposta1': 'Resposta 1',
+            'resposta2': 'Resposta 2',
+            'resposta3': 'Resposta 3',
+            'resposta4': 'Resposta 4',
+            'resposta5': 'Resposta 5',
+            'certoErrado': 'Modelo Certo Errado?',
+            'apostila': 'Apostila',
+            'resposta_correta': 'Resposta Correta',
+        }
+
+class VideoAulasForm(forms.ModelForm):
+    class Meta:
+        model = VideoAulas
+        fields = ['videoAula', 'aula', 'linkVimeo', 'idYouTube']  # Listar os campos que deseja incluir no formulário
+        labels = {
+            'videoAula': 'Nome da Videoaula',
+            'aula': 'Aula associada',  # Se quiser um rótulo diferente
+            'linkVimeo': 'Link do Vimeo',
+            'idYouTube': 'Id do You Tube',
+        }
+
+class VideoAulasDaAulaForm(forms.ModelForm):
+    class Meta:
+        model = VideoAulas
+        fields = ['videoAula', 'linkVimeo', 'idYouTube']  # Listar os campos que deseja incluir no formulário
+        labels = {
+            'videoAula': 'Nome da Videoaula',
+            'linkVimeo': 'Link do Vimeo',
+            'idYouTube': 'Id do You Tube',
+        }
+
+class BoletimForm(forms.ModelForm):
+    class Meta:
+        model = Boletim
+        fields = ['aluno', 'curso', 'nota', 'aprovado']
+        labels = {
+            'aluno': 'Aluno',
+            'curso': 'Curso',
+            'nota': 'Nota',
+            'aprovado': 'Aprovado'
+        }
+
+class InscricoesForm(forms.ModelForm):
+    class Meta:
+        model = Inscricoes
+        fields = ['usuario', 'curso', 'pago']
+        labels = {
+            'usuario': 'Usuário',
+            'curso': 'Curso',
+            'pago': 'Pago'
         }

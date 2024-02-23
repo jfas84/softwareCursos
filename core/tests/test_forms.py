@@ -2,18 +2,16 @@ from unittest.mock import patch
 from django.test import TestCase
 from model_mommy import mommy
 from django.contrib.auth import get_user_model
-from login.forms import CustomUsuarioChangeForm, CustomUsuarioCreateForm, LoginCadastroInternoForm, RegistrationForm  
-from login.models import CustomUsuario, Condominios
+from core.forms import CustomUsuarioChangeForm, CustomUsuarioCreateForm, LoginCadastroInternoForm, RegistrationForm  
+from core.models import CustomUsuario
 
 class RegistrationFormTestCase(TestCase):
     def setUp(self):
-        self.condominio = Condominios.objects.create(nome="Meu Condomínio")
         self.existing_user = CustomUsuario.objects.create(email='existing@example.com', nome='Existing User')
 
     def test_registration_form(self):
         form_data = {
             'nome': 'Teste Nome',
-            'condominio': self.condominio.id,
             'email': 'test@example.com',
             'password1': 'mypassword123',
             'password2': 'mypassword123',
@@ -24,11 +22,9 @@ class RegistrationFormTestCase(TestCase):
         user_model = get_user_model()
         user = user_model.objects.create_user(email=form_data['email'], password=form_data['password1'])
         user.nome = form_data['nome']
-        user.condominio_id = form_data['condominio']
         user.save()
 
         self.assertEqual(user.nome, 'Teste Nome')
-        self.assertEqual(user.condominio_id, self.condominio.id)
         self.assertEqual(user.email, 'test@example.com')
 
         self.assertTrue(hasattr(form, 'save'))
@@ -38,7 +34,6 @@ class RegistrationFormTestCase(TestCase):
     def test_save_method_assigns_email_correctly(self, mock_save):
         form_data = {
             'nome': 'Teste Nome',
-            'condominio': self.condominio.id,
             'email': 'test@example.com',
             'password1': 'mypassword123',
             'password2': 'mypassword123',
@@ -62,13 +57,11 @@ class RegistrationFormTestCase(TestCase):
 
         # Verificando se o usuário foi salvo corretamente
         self.assertEqual(user.nome, 'Teste Nome')
-        self.assertEqual(user.condominio_id, self.condominio.id)
         self.assertEqual(user.email, 'test@example.com')
 
     def test_clean_email_already_exists(self):
         form_data = {
             'nome': 'Teste Nome',
-            'condominio': self.condominio.id,
             'email': 'existing@example.com', 
             'password1': 'mypassword123',
             'password2': 'mypassword123',
@@ -85,7 +78,6 @@ class CustomUsuarioCreateFormTestCase(TestCase):
     def test_clean_password2(self):
         form_data = {
             'nome': 'John Doe',
-            'condominio': None,
             'email': 'test@example.com',
             'password1': 'testpassword',
             'password2': 'testpassword',
@@ -98,7 +90,6 @@ class CustomUsuarioCreateFormTestCase(TestCase):
     def test_save(self):
         form_data = {
             'nome': 'Test User',
-            'condominio': None,
             'email': 'test@example.com',
             'password1': 'testpassword',
             'password2': 'testpassword',
@@ -117,7 +108,6 @@ class CustomUsuarioCreateFormTestCase(TestCase):
         # Dados do formulário com passwords diferentes
         form_data = {
             'nome': 'John Doe',
-            'condominio': None,
             'email': 'test@example.com',
             'password1': 'testpassword',
             'password2': 'differentpassword',  # Diferente de password1 para forçar o erro
@@ -133,14 +123,12 @@ class CustomUsuarioCreateFormTestCase(TestCase):
 
 class LoginCadastroInternoFormTestCase(TestCase):
     def setUp(self):
-        self.condominio = Condominios.objects.create(nome="Meu Condomínio")
         self.user = mommy.make('CustomUsuario')
         self.existing_user = CustomUsuario.objects.create(email='existing@example.com', nome='Existing User')
 
     def test_registration_form(self):
         form_data = {
             'nome': 'Teste Nome',
-            'condominio': self.condominio.id,
             'email': 'test@example.com',
             'password1': 'mypassword123',
             'password2': 'mypassword123',
@@ -151,11 +139,9 @@ class LoginCadastroInternoFormTestCase(TestCase):
         user_model = get_user_model()
         user = user_model.objects.create_user(email=form_data['email'], password=form_data['password1'])
         user.nome = form_data['nome']
-        user.condominio_id = form_data['condominio']
         user.save()
 
         self.assertEqual(user.nome, 'Teste Nome')
-        self.assertEqual(user.condominio_id, self.condominio.id)
         self.assertEqual(user.email, 'test@example.com')
 
         self.assertTrue(hasattr(form, 'save'))
@@ -165,7 +151,6 @@ class LoginCadastroInternoFormTestCase(TestCase):
     def test_save_method_assigns_email_correctly(self, mock_save):
         form_data = {
             'nome': 'Teste Nome',
-            'condominio': self.condominio.id,
             'email': 'test@example.com',
             'password1': 'mypassword123',
             'password2': 'mypassword123',
@@ -189,13 +174,11 @@ class LoginCadastroInternoFormTestCase(TestCase):
 
         # Verificando se o usuário foi salvo corretamente
         self.assertEqual(user.nome, 'Teste Nome')
-        self.assertEqual(user.condominio_id, self.condominio.id)
         self.assertEqual(user.email, 'test@example.com')
 
     def test_clean_email_already_exists(self):
         form_data = {
             'nome': 'Teste Nome',
-            'condominio': self.condominio.id,
             'email': 'existing@example.com', 
             'password1': 'mypassword123',
             'password2': 'mypassword123',

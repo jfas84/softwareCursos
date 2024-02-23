@@ -241,11 +241,17 @@
                 <div class="middle-content container-xxl p-0">
 
                     {% include 'includes/breadcrumb.html' %}
+                    {% bootstrap_messages %}
+
                     
                     {% if request.resolver_match.url_name == 'internaTableauGeral' %}
 
                     {% elif request.resolver_match.url_name == 'internaCadastroInterno' or request.resolver_match.url_name == 'internaImportarUsuarios' or request.resolver_match.url_name == 'internaCadastrarEmpresas' %}
                         {% include 'includes/dashCadastros.html' %}
+
+                    {% elif request.resolver_match.url_name == 'internaCadastrarTipoCurso' %}
+                        {% include 'includes/dashCadastros.html' %}
+                    
 
 
                         

@@ -134,10 +134,6 @@ class TiposCurso(models.Model):
         verbose_name = 'Tipo de Curso'
         verbose_name_plural = 'Tipos de Curso'
 
-    class Meta:
-        verbose_name = 'Tipo de Curso'
-        verbose_name_plural = 'Tipos de Curso'
-
     def __str__(self):
         return self.descricao
 

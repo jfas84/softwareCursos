@@ -51,15 +51,41 @@
         });
     });
 </script> -->
-{% if request.resolver_match.url_name == 'internaCadastrarEmpresas' %}
+{% elif request.resolver_match.url_name == 'internaCadastrarEmpresas' %}
 <script>
     function limparFormulario(event) {
     event.preventDefault();
 
     const campos = [
-        'id_nome',
+        'id_razaoSocial',
+        'id_nomeFantasia',
+        'id_cnpj',
+        'id_endereco',
+        'id_cidade',
+        'id_bairro',
+        'id_estado',
+        'id_cep',
+        'id_dataFundacao',
+        'id_telefone',
         'id_email',
-        'id_responsabilidades',
+        'id_responsavel',
+        'id_contato',
+        'id_logo',
+        // Adicione mais campos conforme necessário, usando os IDs dos campos do seu formulário
+    ];
+
+    campos.forEach(campo => {
+        document.getElementById(campo).value = "";
+    });
+}
+</script>
+{% elif request.resolver_match.url_name == 'internaCadastrarTipoCurso' %}
+<script>
+    function limparFormulario(event) {
+    event.preventDefault();
+
+    const campos = [
+        'id_descricao',
         // Adicione mais campos conforme necessário, usando os IDs dos campos do seu formulário
     ];
 
