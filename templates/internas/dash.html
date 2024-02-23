@@ -249,12 +249,11 @@
                     {% elif request.resolver_match.url_name == 'internaCadastroInterno' or request.resolver_match.url_name == 'internaImportarUsuarios' or request.resolver_match.url_name == 'internaCadastrarEmpresas' %}
                         {% include 'includes/dashCadastros.html' %}
 
-                    {% elif request.resolver_match.url_name == 'internaCadastrarTipoCurso' %}
+                    {% elif request.resolver_match.url_name == 'internaCadastrarTipoCurso' or request.resolver_match.url_name == 'internaCadastrarCurso' or request.resolver_match.url_name == 'internaCadastrarCapitulo'  %}
                         {% include 'includes/dashCadastros.html' %}
                     
-
-
-                        
+                    {% elif request.resolver_match.url_name == 'internaCadastrarAula' or request.resolver_match.url_name == 'internaCadastrarApostila' %}
+                        {% include 'includes/dashCadastros.html' %}
 
                     {% endif %}
 

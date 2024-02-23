@@ -8,9 +8,9 @@ from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.forms import ValidationError
-from core.decorators import responsabilidade_required
-from core.models import Apostilas, Cursos, CustomUsuario, Empresas, Inscricoes, LogErro
-from .forms import CursosForm, CustomUsuarioChangeForm, EmpresasForm, LoginCadastroInternoForm, RegistrationForm, TipoCursoForm, UploadCSVUsuariosForm
+from .decorators import responsabilidade_required
+from .models import Apostilas, Aulas, Capitulos, Cursos, CustomUsuario, Empresas, Inscricoes, LogErro, Temas
+from .forms import ApostilasForm, AulasForm, CapitulosForm, CursosForm, CustomUsuarioChangeForm, EmpresasForm, LoginCadastroInternoForm, RegistrationForm, TipoCursoForm, UploadCSVUsuariosForm
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.http import HttpResponse
 from django.template.loader import render_to_string
@@ -44,7 +44,7 @@ def verificaUsuarioCurso(usuario, curso):
             return True
         else:
             return False
-
+        
 def obter_responsabilidades_usuario(usuario):
     usuario = get_object_or_404(CustomUsuario, pk=usuario.pk)
     responsabilidades = usuario.responsabilidades.all()
@@ -251,7 +251,7 @@ def internaCadastroInterno(request):
     responsabilidades = obter_responsabilidades_usuario(usuario)
     try:
         if request.method == 'POST':
-            form = LoginCadastroInternoForm(request.POST)
+            form = LoginCadastroInternoForm(request.user, request.POST)
             if form.is_valid():
                 user = CustomUsuario(username=form.cleaned_data['email'])
                 form = LoginCadastroInternoForm(request.POST, instance=user)
@@ -417,19 +417,23 @@ def internaCadastrarTipoCurso(request):
 def internaCadastrarCurso(request):
     usuario = request.user
     responsabilidades = obter_responsabilidades_usuario(usuario)
+    acesso = ['SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR']
     try:
         if request.method == 'POST':
-            form = CursosForm(request.POST)
+            form = CursosForm(user=request.user, data=request.POST, files=request.FILES)
             if form.is_valid():
-                form.save()
-                messages.success(request, 'O tipo de curso foi criado com sucesso!')
-                return redirect('internaCadastrarTipoCurso')
+                instance = form.save(commit=False)
+                if any(responsabilidade in acesso for responsabilidade in responsabilidades):
+                    instance.empresa = usuario.empresa
+                instance.save()
+                messages.success(request, 'O curso foi criado com sucesso!')
+                return redirect('internaCadastrarCurso')
         else:
-            form = CursosForm()
+            form = CursosForm(user=request.user)
         context = {
             'form': form,
-            'title': "Cadastrar Tipo de Curso",
-            'paginaAtual': 'Cadastrar Tipo de Curso',
+            'title': "Cadastrar Curso",
+            'paginaAtual': 'Cadastrar Curso',
             'usuario': usuario,
             'responsabilidades': responsabilidades,
         }
@@ -437,7 +441,7 @@ def internaCadastrarCurso(request):
     except ValidationError as e:
         log_erro = LogErro(
             usuario=request.user if request.user.is_authenticated else None,
-            pagina_atual="internaCadastrarTipoCurso",
+            pagina_atual="internaCadastrarCurso",
             mensagem_erro=str(e),
         )
         log_erro.save()
@@ -446,7 +450,130 @@ def internaCadastrarCurso(request):
     except Exception as e:
         log_erro = LogErro(
             usuario=request.user if request.user.is_authenticated else None,
-            pagina_atual="internaCadastrarTipoCurso",
+            pagina_atual="internaCadastrarCurso",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro inesperado. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaCadastrarCapitulo(request):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    try:
+        if request.method == 'POST':
+            form = CapitulosForm(user=request.user, data=request.POST)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.save()
+                messages.success(request, 'O capítulo foi criado com sucesso!')
+                return redirect('internaCadastrarCapitulo')
+        else:
+            form = CapitulosForm(user=request.user)
+        context = {
+            'form': form,
+            'title': "Cadastrar Capítulo",
+            'paginaAtual': 'Cadastrar Capítulo',
+            'usuario': usuario,
+            'responsabilidades': responsabilidades,
+        }
+        return render(request, 'internas/dash.html', context)
+    except ValidationError as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaCadastrarCapitulo",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+    except Exception as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaCadastrarCapitulo",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro inesperado. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+    
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaCadastrarAula(request):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    try:
+        if request.method == 'POST':
+            form = AulasForm(user=request.user, data=request.POST)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.save()
+                messages.success(request, 'A aula foi criada com sucesso!')
+                return redirect('internaCadastrarAula')
+        else:
+            form = AulasForm(user=request.user)
+        context = {
+            'form': form,
+            'title': "Cadastrar Aula",
+            'paginaAtual': 'Cadastrar Aula',
+            'usuario': usuario,
+            'responsabilidades': responsabilidades,
+        }
+        return render(request, 'internas/dash.html', context)
+    except ValidationError as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaCadastrarAula",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+    except Exception as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaCadastrarAula",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro inesperado. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+    
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaCadastrarApostila(request):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    try:
+        if request.method == 'POST':
+            form = ApostilasForm(user=request.user, data=request.POST, files=request.FILES)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.save()
+                messages.success(request, 'A apostila foi criada com sucesso!')
+                return redirect('internaCadastrarApostila')
+        else:
+            form = ApostilasForm(user=request.user)
+        context = {
+            'form': form,
+            'title': "Cadastrar Apostila",
+            'paginaAtual': 'Cadastrar Apostila',
+            'usuario': usuario,
+            'responsabilidades': responsabilidades,
+        }
+        return render(request, 'internas/dash.html', context)
+    except ValidationError as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaCadastrarApostila",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+    except Exception as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaCadastrarApostila",
             mensagem_erro=str(e),
         )
         log_erro.save()

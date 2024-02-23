@@ -1,8 +1,13 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import CustomUsuario, Responsaveis
+from django.shortcuts import get_object_or_404
+from .models import Apostilas, Aulas, Boletim, Capitulos, Cursos, CustomUsuario, Empresas, Inscricoes, Questoes, Responsaveis, Temas, TiposCurso, VideoAulas
 from django.core.exceptions import ValidationError
-from core.models import *
+
+def obter_responsabilidades_usuario(usuario):
+    usuario = get_object_or_404(CustomUsuario, pk=usuario.pk)
+    responsabilidades = usuario.responsabilidades.all()
+    return [responsabilidade.descricao for responsabilidade in responsabilidades]
 
 class RegistrationForm(UserCreationForm):
     nome = forms.CharField(max_length=180, required=True, help_text='Informe seu nome completo.')
@@ -113,9 +118,16 @@ class TipoCursoForm(forms.ModelForm):
         fields = '__all__'
 
 class CursosForm(forms.ModelForm):
+    def __init__(self, user, *args, **kwargs):
+        super(CursosForm, self).__init__(*args, **kwargs)
+        acesso = ['SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR']
+        responsabilidades = obter_responsabilidades_usuario(user)
+        if any(responsabilidade in acesso for responsabilidade in responsabilidades):
+            self.fields.pop('empresa', None)
+
     class Meta:
         model = Cursos
-        fields = ['curso', 'valor', 'externo', 'tipoCurso', 'resumo', 'imagem', 'ativo']
+        fields = ['empresa', 'curso', 'valor', 'externo', 'tipoCurso', 'resumo', 'imagem', 'ativo']
         labels = {
             'curso': 'Nome do Curso',
             'valor': 'Valor do Curso',
@@ -140,12 +152,13 @@ class CapitulosForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)  # Obtém o usuário, se disponível
+        user = kwargs.pop('user', None)
         super(CapitulosForm, self).__init__(*args, **kwargs)
+        acesso_geral = ['GESTORGERAL', 'COLABORADORSEDE']
+        responsabilidades = obter_responsabilidades_usuario(user)
 
-        # Filtra as opções do campo 'curso' com base na empresa do usuário
         if user and user.is_authenticated:
-            if user and user.is_superuser:
+            if any(responsabilidade in acesso_geral for responsabilidade in responsabilidades):
                 cursos_da_empresa = Cursos.objects.all()
                 self.fields['curso'].queryset = cursos_da_empresa
             else:
@@ -172,10 +185,12 @@ class AulasForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)  # Obtém o usuário, se disponível
         super(AulasForm, self).__init__(*args, **kwargs)
+        acesso_geral = ['GESTORGERAL', 'COLABORADORSEDE']
+        responsabilidades = obter_responsabilidades_usuario(user)
 
         # Filtra as opções do campo 'curso' com base na empresa do usuário
         if user and user.is_authenticated:
-            if user and user.is_superuser:
+            if any(responsabilidade in acesso_geral for responsabilidade in responsabilidades):
                 capitulosEmpresa = Capitulos.objects.all().order_by('curso', 'capitulo')
                 self.fields['capitulo'].queryset = capitulosEmpresa
             else:
@@ -222,9 +237,23 @@ class TemasAulaForm(forms.ModelForm):
         }
 
 class ApostilasForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super(ApostilasForm, self).__init__(*args, **kwargs)
+        acesso_geral = ['GESTORGERAL', 'COLABORADORSEDE']
+        responsabilidades = obter_responsabilidades_usuario(user)
+
+        if user and user.is_authenticated:
+            if any(responsabilidade in acesso_geral for responsabilidade in responsabilidades):
+                cursos_da_empresa = Cursos.objects.all()
+                self.fields['curso'].queryset = cursos_da_empresa
+            else:
+                cursos_da_empresa = Cursos.objects.filter(empresa=user.empresa)
+                self.fields['curso'].queryset = cursos_da_empresa
+
     class Meta:
         model = Apostilas
-        fields = ['apostila', 'arquivo', 'curso']  # Campos que estarão no formulário
+        fields = ['apostila', 'arquivo', 'curso']
         labels = {
             'apostila': 'Nome da Apostila',
             'arquivo': 'Arquivo da Apostila',
@@ -233,8 +262,9 @@ class ApostilasForm(forms.ModelForm):
 
     def clean_arquivo(self):
         arquivo = self.cleaned_data['arquivo']
-        # Faça suas validações necessárias para o campo 'arquivo' aqui, se aplicável
         return arquivo
+    
+    
 
 class QuestoesForm(forms.ModelForm):
     class Meta:

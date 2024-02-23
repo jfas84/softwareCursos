@@ -94,4 +94,41 @@
     });
 }
 </script>
+{% elif request.resolver_match.url_name == 'internaCadastrarCurso' %}
+<script>
+    function limparFormulario(event) {
+    event.preventDefault();
+
+    const campos = [
+    'id_curso',
+    'id_valor',
+    'id_externo',
+    'id_ativo',
+    'id_tipoCurso',
+    'id_resumo',
+    'id_imagem',
+    'id_empresa',
+    ];
+
+    campos.forEach(campo => {
+        document.getElementById(campo).value = "";
+    });
+}
+</script>
+{% elif request.resolver_match.url_name == 'internaCadastrarCapitulo' %}
+<script>
+    function limparFormulario(event) {
+    event.preventDefault();
+
+    const campos = [
+    'id_capitulo',
+    'id_objetivo',
+    'id_curso',
+    ];
+
+    campos.forEach(campo => {
+        document.getElementById(campo).value = "";
+    });
+}
+</script>
 {% endif %}
