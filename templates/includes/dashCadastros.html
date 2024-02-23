@@ -6,7 +6,6 @@
             <div class="card">
                 <div class="card-header">
                     <h3 class="text-center">{{title}}</h3>
-                    {% bootstrap_messages %}
                 </div>
                 <div class="card-body">
                     <form method="post" enctype="multipart/form-data">
@@ -124,6 +123,47 @@
     'id_capitulo',
     'id_objetivo',
     'id_curso',
+    ];
+
+    campos.forEach(campo => {
+        document.getElementById(campo).value = "";
+    });
+}
+</script>
+{% elif request.resolver_match.url_name == 'internaCadastrarQuestao' %}
+<script>
+    function limparFormulario(event) {
+    event.preventDefault();
+
+    const campos = [
+    'id_pergunta',
+    'id_resposta1',
+    'id_resposta2',
+    'id_resposta3',
+    'id_resposta4',
+    'id_resposta5',
+    'id_certoErrado',
+    'id_aula',
+    'id_apostila',
+    'id_imagem',
+    'id_resposta_correta',
+    ];
+
+    campos.forEach(campo => {
+        document.getElementById(campo).value = "";
+    });
+}
+</script>
+{% elif request.resolver_match.url_name == 'internaCadastrarVideoAula' %}
+<script>
+    function limparFormulario(event) {
+    event.preventDefault();
+
+    const campos = [
+    'id_videoAula',
+    'id_aula',
+    'id_linkVimeo',
+    'id_idYouTube',
     ];
 
     campos.forEach(campo => {

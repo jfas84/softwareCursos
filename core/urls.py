@@ -33,6 +33,9 @@ urlpatterns = [
     path('tableau/cadastro/capitulo', login_required(views.internaCadastrarCapitulo), name='internaCadastrarCapitulo'),
     path('tableau/cadastro/aula', login_required(views.internaCadastrarAula), name='internaCadastrarAula'),
     path('tableau/cadastro/apostila', login_required(views.internaCadastrarApostila), name='internaCadastrarApostila'),
+    path('tableau/cadastro/tema', login_required(views.internaCadastrarTema), name='internaCadastrarTema'),
+    path('tableau/cadastro/questao', login_required(views.internaCadastrarQuestao), name='internaCadastrarQuestao'),
+    path('tableau/cadastro/video-aula', login_required(views.internaCadastrarVideoAula), name='internaCadastrarVideoAula'),
     
     
     path('tableau/importar/usuarios', login_required(views.internaImportarUsuarios), name='internaImportarUsuarios'),

@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from django.forms import ValidationError
 from .decorators import responsabilidade_required
 from .models import Apostilas, Aulas, Capitulos, Cursos, CustomUsuario, Empresas, Inscricoes, LogErro, Temas
-from .forms import ApostilasForm, AulasForm, CapitulosForm, CursosForm, CustomUsuarioChangeForm, EmpresasForm, LoginCadastroInternoForm, RegistrationForm, TipoCursoForm, UploadCSVUsuariosForm
+from .forms import ApostilasForm, AulasForm, CapitulosForm, CursosForm, CustomUsuarioChangeForm, EmpresasForm, LoginCadastroInternoForm, QuestoesForm, RegistrationForm, TemasAulaForm, TemasForm, TipoCursoForm, UploadCSVUsuariosForm, VideoAulasForm
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.http import HttpResponse
 from django.template.loader import render_to_string
@@ -574,6 +574,129 @@ def internaCadastrarApostila(request):
         log_erro = LogErro(
             usuario=request.user if request.user.is_authenticated else None,
             pagina_atual="internaCadastrarApostila",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro inesperado. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaCadastrarTema(request):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    try:
+        if request.method == 'POST':
+            form = TemasForm(user=request.user, data=request.POST)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.save()
+                messages.success(request, 'O tema foi criado com sucesso!')
+                return redirect('internaCadastrarTema')
+        else:
+            form = TemasForm(user=request.user)
+        context = {
+            'form': form,
+            'title': "Cadastrar Tema",
+            'paginaAtual': 'Cadastrar Tema',
+            'usuario': usuario,
+            'responsabilidades': responsabilidades,
+        }
+        return render(request, 'internas/dash.html', context)
+    except ValidationError as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaCadastrarTema",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+    except Exception as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaCadastrarTema",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro inesperado. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaCadastrarQuestao(request):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    try:
+        if request.method == 'POST':
+            form = QuestoesForm(user=request.user, data=request.POST, files=request.FILES)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.save()
+                messages.success(request, 'A questão foi criada com sucesso!')
+                return redirect('internaCadastrarQuestao')
+        else:
+            form = QuestoesForm(user=request.user)
+        context = {
+            'form': form,
+            'title': "Cadastrar Questão",
+            'paginaAtual': 'Cadastrar Questão',
+            'usuario': usuario,
+            'responsabilidades': responsabilidades,
+        }
+        return render(request, 'internas/dash.html', context)
+    except ValidationError as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaCadastrarQuestao",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+    except Exception as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaCadastrarQuestao",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro inesperado. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+    
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaCadastrarVideoAula(request):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    try:
+        if request.method == 'POST':
+            form = VideoAulasForm(user=request.user, data=request.POST)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.save()
+                messages.success(request, 'A video aula foi criada com sucesso!')
+                return redirect('internaCadastrarVideoAula')
+        else:
+            form = VideoAulasForm(user=request.user)
+        context = {
+            'form': form,
+            'title': "Cadastrar Vídeo Aula",
+            'paginaAtual': 'Cadastrar Vídeo Aula',
+            'usuario': usuario,
+            'responsabilidades': responsabilidades,
+        }
+        return render(request, 'internas/dash.html', context)
+    except ValidationError as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaCadastrarVideoAula",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+    except Exception as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaCadastrarVideoAula",
             mensagem_erro=str(e),
         )
         log_erro.save()

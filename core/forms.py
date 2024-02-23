@@ -215,12 +215,14 @@ class TemasForm(forms.ModelForm):
             'texto': 'Texto do Tema',
         }
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)  # Obtém o usuário, se disponível
+        user = kwargs.pop('user', None)
         super(TemasForm, self).__init__(*args, **kwargs)
+        acesso_geral = ['GESTORGERAL', 'COLABORADORSEDE']
+        responsabilidades = obter_responsabilidades_usuario(user)
 
         # Filtra as opções do campo 'curso' com base na empresa do usuário
         if user and user.is_authenticated:
-            if user and user.is_superuser:
+            if any(responsabilidade in acesso_geral for responsabilidade in responsabilidades):
                 aulasEmpresa = Aulas.objects.all().order_by('capitulo__curso', 'capitulo', 'aula')
                 self.fields['aula'].queryset = aulasEmpresa
             else:
@@ -267,6 +269,23 @@ class ApostilasForm(forms.ModelForm):
     
 
 class QuestoesForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super(QuestoesForm, self).__init__(*args, **kwargs)
+        acesso_geral = ['GESTORGERAL', 'COLABORADORSEDE']
+        responsabilidades = obter_responsabilidades_usuario(user)
+
+        if user and user.is_authenticated:
+            if any(responsabilidade in acesso_geral for responsabilidade in responsabilidades):
+                aulasEmpresa = Aulas.objects.all().order_by('capitulo__curso', 'capitulo', 'aula')
+                self.fields['aula'].queryset = aulasEmpresa
+                apostila = Apostilas.objects.all().order_by('curso')
+                self.fields['apostila'].queryset = apostila
+            else:
+                aulasEmpresa = Aulas.objects.filter(capitulo__curso__empresa=user.empresa).order_by('capitulo__curso', 'capitulo', 'aula')
+                self.fields['aula'].queryset = aulasEmpresa
+                apostila = Apostilas.objects.filter(curso__empresa=user.empresa).order_by('curso')
+                self.fields['aula'].queryset = aulasEmpresa
     class Meta:
         model = Questoes
         fields = ['pergunta', 'imagem', 'resposta1', 'resposta2', 'resposta3', 'resposta4', 'resposta5', 'certoErrado', 'aula', 'apostila', 'resposta_correta']
@@ -302,12 +321,25 @@ class QuestoesAulaForm(forms.ModelForm):
         }
 
 class VideoAulasForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super(VideoAulasForm, self).__init__(*args, **kwargs)
+        acesso_geral = ['GESTORGERAL', 'COLABORADORSEDE']
+        responsabilidades = obter_responsabilidades_usuario(user)
+
+        if user and user.is_authenticated:
+            if any(responsabilidade in acesso_geral for responsabilidade in responsabilidades):
+                aulasEmpresa = Aulas.objects.all().order_by('capitulo__curso', 'capitulo', 'aula')
+                self.fields['aula'].queryset = aulasEmpresa
+            else:
+                aulasEmpresa = Aulas.objects.filter(capitulo__curso__empresa=user.empresa).order_by('capitulo__curso', 'capitulo', 'aula')
+                self.fields['aula'].queryset = aulasEmpresa
     class Meta:
         model = VideoAulas
-        fields = ['videoAula', 'aula', 'linkVimeo', 'idYouTube']  # Listar os campos que deseja incluir no formulário
+        fields = ['videoAula', 'aula', 'linkVimeo', 'idYouTube'] 
         labels = {
             'videoAula': 'Nome da Videoaula',
-            'aula': 'Aula associada',  # Se quiser um rótulo diferente
+            'aula': 'Aula associada', 
             'linkVimeo': 'Link do Vimeo',
             'idYouTube': 'Id do You Tube',
         }
