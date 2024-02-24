@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Apostilas, Aulas, Boletim, Capitulos, Cursos, CustomUsuario, Inscricoes, LogErro, Questoes, Responsaveis, Temas, TiposCurso, VideoAulas
+from .models import Apostilas, Aulas, Boletim, Capitulos, Cursos, CustomUsuario, FrequenciaAulas, Inscricoes, LogErro, Notas, Questoes, Responsaveis, Temas, TiposCurso, VideoAulas
 from .forms import CustomUsuarioCreateForm, CustomUsuarioChangeForm
 from django.template.defaultfilters import slugify
 
@@ -17,7 +17,7 @@ class CustomUsuarioAdmin(UserAdmin):
 
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Informações Pessoais', {'fields': ('nome', 'aprovado', 'empresa', 'responsabilidades')}),
+        ('Informações Pessoais', {'fields': ('nome', 'aprovado', 'empresa', 'responsabilidades', 'turma')}),
         ('Permissões', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         ('Datas Importantes', {'fields': ('last_login', 'date_joined')}),
     )
@@ -112,12 +112,30 @@ class VideoAulasAdmin(admin.ModelAdmin):
     list_filter = ('aula',)  # Adicionando filtro por aula
     raw_id_fields = ('aula',)  # Utilizando campo de busca para aula (pode ser útil se houver muitas aulas)
 
+@admin.register(FrequenciaAulas)
+class FrequenciaAulasAdmin(admin.ModelAdmin):
+    list_display = ('aluno', 'aula')
+    search_fields = ('aluno__username',)
+    raw_id_fields = ('aluno', 'aula')
+
+@admin.register(Notas)
+class NotasAdmin(admin.ModelAdmin):
+    list_display = ('aluno', 'capitulo', 'valor')
+    list_filter = ('capitulo',)
+    search_fields = ('aluno__username', 'capitulo__capitulo')
+    raw_id_fields = ('aluno', 'capitulo')
+
 @admin.register(Boletim)
 class BoletimAdmin(admin.ModelAdmin):
-    list_display = ('aluno', 'curso', 'nota', 'aprovado')
-    list_filter = ('curso', 'aprovado')
-    search_fields = ('aluno__nome', 'curso__curso')
-    raw_id_fields = ('aluno', 'curso')
+    list_display = ('aluno', 'calcular_media')
+    search_fields = ('aluno__nome',)
+    raw_id_fields = ('aluno',)
+
+    def calcular_media(self, obj):
+        return obj.calcular_media()
+
+    calcular_media.short_description = 'Média'
+    calcular_media.admin_order_field = 'notas__valor'
 
 @admin.register(Inscricoes)
 class InscricoesAdmin(admin.ModelAdmin):

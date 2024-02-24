@@ -85,6 +85,7 @@
 
     const campos = [
         'id_descricao',
+        'id_empresa',
         // Adicione mais campos conforme necessário, usando os IDs dos campos do seu formulário
     ];
 
@@ -164,6 +165,21 @@
     'id_aula',
     'id_linkVimeo',
     'id_idYouTube',
+    ];
+
+    campos.forEach(campo => {
+        document.getElementById(campo).value = "";
+    });
+}
+</script>
+{% elif request.resolver_match.url_name == 'internaCadastrarTurma' %}
+<script>
+    function limparFormulario(event) {
+    event.preventDefault();
+
+    const campos = [
+    'id_turma',
+    'id_empresa',
     ];
 
     campos.forEach(campo => {

@@ -65,6 +65,17 @@ class Responsaveis(models.Model):
         verbose_name = 'Responsável'
         verbose_name_plural = 'Responsáveis'
 
+class Turmas(models.Model):
+    turma = models.CharField("Turma", max_length=150)
+    empresa = models.ForeignKey(Empresas, on_delete=models.SET_NULL, null=True, blank=True)
+    
+    class Meta:
+        verbose_name = 'Turma'
+        verbose_name_plural = 'Turmas'
+
+    def __str__(self):
+        return self.turma
+
 
 class UsuarioManager(BaseUserManager):
   """
@@ -105,6 +116,7 @@ class CustomUsuario(AbstractUser):
   empresa = models.ForeignKey(Empresas, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Empresa")
   aprovado = models.BooleanField(verbose_name="Aprovado?", default=False)
   responsabilidades = models.ManyToManyField(Responsaveis, blank=True)
+  turma = models.ForeignKey(Turmas, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Turma")
 
   USERNAME_FIELD = 'email' # Aqui estou informando que o campo usado para login será o e-mail
   REQUIRED_FIELDS = ['nome',] # Aqui informo quais os campos que serão requeridos pelo sistema além dos campos padrões.
@@ -130,6 +142,8 @@ class LogErro(models.Model):
 
 class TiposCurso(models.Model):
     descricao = models.CharField('Descrição', max_length=150)
+    empresa = models.ForeignKey(Empresas, on_delete=models.SET_NULL, null=True, blank=True)
+
     class Meta:
         verbose_name = 'Tipo de Curso'
         verbose_name_plural = 'Tipos de Curso'
@@ -138,7 +152,7 @@ class TiposCurso(models.Model):
         return self.descricao
 
 class Cursos(models.Model):
-    curso = models.CharField("Curso", max_length=150)
+    curso = models.CharField("Curso ou Matéria", max_length=150)
     valor = models.DecimalField('Valor da Venda', max_digits=10, decimal_places=2, default=0.00)
     externo = models.BooleanField('Curso para cliente?', default=False)
     ativo = models.BooleanField('Ativo?', default=True)
@@ -273,19 +287,25 @@ class FrequenciaAulas(models.Model):
     def __str__(self):
         return self.aula 
 
-class Boletim(models.Model):
+class Notas(models.Model):
     aluno = models.ForeignKey(CustomUsuario, on_delete=models.CASCADE)
-    curso = models.ForeignKey(Cursos, on_delete=models.CASCADE)
-    nota = models.DecimalField(max_digits=5, decimal_places=2)
-    aprovado = models.BooleanField(default=False)
-
-    class Meta:
-        verbose_name = 'Boletim'
-        verbose_name_plural = 'Boletins'
+    capitulo = models.ForeignKey(Capitulos, on_delete=models.CASCADE)
+    valor = models.DecimalField(max_digits=5, decimal_places=2)
 
     def __str__(self):
-        return f"{self.aluno.nome} - {self.curso.curso}"
-    
+        return f"{self.aluno} - {self.aula}: {self.valor}"
+
+class Boletim(models.Model):
+    aluno = models.ForeignKey(CustomUsuario, on_delete=models.CASCADE)
+    notas = models.ManyToManyField(Notas)
+
+    def calcular_media(self):
+        notas = self.notas.all()
+        total = sum(nota.valor for nota in notas)
+        return total / len(notas) if notas else 0
+
+    def __str__(self):
+        return f"Boletim de {self.aluno}"
 
 class Inscricoes(models.Model):
     usuario = models.ForeignKey(CustomUsuario, on_delete=models.CASCADE)

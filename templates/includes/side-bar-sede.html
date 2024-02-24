@@ -38,50 +38,53 @@
                     <li>
                         <a href="{% url 'internaCadastrarEmpresas' %}"> Empresa </a>
                     </li>
-                    <li>
-                        <a href="{% url 'internaCadastroInterno' %}"> Usuário </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'internaImportarUsuarios' %}"> Imp. Usuário </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'internaCadastrarTipoCurso' %}"> Tipo Curso </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'internaCadastrarCurso' %}"> Curso </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'internaCadastrarCapitulo' %}"> Capítulo </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'internaCadastrarAula' %}"> Aula </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'internaCadastrarApostila' %}"> Apostila </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'internaCadastrarTema' %}"> Tema </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'internaCadastrarQuestao' %}"> Questão </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'internaCadastrarVideoAula' %}"> Vídeo Aula </a>
-                    </li>
-                    
                     <li class="sub-submenu dropend">
-                        <a href="#cadastroReservas" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle collapsed">Reservas <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg> </a>
-                        <ul class="dropdown-menu list-unstyled sub-submenu" id="cadastroReservas"> 
+                        <a href="#cadastroUsuarios" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle collapsed">Usuarios <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg> </a>
+                        <ul class="dropdown-menu list-unstyled sub-submenu" id="cadastroUsuarios"> 
                             <li>
-                                <a href="#"> Churrasqueiras </a>
+                                <a href="{% url 'internaCadastroInterno' %}"> Usuário </a>
                             </li>
                             <li>
-                                <a href="#"> Salões de Festa </a>
+                                <a href="{% url 'internaImportarUsuarios' %}"> Imp. Usuário </a>
                             </li>
                         </ul>
                     </li>
-                    <li>
-                        <a href="#"> Sugestões </a>
+                    <li class="sub-submenu dropend">
+                        <a href="#cadastroEscola" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle collapsed">Escola <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg> </a>
+                        <ul class="dropdown-menu list-unstyled sub-submenu" id="cadastroEscola"> 
+                            <li>
+                                <a href="{% url 'internaCadastrarTurma' %}"> Turma </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="sub-submenu dropend">
+                        <a href="#cadastroCursos" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle collapsed">Cursos <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg> </a>
+                        <ul class="dropdown-menu list-unstyled sub-submenu" id="cadastroCursos"> 
+                            <li>
+                                <a href="{% url 'internaCadastrarTipoCurso' %}"> Tipo Curso </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'internaCadastrarCurso' %}"> Curso </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'internaCadastrarCapitulo' %}"> Capítulo </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'internaCadastrarAula' %}"> Aula </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'internaCadastrarApostila' %}"> Apostila </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'internaCadastrarTema' %}"> Tema </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'internaCadastrarQuestao' %}"> Questão </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'internaCadastrarVideoAula' %}"> Vídeo Aula </a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </li>

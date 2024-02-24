@@ -29,6 +29,7 @@ urlpatterns = [
     
     # Internas Empresas
     path('tableau/cadastro/tipo-de-curso', login_required(views.internaCadastrarTipoCurso), name='internaCadastrarTipoCurso'),
+    path('tableau/cadastro/turma', login_required(views.internaCadastrarTurma), name='internaCadastrarTurma'),
     path('tableau/cadastro/curso', login_required(views.internaCadastrarCurso), name='internaCadastrarCurso'),
     path('tableau/cadastro/capitulo', login_required(views.internaCadastrarCapitulo), name='internaCadastrarCapitulo'),
     path('tableau/cadastro/aula', login_required(views.internaCadastrarAula), name='internaCadastrarAula'),

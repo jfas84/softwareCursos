@@ -1,5 +1,6 @@
 from datetime import timezone
 import datetime
+from django.db import transaction
 from django.db.models import Q, Count
 from django.core.mail import send_mail
 from django.contrib.auth import authenticate, login
@@ -9,8 +10,8 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.forms import ValidationError
 from .decorators import responsabilidade_required
-from .models import Apostilas, Aulas, Capitulos, Cursos, CustomUsuario, Empresas, Inscricoes, LogErro, Temas
-from .forms import ApostilasForm, AulasForm, CapitulosForm, CursosForm, CustomUsuarioChangeForm, EmpresasForm, LoginCadastroInternoForm, QuestoesForm, RegistrationForm, TemasAulaForm, TemasForm, TipoCursoForm, UploadCSVUsuariosForm, VideoAulasForm
+from .models import Apostilas, Aulas, Boletim, Capitulos, Cursos, CustomUsuario, Empresas, FrequenciaAulas, Inscricoes, LogErro, Notas, Temas
+from .forms import ApostilasForm, AulasForm, CapitulosForm, CursosForm, CustomUsuarioChangeForm, EmpresasForm, LoginCadastroInternoForm, QuestoesForm, RegistrationForm, TemasForm, TipoCursoForm, TurmasForm, UploadCSVUsuariosForm, VideoAulasForm
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.http import HttpResponse
 from django.template.loader import render_to_string
@@ -373,19 +374,85 @@ def internaCadastrarEmpresas(request):
         messages.error(request, 'Houve um erro inesperado. Por favor, abra um chamado.')
         return redirect('internaTableauGeral')
 
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE')
+def internaListarUsuarios(request):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    dados = CustomUsuario.objects.all()
+    paginaAtual = {'nome': 'Listar Usuários'}
+
+    context = {
+        'title': 'Listar Usuários',
+        'dados': dados,
+        'paginaAtual': paginaAtual,
+        'usuario': usuario,
+        'responsabilidades': responsabilidades,
+    }
+    return render(request, 'internas/dash.html', context)
+
+# Internas Empresas
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaCadastrarTurma(request):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    acesso = ['SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR']
+    try:
+        if request.method == 'POST':
+            form = TurmasForm(user=request.user, data=request.POST)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                if any(responsabilidade in acesso for responsabilidade in responsabilidades):
+                    instance.empresa = usuario.empresa
+                instance.save()
+                messages.success(request, 'A turma foi criada com sucesso!')
+                return redirect('internaCadastrarTurma')
+        else:
+            form = TurmasForm(user=request.user)
+        context = {
+            'form': form,
+            'title': "Cadastrar Turma",
+            'paginaAtual': 'Cadastrar turma',
+            'usuario': usuario,
+            'responsabilidades': responsabilidades,
+        }
+        return render(request, 'internas/dash.html', context)
+    except ValidationError as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaCadastrarTurma",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+    except Exception as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaCadastrarTurma",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro inesperado. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+
+
 @responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
 def internaCadastrarTipoCurso(request):
     usuario = request.user
     responsabilidades = obter_responsabilidades_usuario(usuario)
+    acesso = ['SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR']
     try:
         if request.method == 'POST':
-            form = TipoCursoForm(request.POST)
+            form = TipoCursoForm(user=request.user, data=request.POST)
             if form.is_valid():
-                form.save()
-                messages.success(request, 'O tipo de curso foi criado com sucesso!')
+                instance = form.save(commit=False)
+                if any(responsabilidade in acesso for responsabilidade in responsabilidades):
+                    instance.empresa = usuario.empresa
+                instance.save()
+                messages.success(request, 'A turma foi criada com sucesso!')
                 return redirect('internaCadastrarTipoCurso')
         else:
-            form = TipoCursoForm()
+            form = TipoCursoForm(user=request.user)
         context = {
             'form': form,
             'title': "Cadastrar Tipo de Curso",
@@ -426,14 +493,14 @@ def internaCadastrarCurso(request):
                 if any(responsabilidade in acesso for responsabilidade in responsabilidades):
                     instance.empresa = usuario.empresa
                 instance.save()
-                messages.success(request, 'O curso foi criado com sucesso!')
+                messages.success(request, 'O curso ou matéria foi criada com sucesso!')
                 return redirect('internaCadastrarCurso')
         else:
             form = CursosForm(user=request.user)
         context = {
             'form': form,
-            'title': "Cadastrar Curso",
-            'paginaAtual': 'Cadastrar Curso',
+            'title': "Cadastrar Curso ou Matéria",
+            'paginaAtual': 'Cadastrar Curso ou Matéria',
             'usuario': usuario,
             'responsabilidades': responsabilidades,
         }
@@ -703,22 +770,43 @@ def internaCadastrarVideoAula(request):
         messages.error(request, 'Houve um erro inesperado. Por favor, abra um chamado.')
         return redirect('internaTableauGeral')
 
-@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE')
-def internaListarUsuarios(request):
+# Internas Aluno
+def internaCadastrarFrequenciaAula(request, id):
     usuario = request.user
-    responsabilidades = obter_responsabilidades_usuario(usuario)
-    dados = CustomUsuario.objects.all()
-    paginaAtual = {'nome': 'Listar Usuários'}
+    instance = get_object_or_404(Aulas, pk=id)
+    frequencia_existente = FrequenciaAulas.objects.filter(aluno=usuario, aula=instance).exists()
 
-    context = {
-        'title': 'Listar Usuários',
-        'dados': dados,
-        'paginaAtual': paginaAtual,
-        'usuario': usuario,
-        'responsabilidades': responsabilidades,
-    }
-    return render(request, 'internas/dash.html', context)
+    if not frequencia_existente:
+        try:
+            with transaction.atomic():
+                nova_frequencia = FrequenciaAulas.objects.create(
+                    aluno=usuario,
+                    aula=instance,
+                )
+            messages.success(request, "Frequência validada.")
+        except Exception as e:
+            log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaCadastrarFrequenciaAula",
+            mensagem_erro=str(e),
+            )
+            log_erro.save()
+            messages.error(request, 'Houve um erro inesperado. Por favor, abra um chamado.')
+            return redirect('internaTableauGeral')
+    else:
+        messages.warning(request, "Frequência já cadastrada para esta aula.")
 
+    return redirect(request.META.get('HTTP_REFERER', reverse('internaVerAula', args=[id])))
+
+def internaCriarNovaNota(request, aula_id):
+    aluno = get_object_or_404(CustomUsuario, pk=request.user.id)
+    aula = get_object_or_404(Aulas, pk=aula_id)
+    valor_nota = float(request.POST['valor'])  
+    nova_nota = Notas.objects.create(aluno=aluno, aula=aula, valor=valor_nota)
+
+    # Opcional: Adiciona a nova nota ao boletim do aluno
+    boletim, criado = Boletim.objects.get_or_create(aluno=aluno)
+    boletim.notas.add(nova_nota)
 
 ##### --------------------------------------------------
 def dashTreinamentosInternos(request):
