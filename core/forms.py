@@ -78,30 +78,77 @@ class CustomUsuarioChangeForm(UserChangeForm):
         model = CustomUsuario
         fields = ['nome']
 
-class LoginCadastroInternoForm(UserCreationForm):
-    nome = forms.CharField(max_length=180, required=True, help_text='Informe seu nome completo.')
-    email = forms.EmailField(label='E-mail', max_length=254, help_text='Informe um e-mail válido.')
-    responsabilidades = forms.ModelMultipleChoiceField(queryset=Responsaveis.objects.all(), required=False, help_text='Selecione as responsabilidades.')
-    turmas = forms.ModelMultipleChoiceField(queryset=Turmas.objects.all(), required=False, help_text='Selecione as turmas.')
-
+class CustomUsuarioForm(forms.ModelForm):
     class Meta:
         model = CustomUsuario
-        fields = ['email', 'nome', 'aprovado', 'responsabilidades', 'password1', 'password2']
+        fields = ['email', 'nome', 'is_staff', 'empresa', 'aprovado', 'responsabilidades', 'turmas']
+        widgets = {
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'E-mail'}),
+            'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome Completo'}),
+            'is_staff': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'empresa': forms.Select(attrs={'class': 'form-control'}),
+            'aprovado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'responsabilidades': forms.SelectMultiple(attrs={'class': 'form-control'}),
+            'turmas': forms.SelectMultiple(attrs={'class': 'form-control'}),
+        }
 
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if email and CustomUsuario.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
-            raise forms.ValidationError('Este e-mail já está em uso.')
-        return email
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super(CustomUsuarioForm, self).__init__(*args, **kwargs)
+        acesso_geral = ['GESTORGERAL', 'COLABORADORSEDE']
+        responsabilidades = obter_responsabilidades_usuario(user)
+        if user and user.is_authenticated:
+            if any(responsabilidade in acesso_geral for responsabilidade in responsabilidades):
+                self.fields['empresa'].queryset = Empresas.objects.all()
+                self.fields['responsabilidades'].queryset = Responsaveis.objects.all()
+                self.fields['turmas'].queryset = Turmas.objects.all()
+            else:
+                self.fields['empresa'].queryset = Empresas.objects.get(pk=user.empresa.id)
+                self.fields['responsabilidades'].queryset = Responsaveis.objects.all()
+                self.fields['turmas'].queryset = Turmas.objects.all()
 
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.email = self.cleaned_data['email']
-        if commit:
-            user.save()
-            self.save_m2m()
-        return user
-    
+class CustomAlunoForm(forms.ModelForm):
+    class Meta:
+        model = CustomUsuario
+        fields = ['email', 'nome', 'is_staff', 'empresa', 'aprovado', 'responsabilidades', 'turmas']
+        
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super(CustomAlunoForm, self).__init__(*args, **kwargs)
+        acesso_geral = ['GESTORGERAL', 'COLABORADORSEDE']
+        responsabilidades = obter_responsabilidades_usuario(user)
+        if user and user.is_authenticated:
+            if any(responsabilidade in acesso_geral for responsabilidade in responsabilidades):
+                self.fields['empresa'].queryset = Empresas.objects.all()
+                self.fields['responsabilidades'].queryset = Responsaveis.objects.filter(descricao='ALUNO')
+                self.fields['turmas'].queryset = Turmas.objects.all()
+            else:
+                self.fields['empresa'].queryset = Empresas.objects.filter(empresa=user.empresa)
+                self.fields['responsabilidades'].queryset = Responsaveis.objects.filter(descricao='ALUNO')
+                self.fields['turmas'].queryset = Turmas.objects.filter(empresa=user.empresa)
+
+class CustomProfessorForm(forms.ModelForm):
+    class Meta:
+        model = CustomUsuario
+        fields = ['email', 'nome', 'is_staff', 'empresa', 'aprovado', 'responsabilidades', 'turmas']
+        
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super(CustomProfessorForm, self).__init__(*args, **kwargs)
+        acesso_geral = ['GESTORGERAL', 'COLABORADORSEDE']
+        responsabilidades = obter_responsabilidades_usuario(user)
+        if user and user.is_authenticated:
+            if any(responsabilidade in acesso_geral for responsabilidade in responsabilidades):
+                self.fields['empresa'].queryset = Empresas.objects.all()
+                self.fields['responsabilidades'].queryset = Responsaveis.objects.filter(descricao='PROFESSOR')
+                self.fields['turmas'].queryset = Turmas.objects.all()
+            else:
+                self.fields['empresa'].queryset = Empresas.objects.filter(empresa=user.empresa)
+                self.fields['responsabilidades'].queryset = Responsaveis.objects.filter(descricao='PROFESSOR')
+                self.fields['turmas'].queryset = Turmas.objects.filter(empresa=user.empresa)
+
 class UploadCSVUsuariosForm(forms.Form):
     arquivo_csv = forms.FileField(label='Selecione um arquivo CSV')
 

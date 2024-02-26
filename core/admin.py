@@ -11,23 +11,23 @@ class ResponsaveisAdmin(admin.ModelAdmin):
 
 @admin.register(CustomUsuario)
 class CustomUsuarioAdmin(UserAdmin):
-    list_display = ('email', 'nome', 'empresa', 'is_staff')
-    search_fields = ('email', 'nome')
-    ordering = ('-date_joined',)
-
+    model = CustomUsuario
+    list_display = ['email', 'nome', 'is_staff', 'aprovado']
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Informações Pessoais', {'fields': ('nome', 'aprovado', 'empresa', 'responsabilidades', 'turma')}),
-        ('Permissões', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Informações Pessoais', {'fields': ('nome',)}),
+        ('Permissões', {'fields': ('is_staff', 'is_active', 'aprovado', 'groups', 'user_permissions')}),
         ('Datas Importantes', {'fields': ('last_login', 'date_joined')}),
+        ('Associado a', {'fields': ('empresa', 'responsabilidades', 'turmas')}),
     )
-
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'nome', 'password1', 'password2'),
-        }),
+            'fields': ('email', 'nome', 'password1', 'password2', 'is_staff', 'is_active', 'aprovado', 'empresa', 'responsabilidades', 'turmas')}
+        ),
     )
+    search_fields = ['email', 'nome']
+    ordering = ['email']
 
 
 @admin.register(LogErro)

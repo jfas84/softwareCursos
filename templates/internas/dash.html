@@ -245,6 +245,7 @@
 
                     
                     {% if request.resolver_match.url_name == 'internaTableauGeral' %}
+                    <p>Ainda fazer</p>
 
                     {% elif request.resolver_match.url_name == 'internaCadastroInterno' or request.resolver_match.url_name == 'internaImportarUsuarios' or request.resolver_match.url_name == 'internaCadastrarEmpresas' %}
                         {% include 'includes/dashCadastros.html' %}
@@ -258,12 +259,21 @@
                     {% elif request.resolver_match.url_name == 'internaCadastrarQuestao' or request.resolver_match.url_name == 'internaCadastrarVideoAula' or request.resolver_match.url_name == 'internaCadastrarTurma' %}
                         {% include 'includes/dashCadastros.html' %}
 
+                    {% elif request.resolver_match.url_name == 'internaCadastroAluno' or request.resolver_match.url_name == 'internaCadastroProfessor' %}
+                        {% include 'includes/dashCadastros.html' %}
+
                     {% elif request.resolver_match.url_name == 'internaListarUsuarios' or request.resolver_match.url_name == 'internaListarEmpresas' or request.resolver_match.url_name == 'internaListarTurmas' %}
                         {% include 'includes/dashListar.html' %}
 
-                    {% elif request.resolver_match.url_name == 'internaListarProfessores' %}
+                    {% elif request.resolver_match.url_name == 'internaListarProfessores' or request.resolver_match.url_name == 'internaListarAlunos' or request.resolver_match.url_name == 'internaListarTiposCurso' %}
                         {% include 'includes/dashListar.html' %}
 
+                    {% elif request.resolver_match.url_name == 'internaListarCursos' or request.resolver_match.url_name == 'internaListarCapitulos' or request.resolver_match.url_name == 'internaListarAulas' %}
+                        {% include 'includes/dashListar.html' %}
+                    
+                    {% elif request.resolver_match.url_name == 'internaListarTemas' %}
+                        {% include 'includes/dashListar.html' %}
+                        
                     {% endif %}
 
                 </div>

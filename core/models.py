@@ -109,21 +109,26 @@ class UsuarioManager(BaseUserManager):
 
 
 class CustomUsuario(AbstractUser):
-  email = models.EmailField('E-mail', unique=True)
-  nome = models.CharField(verbose_name="Nome Completo", max_length=180)
-  is_staff = models.BooleanField('Membro da equipe', default=False)
-  empresa = models.ForeignKey(Empresas, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Empresa")
-  aprovado = models.BooleanField(verbose_name="Aprovado?", default=False)
-  responsabilidades = models.ManyToManyField(Responsaveis, blank=True)
-  turmas = models.ManyToManyField('Turmas', related_name='alunos', null=True, blank=True, verbose_name="Turmas")
+    email = models.EmailField('E-mail', unique=True)
+    nome = models.CharField(verbose_name="Nome Completo", max_length=180)
+    is_staff = models.BooleanField('Membro da equipe', default=False)
+    empresa = models.ForeignKey(Empresas, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Empresa")
+    aprovado = models.BooleanField(verbose_name="Aprovado?", default=False)
+    responsabilidades = models.ManyToManyField(Responsaveis, blank=True)
+    turmas = models.ManyToManyField(Turmas, related_name='alunos', null=True, blank=True, verbose_name="Turmas")
 
-  USERNAME_FIELD = 'email' # Aqui estou informando que o campo usado para login será o e-mail
-  REQUIRED_FIELDS = ['nome',] # Aqui informo quais os campos que serão requeridos pelo sistema além dos campos padrões.
+    USERNAME_FIELD = 'email' 
+    REQUIRED_FIELDS = ['nome',]
 
-  def __str__(self):
-    return self.nome
+    def save(self, *args, **kwargs):
+        if not self.username:
+            self.username = self.email
+        super(CustomUsuario, self).save(*args, **kwargs)
 
-  objects = UsuarioManager()
+    def __str__(self):
+        return self.nome
+
+    objects = UsuarioManager()
 
 class LogErro(models.Model):
     usuario = models.ForeignKey(CustomUsuario, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Usuário do Erro")

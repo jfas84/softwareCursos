@@ -56,10 +56,10 @@
                                 <a href="{% url 'internaCadastrarTurma' %}"> Turma </a>
                             </li>
                             <li>
-                                <a href="#"> Professor </a>
+                                <a href="{% url 'internaCadastroProfessor' %}"> Professor </a>
                             </li>
                             <li>
-                                <a href="#"> Aluno </a>
+                                <a href="{% url 'internaCadastroAluno' %}"> Aluno </a>
                             </li>
                         </ul>
                     </li>
@@ -125,7 +125,36 @@
                                 <a href="{% url 'internaListarProfessores' %}"> Professor </a>
                             </li>
                             <li>
-                                <a href="#"> Aluno </a>
+                                <a href="{% url 'internaListarAlunos' %}"> Aluno </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="sub-submenu dropend">
+                        <a href="#consultaCursos" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle collapsed">Cursos <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg> </a>
+                        <ul class="dropdown-menu list-unstyled sub-submenu" id="consultaCursos"> 
+                            <li>
+                                <a href="{% url 'internaListarTiposCurso' %}"> Tipo Curso </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'internaListarCursos' %}"> Curso </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'internaListarCapitulos' %}"> Capítulo </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'internaListarAulas' %}"> Aula </a>
+                            </li>
+                            <li>
+                                <a href="#"> Apostila </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'internaListarTemas' %}"> Tema </a>
+                            </li>
+                            <li>
+                                <a href="#"> Questão </a>
+                            </li>
+                            <li>
+                                <a href="#"> Vídeo Aula </a>
                             </li>
                         </ul>
                     </li>
