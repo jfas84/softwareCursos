@@ -76,7 +76,6 @@ class Turmas(models.Model):
     def __str__(self):
         return self.turma
 
-
 class UsuarioManager(BaseUserManager):
   """
   Responsável por salvar os usuários
@@ -116,7 +115,7 @@ class CustomUsuario(AbstractUser):
   empresa = models.ForeignKey(Empresas, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Empresa")
   aprovado = models.BooleanField(verbose_name="Aprovado?", default=False)
   responsabilidades = models.ManyToManyField(Responsaveis, blank=True)
-  turma = models.ForeignKey(Turmas, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Turma")
+  turmas = models.ManyToManyField('Turmas', related_name='alunos', null=True, blank=True, verbose_name="Turmas")
 
   USERNAME_FIELD = 'email' # Aqui estou informando que o campo usado para login será o e-mail
   REQUIRED_FIELDS = ['nome',] # Aqui informo quais os campos que serão requeridos pelo sistema além dos campos padrões.

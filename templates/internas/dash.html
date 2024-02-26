@@ -258,7 +258,12 @@
                     {% elif request.resolver_match.url_name == 'internaCadastrarQuestao' or request.resolver_match.url_name == 'internaCadastrarVideoAula' or request.resolver_match.url_name == 'internaCadastrarTurma' %}
                         {% include 'includes/dashCadastros.html' %}
 
-                    
+                    {% elif request.resolver_match.url_name == 'internaListarUsuarios' or request.resolver_match.url_name == 'internaListarEmpresas' or request.resolver_match.url_name == 'internaListarTurmas' %}
+                        {% include 'includes/dashListar.html' %}
+
+                    {% elif request.resolver_match.url_name == 'internaListarProfessores' %}
+                        {% include 'includes/dashListar.html' %}
+
                     {% endif %}
 
                 </div>

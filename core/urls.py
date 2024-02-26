@@ -26,7 +26,10 @@ urlpatterns = [
     # Internas Sede
     path('tableau/cadastro/usuario', login_required(views.internaCadastroInterno), name='internaCadastroInterno'),
     path('tableau/cadastro/empresa', login_required(views.internaCadastrarEmpresas), name='internaCadastrarEmpresas'),
-    
+    path('tableau/importar/usuarios', login_required(views.internaImportarUsuarios), name='internaImportarUsuarios'),
+    path('tableau/listar/usuarios', login_required(views.internaListarUsuarios), name='internaListarUsuarios'),
+    path('tableau/listar/empresas', login_required(views.internaListarEmpresas), name='internaListarEmpresas'),
+
     # Internas Empresas
     path('tableau/cadastro/tipo-de-curso', login_required(views.internaCadastrarTipoCurso), name='internaCadastrarTipoCurso'),
     path('tableau/cadastro/turma', login_required(views.internaCadastrarTurma), name='internaCadastrarTurma'),
@@ -37,10 +40,10 @@ urlpatterns = [
     path('tableau/cadastro/tema', login_required(views.internaCadastrarTema), name='internaCadastrarTema'),
     path('tableau/cadastro/questao', login_required(views.internaCadastrarQuestao), name='internaCadastrarQuestao'),
     path('tableau/cadastro/video-aula', login_required(views.internaCadastrarVideoAula), name='internaCadastrarVideoAula'),
+    path('tableau/listar/turmas', login_required(views.internaListarTurmas), name='internaListarTurmas'),
+    path('tableau/listar/professores', login_required(views.internaListarProfessores), name='internaListarProfessores'),
     
     
-    path('tableau/importar/usuarios', login_required(views.internaImportarUsuarios), name='internaImportarUsuarios'),
-    path('tableau/listar/usuarios', login_required(views.internaListarUsuarios), name='internaListarUsuarios'),
     
     
     #####-------------

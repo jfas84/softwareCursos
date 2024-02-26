@@ -82,10 +82,11 @@ class LoginCadastroInternoForm(UserCreationForm):
     nome = forms.CharField(max_length=180, required=True, help_text='Informe seu nome completo.')
     email = forms.EmailField(label='E-mail', max_length=254, help_text='Informe um e-mail válido.')
     responsabilidades = forms.ModelMultipleChoiceField(queryset=Responsaveis.objects.all(), required=False, help_text='Selecione as responsabilidades.')
+    turmas = forms.ModelMultipleChoiceField(queryset=Turmas.objects.all(), required=False, help_text='Selecione as turmas.')
 
     class Meta:
         model = CustomUsuario
-        fields = ['email', 'nome', 'turma', 'aprovado', 'responsabilidades', 'password1', 'password2']
+        fields = ['email', 'nome', 'aprovado', 'responsabilidades', 'password1', 'password2']
 
     def clean_email(self):
         email = self.cleaned_data.get('email')

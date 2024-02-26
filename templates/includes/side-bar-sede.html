@@ -55,6 +55,12 @@
                             <li>
                                 <a href="{% url 'internaCadastrarTurma' %}"> Turma </a>
                             </li>
+                            <li>
+                                <a href="#"> Professor </a>
+                            </li>
+                            <li>
+                                <a href="#"> Aluno </a>
+                            </li>
                         </ul>
                     </li>
                     <li class="sub-submenu dropend">
@@ -92,7 +98,7 @@
             <li class="menu menu-heading">
                 <div class="heading"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg><span>APPLICATIONS</span></div>
             </li>
-            <!-- <li class="menu">
+            <li class="menu">
                 <a href="#consultas" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle">
                     <div class="">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
@@ -104,13 +110,31 @@
                 </a>
                 <ul class="dropdown-menu submenu list-unstyled" id="consultas" data-bs-parent="#accordionExample">
                     <li>
-                        <a href="#"> Apartamentos </a>
+                        <a href="{% url 'internaListarEmpresas' %}"> Empresas </a>
                     </li>
                     <li>
-                        <a href="#"> Blocos </a>
+                        <a href="{% url 'internaListarUsuarios' %}"> Usuários </a>
+                    </li>
+                    <li class="sub-submenu dropend">
+                        <a href="#consultaEscola" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle collapsed">Escola <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg> </a>
+                        <ul class="dropdown-menu list-unstyled sub-submenu" id="consultaEscola"> 
+                            <li>
+                                <a href="{% url 'internaListarTurmas' %}"> Turma </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'internaListarProfessores' %}"> Professor </a>
+                            </li>
+                            <li>
+                                <a href="#"> Aluno </a>
+                            </li>
+                        </ul>
                     </li>
                     
-                    <li class="sub-submenu dropend">
+                    <!-- <li>
+                        <a href="#"> Blocos </a>
+                    </li> -->
+                    
+                    <!-- <li class="sub-submenu dropend">
                         <a href="#consutaReservas" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle collapsed">Reservas <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg> </a>
                         <ul class="dropdown-menu list-unstyled sub-submenu" id="consutaReservas"> 
                             <li>
@@ -120,11 +144,11 @@
                     </li>
                     <li>
                         <a href="#"> Sugestões </a>
-                    </li>
+                    </li> -->
                 </ul>
             </li>
 
-            <li class="menu menu-heading">
+            <!-- <li class="menu menu-heading">
                 <div class="heading"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg><span>USER INTERFACE</span></div>
             </li>
 

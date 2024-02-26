@@ -10,7 +10,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.forms import ValidationError
 from .decorators import responsabilidade_required
-from .models import Apostilas, Aulas, Boletim, Capitulos, Cursos, CustomUsuario, Empresas, FrequenciaAulas, Inscricoes, LogErro, Notas, Temas
+from .models import Apostilas, Aulas, Boletim, Capitulos, Cursos, CustomUsuario, Empresas, FrequenciaAulas, Inscricoes, LogErro, Notas, Temas, Turmas
 from .forms import ApostilasForm, AulasForm, CapitulosForm, CursosForm, CustomUsuarioChangeForm, EmpresasForm, LoginCadastroInternoForm, QuestoesForm, RegistrationForm, TemasForm, TipoCursoForm, TurmasForm, UploadCSVUsuariosForm, VideoAulasForm
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.http import HttpResponse
@@ -383,6 +383,22 @@ def internaListarUsuarios(request):
 
     context = {
         'title': 'Listar Usuários',
+        'dados': dados,
+        'paginaAtual': paginaAtual,
+        'usuario': usuario,
+        'responsabilidades': responsabilidades,
+    }
+    return render(request, 'internas/dash.html', context)
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE')
+def internaListarEmpresas(request):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    dados = Empresas.objects.all()
+    paginaAtual = {'nome': 'Listar Empresas'}
+
+    context = {
+        'title': 'Listar Empresas',
         'dados': dados,
         'paginaAtual': paginaAtual,
         'usuario': usuario,
@@ -769,6 +785,61 @@ def internaCadastrarVideoAula(request):
         log_erro.save()
         messages.error(request, 'Houve um erro inesperado. Por favor, abra um chamado.')
         return redirect('internaTableauGeral')
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaListarTurmas(request):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    acesso = ['GESTORGERAL', 'COLABORADORSEDE']
+
+    dados = None
+
+    if any(responsabilidade in acesso for responsabilidade in responsabilidades):
+        dados = Turmas.objects.all()
+    elif usuario.empresa:
+        dados = Turmas.objects.filter(empresa=usuario.empresa)
+    
+    if dados is None:
+        dados = Turmas.objects.none()
+
+    paginaAtual = {'nome': 'Listar Turmas'}
+
+    context = {
+        'title': 'Listar Turmas',
+        'dados': dados,
+        'paginaAtual': paginaAtual,
+        'usuario': usuario,
+        'responsabilidades': responsabilidades,
+    }
+    return render(request, 'internas/dash.html', context)
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaListarProfessores(request):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    acesso = ['GESTORGERAL', 'COLABORADORSEDE']
+
+    dados = None
+
+    if any(responsabilidade in acesso for responsabilidade in responsabilidades):
+        dados = CustomUsuario.objects.filter(responsabilidades__descricao='PROFESSOR')
+    elif usuario.empresa:
+        dados = CustomUsuario.objects.filter(responsabilidades__descricao='PROFESSOR', empresa=usuario.empresa)
+    
+    if dados is None:
+        dados = CustomUsuario.objects.none()
+
+    paginaAtual = {'nome': 'Listar Professores'}
+
+    context = {
+        'title': 'Listar Professores',
+        'dados': dados,
+        'paginaAtual': paginaAtual,
+        'usuario': usuario,
+        'responsabilidades': responsabilidades,
+    }
+    return render(request, 'internas/dash.html', context)
+
 
 # Internas Aluno
 def internaCadastrarFrequenciaAula(request, id):
