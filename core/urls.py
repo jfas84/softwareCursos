@@ -50,6 +50,10 @@ urlpatterns = [
     path('tableau/listar/capitulos', login_required(views.internaListarCapitulos), name='internaListarCapitulos'),
     path('tableau/listar/aulas', login_required(views.internaListarAulas), name='internaListarAulas'),
     path('tableau/listar/temas', login_required(views.internaListarTemas), name='internaListarTemas'),
+    path('tableau/listar/apostilas', login_required(views.internaListarApostilas), name='internaListarApostilas'),
+    path('tableau/listar/questoes', login_required(views.internaListarQuestoes), name='internaListarQuestoes'),
+    path('tableau/listar/video-aulas', login_required(views.internaListarVideoAulas), name='internaListarVideoAulas'),
+    path('tableau/dash/cursos/internos', login_required(views.internaDashCursosInternos), name='internaDashCursosInternos'),
     
     
     

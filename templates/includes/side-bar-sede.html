@@ -145,35 +145,46 @@
                                 <a href="{% url 'internaListarAulas' %}"> Aula </a>
                             </li>
                             <li>
-                                <a href="#"> Apostila </a>
+                                <a href="{% url 'internaListarApostilas' %}"> Apostila </a>
                             </li>
                             <li>
                                 <a href="{% url 'internaListarTemas' %}"> Tema </a>
                             </li>
                             <li>
-                                <a href="#"> Questão </a>
+                                <a href="{% url 'internaListarQuestoes' %}"> Questão </a>
                             </li>
                             <li>
-                                <a href="#"> Vídeo Aula </a>
+                                <a href="{% url 'internaListarVideoAulas' %}"> Vídeo Aula </a>
                             </li>
                         </ul>
                     </li>
-                    
-                    <!-- <li>
-                        <a href="#"> Blocos </a>
-                    </li> -->
-                    
-                    <!-- <li class="sub-submenu dropend">
-                        <a href="#consutaReservas" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle collapsed">Reservas <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg> </a>
-                        <ul class="dropdown-menu list-unstyled sub-submenu" id="consutaReservas"> 
-                            <li>
-                                <a href="#"> Churrasqueiras </a>
-                            </li>
-                        </ul>
+                </ul>
+            </li>
+            <li class="menu menu-heading">
+                <div class="heading"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg><span>USER INTERFACE</span></div>
+            </li>
+            <li class="menu">
+                <a href="#cursos" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle">
+                    <div class="">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mortarboard">
+                            <path d="M22 12v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7"></path>
+                            <path d="M17 21v-4l-5-2-5 2v4"></path>
+                            <path d="M12 3L1 9l11 6 11-6-11-6z"></path>
+                          </svg>
+                          
+                        <span>Cursos</span>
+                    </div>
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </div>
+                </a>
+                <ul class="dropdown-menu submenu list-unstyled" id="cursos" data-bs-parent="#accordionExample">
+                    <li>
+                        <a href="{% url 'internaDashCursosInternos' %}"> Internos </a>
                     </li>
                     <li>
-                        <a href="#"> Sugestões </a>
-                    </li> -->
+                        <a href="#"> Externos </a>
+                    </li>
                 </ul>
             </li>
 

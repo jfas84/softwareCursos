@@ -10,7 +10,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.forms import ValidationError
 from .decorators import responsabilidade_required
-from .models import Apostilas, Aulas, Boletim, Capitulos, Cursos, CustomUsuario, Empresas, FrequenciaAulas, Inscricoes, LogErro, Notas, Temas, TiposCurso, Turmas
+from .models import Apostilas, Aulas, Boletim, Capitulos, Cursos, CustomUsuario, Empresas, FrequenciaAulas, Inscricoes, LogErro, Notas, Questoes, Temas, TiposCurso, Turmas, VideoAulas
 from .forms import ApostilasForm, AulasForm, CapitulosForm, CursosForm, CustomAlunoForm, CustomProfessorForm, CustomUsuarioChangeForm, CustomUsuarioForm, EmpresasForm, QuestoesForm, RegistrationForm, TemasForm, TipoCursoForm, TurmasForm, UploadCSVUsuariosForm, VideoAulasForm
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.http import HttpResponse
@@ -1083,6 +1083,114 @@ def internaListarTemas(request):
 
     context = {
         'title': 'Listar Temas',
+        'dados': dados,
+        'paginaAtual': paginaAtual,
+        'usuario': usuario,
+        'responsabilidades': responsabilidades,
+    }
+    return render(request, 'internas/dash.html', context)
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaListarApostilas(request):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    acesso = ['GESTORGERAL', 'COLABORADORSEDE']
+
+    dados = None
+
+    if any(responsabilidade in acesso for responsabilidade in responsabilidades):
+        dados = Apostilas.objects.all().order_by('curso__curso')
+    elif usuario.empresa:
+        dados = Apostilas.objects.filter(curso__empresa=usuario.empresa).order_by('curso__curso')
+    
+    if dados is None:
+        dados = Apostilas.objects.none()
+
+    paginaAtual = {'nome': 'Listar Apostilas'}
+
+    context = {
+        'title': 'Listar Apostilas',
+        'dados': dados,
+        'paginaAtual': paginaAtual,
+        'usuario': usuario,
+        'responsabilidades': responsabilidades,
+    }
+    return render(request, 'internas/dash.html', context)
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaListarQuestoes(request):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    acesso = ['GESTORGERAL', 'COLABORADORSEDE']
+
+    dados = None
+
+    if any(responsabilidade in acesso for responsabilidade in responsabilidades):
+        dados = Questoes.objects.all().order_by('aula__capitulo__curso__curso', 'aula__capitulo__capitulo', 'aula__aula')
+    elif usuario.empresa:
+        dados = Questoes.objects.filter(aula__capitulo__curso__empresa=usuario.empresa).order_by('aula__capitulo__curso__curso', 'aula__capitulo__capitulo', 'aula__aula')
+    
+    if dados is None:
+        dados = Questoes.objects.none()
+
+    paginaAtual = {'nome': 'Listar Questões'}
+
+    context = {
+        'title': 'Listar Questões',
+        'dados': dados,
+        'paginaAtual': paginaAtual,
+        'usuario': usuario,
+        'responsabilidades': responsabilidades,
+    }
+    return render(request, 'internas/dash.html', context)
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaListarVideoAulas(request):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    acesso = ['GESTORGERAL', 'COLABORADORSEDE']
+
+    dados = None
+
+    if any(responsabilidade in acesso for responsabilidade in responsabilidades):
+        dados = VideoAulas.objects.all().order_by('aula__capitulo__curso__curso', 'aula__capitulo__capitulo', 'aula__aula')
+    elif usuario.empresa:
+        dados = VideoAulas.objects.filter(aula__capitulo__curso__empresa=usuario.empresa).order_by('aula__capitulo__curso__curso', 'aula__capitulo__capitulo', 'aula__aula')
+    
+    if dados is None:
+        dados = VideoAulas.objects.none()
+
+    paginaAtual = {'nome': 'Listar Video Aulas'}
+
+    context = {
+        'title': 'Listar Video Aulas',
+        'dados': dados,
+        'paginaAtual': paginaAtual,
+        'usuario': usuario,
+        'responsabilidades': responsabilidades,
+    }
+    return render(request, 'internas/dash.html', context)
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaDashCursosInternos(request):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    acesso = ['GESTORGERAL', 'COLABORADORSEDE']
+
+    dados = None
+
+    if any(responsabilidade in acesso for responsabilidade in responsabilidades):
+        dados = Cursos.objects.filter(externo=False)
+    elif usuario.empresa:
+        dados = Cursos.objects.filter(empresa=usuario.empresa, externo=False)
+    
+    if dados is None:
+        dados = Cursos.objects.none()
+
+    paginaAtual = {'nome': 'Dash Cursos ou Matérias - Interno'}
+
+    context = {
+        'title': 'Dash Cursos ou Matérias - Interno',
         'dados': dados,
         'paginaAtual': paginaAtual,
         'usuario': usuario,

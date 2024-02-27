@@ -396,6 +396,125 @@
         </div>
     </div>
 </div>
+{% elif request.resolver_match.url_name == 'internaListarApostilas' %}
+<div class="row layout-spacing">
+    {% bootstrap_messages %}
+    <div class="col-lg-12">
+        <div class="statbox widget box box-shadow">
+            <div class="widget-content widget-content-area">
+                <table id="style-3" class="table style-3 dt-table-hover">
+                    <thead>
+                        <tr>
+                            <th class="checkbox-column text-center"> Código Id </th>
+                            <th class="text-center">Empresa</th>
+                            <th>Curso</th>
+                            <th>Apostila</th>
+                            <th class="text-center dt-no-sorting">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for dado in dados %}
+                        <tr>
+                            <td class="checkbox-column text-center">{{dado.id}}</td>
+                            <td class="text-center">
+                                {{dado.curso.empresa}}
+                            </td>
+                            <td>{{dado.curso}}</td>
+                            <td>{{dado.apostila}}</td>
+                            <td class="text-center">
+                                <ul class="table-controls">
+                                    <!-- <li><a href="#" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar" data-original-title="Editar"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 p-1 br-8 mb-1"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></a></li> -->
+                                    <!-- <li><a href="javascript:void(0);" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a></li> -->
+                                </ul>
+                            </td>
+                        </tr>
+                        {% endfor %}  
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% elif request.resolver_match.url_name == 'internaListarQuestoes' %}
+<div class="row layout-spacing">
+    {% bootstrap_messages %}
+    <div class="col-lg-12">
+        <div class="statbox widget box box-shadow">
+            <div class="widget-content widget-content-area">
+                <table id="style-3" class="table style-3 dt-table-hover">
+                    <thead>
+                        <tr>
+                            <th class="checkbox-column text-center"> Código Id </th>
+                            <th class="text-center">Empresa</th>
+                            <th>Curso</th>
+                            <th>Aula</th>
+                            <th>Pergunta</th>
+                            <th class="text-center dt-no-sorting">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for dado in dados %}
+                        <tr>
+                            <td class="checkbox-column text-center">{{dado.id}}</td>
+                            <td class="text-center">
+                                {{dado.aula.capitulo.curso.empresa}}
+                            </td>
+                            <td>{{dado.aula.capitulo.curso}}</td>
+                            <td>{{dado.aula}}</td>
+                            <td style="overflow-wrap: break-word; white-space: normal;">{{dado.pergunta}}</td>
+                            <td class="text-center">
+                                <ul class="table-controls">
+                                    <!-- <li><a href="#" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar" data-original-title="Editar"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 p-1 br-8 mb-1"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></a></li> -->
+                                    <!-- <li><a href="javascript:void(0);" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a></li> -->
+                                </ul>
+                            </td>
+                        </tr>
+                        {% endfor %}  
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% elif request.resolver_match.url_name == 'internaListarVideoAulas' %}
+<div class="row layout-spacing">
+    {% bootstrap_messages %}
+    <div class="col-lg-12">
+        <div class="statbox widget box box-shadow">
+            <div class="widget-content widget-content-area">
+                <table id="style-3" class="table style-3 dt-table-hover">
+                    <thead>
+                        <tr>
+                            <th class="checkbox-column text-center"> Código Id </th>
+                            <th class="text-center">Empresa</th>
+                            <th>Aula</th>
+                            <th>Video Aula</th>
+                            <th class="text-center dt-no-sorting">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for dado in dados %}
+                        <tr>
+                            <td class="checkbox-column text-center">{{dado.id}}</td>
+                            <td class="text-center">
+                                {{dado.aula.capitulo.curso.empresa}}
+                            </td>
+                            <td>{{dado.aula}}</td>
+                            <td>{{dado.videoAula}}</td>
+                            <td class="text-center">
+                                <ul class="table-controls">
+                                    <!-- <li><a href="#" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar" data-original-title="Editar"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 p-1 br-8 mb-1"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></a></li> -->
+                                    <!-- <li><a href="javascript:void(0);" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a></li> -->
+                                </ul>
+                            </td>
+                        </tr>
+                        {% endfor %}  
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 {% endif %}
 
 
