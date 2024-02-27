@@ -49,9 +49,29 @@
 
 <link href="{% static 'src/assets/css/light/components/media_object.css' %}" rel="stylesheet" type="text/css">
 <link href="{% static 'src/assets/css/dark/components/media_object.css' %}" rel="stylesheet" type="text/css">
-
-
-
+<link href="{% static 'src/assets/css/light/components/accordions.css' %}" rel="stylesheet" type="text/css" />
+{% if request.resolver_match.url_name == 'internaAulaAbrir' %}
+<style>
+    /* Ajusta o container para ocupar a largura total */
+    #video-container {
+      width: 100%;
+      /* Remove a altura fixa */
+    }
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      /* Proporção de aspecto 16:9 */
+      padding-top: 56.25%;
+    }
+    .video-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+{% endif  %}
 {% if request.resolver_match.url_name == 'dashReservas' %}
 <style>
     .fc--button {

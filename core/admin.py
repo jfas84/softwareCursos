@@ -107,10 +107,10 @@ class QuestoesAdmin(admin.ModelAdmin):
 
 @admin.register(VideoAulas)
 class VideoAulasAdmin(admin.ModelAdmin):
-    list_display = ('videoAula', 'aula', 'linkVimeo', 'idYouTube')  # Exibindo os campos na lista de administração
+    list_display = ('videoAula', 'tema', 'linkVimeo', 'idYouTube')  # Exibindo os campos na lista de administração
     search_fields = ('videoAula',)  # Permitindo a busca por nome da videoaula
-    list_filter = ('aula',)  # Adicionando filtro por aula
-    raw_id_fields = ('aula',)  # Utilizando campo de busca para aula (pode ser útil se houver muitas aulas)
+    list_filter = ('tema',)  # Adicionando filtro por aula
+    raw_id_fields = ('tema',)  # Utilizando campo de busca para aula (pode ser útil se houver muitas aulas)
 
 @admin.register(FrequenciaAulas)
 class FrequenciaAulasAdmin(admin.ModelAdmin):

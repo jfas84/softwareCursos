@@ -376,17 +376,17 @@ class VideoAulasForm(forms.ModelForm):
 
         if user and user.is_authenticated:
             if any(responsabilidade in acesso_geral for responsabilidade in responsabilidades):
-                aulasEmpresa = Aulas.objects.all().order_by('capitulo__curso', 'capitulo', 'aula')
-                self.fields['aula'].queryset = aulasEmpresa
+                temasEmpresa = Temas.objects.all().order_by('aula__capitulo__curso', 'aula__capitulo', 'aula__aula', 'tema')
+                self.fields['tema'].queryset = temasEmpresa
             else:
-                aulasEmpresa = Aulas.objects.filter(capitulo__curso__empresa=user.empresa).order_by('capitulo__curso', 'capitulo', 'aula')
-                self.fields['aula'].queryset = aulasEmpresa
+                temasEmpresa = Temas.objects.filter(aula__capitulo__curso__empresa=user.empresa).order_by('aula__capitulo__curso', 'aula__capitulo', 'aula__aula', 'tema')
+                self.fields['tema'].queryset = temasEmpresa
     class Meta:
         model = VideoAulas
-        fields = ['videoAula', 'aula', 'linkVimeo', 'idYouTube'] 
+        fields = ['videoAula', 'tema', 'linkVimeo', 'idYouTube'] 
         labels = {
             'videoAula': 'Nome da Videoaula',
-            'aula': 'Aula associada', 
+            'tema': 'Tema associado', 
             'linkVimeo': 'Link do Vimeo',
             'idYouTube': 'Id do You Tube',
         }

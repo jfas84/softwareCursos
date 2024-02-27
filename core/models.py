@@ -206,7 +206,7 @@ class Temas(models.Model):
         verbose_name_plural = 'Temas'
 
     def __str__(self):
-        return f'{self.tema} - {self.aula} - {self.aula.capitulo} - {self.aula.capitulo.curso}'
+        return f'{self.aula.capitulo.curso.curso} - {self.aula.capitulo.capitulo} - {self.aula.aula} - {self.tema}'
 
 class Apostilas(models.Model):
     apostila = models.CharField('Apostila', max_length=100)
@@ -269,7 +269,7 @@ class Questoes(models.Model):
 
 class VideoAulas(models.Model):
     videoAula = models.CharField('Video aula', max_length=100)
-    aula = models.ForeignKey(Aulas, on_delete=models.SET_NULL, null=True, blank=True)
+    tema = models.ForeignKey(Temas, on_delete=models.SET_NULL, null=True, blank=True)
     linkVimeo = models.URLField('Link do Vimeo', max_length=250, blank=True, null=True)
     idYouTube = models.CharField('Id do You Tube', max_length=100, blank=True, null=True)
 

@@ -1198,12 +1198,116 @@ def internaDashCursosInternos(request):
     }
     return render(request, 'internas/dash.html', context)
 
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaDashCursosExternos(request):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    acesso = ['GESTORGERAL', 'COLABORADORSEDE']
+
+    dados = None
+
+    if any(responsabilidade in acesso for responsabilidade in responsabilidades):
+        dados = Cursos.objects.filter(externo=True)
+    elif usuario.empresa:
+        dados = Cursos.objects.filter(empresa=usuario.empresa, externo=True)
+    
+    if dados is None:
+        dados = Cursos.objects.none()
+
+    paginaAtual = {'nome': 'Dash Cursos ou Matérias - Externo'}
+
+    context = {
+        'title': 'Dash Cursos ou Matérias - Externo',
+        'dados': dados,
+        'paginaAtual': paginaAtual,
+        'usuario': usuario,
+        'responsabilidades': responsabilidades,
+    }
+    return render(request, 'internas/dash.html', context)
+
 # Internas Aluno
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR', 'ALUNO')
+def internaCursoAbrir(request, id):
+    """
+    Essa função mostra os capítulos do curso que o usuário colocou para abrir.
+    """
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    acesso = ['GESTORGERAL', 'COLABORADORSEDE']
+    curso = get_object_or_404(Cursos, pk=id)
+    instancia = Capitulos.objects.filter(curso=curso)
+
+    if any(responsabilidade in acesso for responsabilidade in responsabilidades):
+        dados = instancia
+    elif usuario.empresa == curso.empresa:
+        dados = instancia
+    else:
+        messages.warning(request, "Você não tem acesso a esse curso ou matéria.")
+        if curso.externo:
+            return redirect('internaDashCursosExternos')
+        else:
+            return redirect('internaDashCursosInternos')
+
+    paginaAtual = {'nome': 'Capítulos'}
+    if curso.externo:
+        navegacao = [
+            {'nome': 'Dash Cursos ou Matérias', 'url': "internaDashCursosExternos"},
+        ]
+    else:
+        navegacao = [
+            {'nome': 'Dash Cursos ou Matérias', 'url': "internaDashCursosInternos"},
+        ]
+    print(dados)
+    context = {
+        'title': 'Capítulos',
+        'dados': dados,
+        'paginaAtual': paginaAtual,
+        'navegacao': navegacao,
+        'usuario': usuario,
+        'responsabilidades': responsabilidades,
+    }
+    return render(request, 'internas/dash.html', context)
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR', 'ALUNO')
+def internaCapituloAbrir(request, id):
+    """
+    Essa função mostra as aulas do capítulo que o usuário colocou para abrir.
+    """
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    acesso = ['GESTORGERAL', 'COLABORADORSEDE']
+    capitulo = get_object_or_404(Capitulos, pk=id)
+    instancia = Aulas.objects.filter(capitulo=capitulo)
+    frequencias = FrequenciaAulas.objects.filter(aluno=usuario).values_list('aula_id', flat=True)
+    if any(responsabilidade in acesso for responsabilidade in responsabilidades):
+        dados = instancia
+    elif usuario.empresa == capitulo.curso.empresa:
+        dados = instancia
+    else:
+        messages.warning(request, "Você não tem acesso a esse capítulo.")
+        return redirect(reverse('internaCursoAbrir', args=[capitulo.curso.id]))
+
+    paginaAtual = {'nome': 'Aulas'}
+    navegacao = [
+        {'nome': 'Dash Cursos ou Matérias', 'url': "internaDashCursosExternos"},
+        {'nome': 'Capítulos', 'url': 'internaCursoAbrir', 'dados': capitulo.curso.id },
+    ]
+    context = {
+        'title': 'Aulas',
+        'dados': dados,
+        'paginaAtual': paginaAtual,
+        'navegacao': navegacao,
+        'usuario': usuario,
+        'frequencias': frequencias,
+        'responsabilidades': responsabilidades,
+    }
+    return render(request, 'internas/dash.html', context)
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR', 'ALUNO')
 def internaCadastrarFrequenciaAula(request, id):
     usuario = request.user
     instance = get_object_or_404(Aulas, pk=id)
     frequencia_existente = FrequenciaAulas.objects.filter(aluno=usuario, aula=instance).exists()
-
     if not frequencia_existente:
         try:
             with transaction.atomic():
@@ -1224,7 +1328,45 @@ def internaCadastrarFrequenciaAula(request, id):
     else:
         messages.warning(request, "Frequência já cadastrada para esta aula.")
 
-    return redirect(request.META.get('HTTP_REFERER', reverse('internaVerAula', args=[id])))
+    return redirect(request.META.get('HTTP_REFERER', reverse('internaCapituloAbrir', args=[instance.capitulo.id])))
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR', 'ALUNO')
+def internaAulaAbrir(request, id):
+    """
+    Essa função mostra os temas da aula que foi aberta e abaixo de cada tema 
+    temos as vídeo aulas
+    """
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    acesso = ['GESTORGERAL', 'COLABORADORSEDE']
+    aula = get_object_or_404(Aulas, pk=id)
+    instancia = Temas.objects.filter(aula=aula)
+    videoAulas = VideoAulas.objects.filter(tema__aula=aula).order_by('videoAula')
+    if any(responsabilidade in acesso for responsabilidade in responsabilidades):
+        dados = instancia
+    elif usuario.empresa == aula.capitulo.curso.empresa:
+        dados = instancia
+    else:
+        messages.warning(request, "Você não tem acesso a essa aula.")
+        return redirect(reverse('internaCapituloAbrir', args=[aula.capitulo.id]))
+
+    paginaAtual = {'nome': 'Temas'}
+    navegacao = [
+        {'nome': 'Dash Cursos ou Matérias', 'url': "internaDashCursosExternos"},
+        {'nome': 'Capítulos', 'url': 'internaCursoAbrir', 'dados': aula.capitulo.curso.id },
+        {'nome': 'Aulas', 'url': 'internaCapituloAbrir', 'dados': aula.capitulo.id },
+
+    ]
+    context = {
+        'title': 'Aulas',
+        'dados': dados,
+        'paginaAtual': paginaAtual,
+        'navegacao': navegacao,
+        'usuario': usuario,
+        'videoAulas': videoAulas,
+        'responsabilidades': responsabilidades,
+    }
+    return render(request, 'internas/dash.html', context)
 
 def internaCriarNovaNota(request, aula_id):
     aluno = get_object_or_404(CustomUsuario, pk=request.user.id)

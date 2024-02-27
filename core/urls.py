@@ -22,6 +22,10 @@ urlpatterns = [
     path('tableau/', login_required(views.internaTableauGeral), name='internaTableauGeral'),
     path('tableau/dadosPessoais', login_required(views.internaDadosPessoais), name='internaDadosPessoais'),
     path('tableau/dadosPessoais/alterar',login_required(views.internaDadosPessoaisAtualizar), name='internaDadosPessoaisAtualizar'),
+    path('tableau/curso/<int:id>/', login_required(views.internaCursoAbrir), name='internaCursoAbrir'),
+    path('tableau/capitulo/<int:id>/', login_required(views.internaCapituloAbrir), name='internaCapituloAbrir'),
+    path('tableau/frequencia/<int:id>/', login_required(views.internaCadastrarFrequenciaAula), name='internaCadastrarFrequenciaAula'),
+    path('tableau/aula/<int:id>/', login_required(views.internaAulaAbrir), name='internaAulaAbrir'),
     
     # Internas Sede
     path('tableau/cadastro/usuario', login_required(views.internaCadastroInterno), name='internaCadastroInterno'),
@@ -54,6 +58,7 @@ urlpatterns = [
     path('tableau/listar/questoes', login_required(views.internaListarQuestoes), name='internaListarQuestoes'),
     path('tableau/listar/video-aulas', login_required(views.internaListarVideoAulas), name='internaListarVideoAulas'),
     path('tableau/dash/cursos/internos', login_required(views.internaDashCursosInternos), name='internaDashCursosInternos'),
+    path('tableau/dash/cursos/externos', login_required(views.internaDashCursosExternos), name='internaDashCursosExternos'),
     
     
     
