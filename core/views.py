@@ -301,7 +301,7 @@ def internaAlterarUsuario(request, id):
             if form.is_valid():
                 user = form.save()
                 messages.success(request, 'O usuário foi alterado com sucesso!')
-                return redirect('internaCadastroInterno')
+                return redirect('internaListarUsuarios')
         else:
             form = CustomUsuarioForm(user=request.user, instance=instancia)
         paginaAtual = {'nome': 'Alterar Usuário'}
@@ -438,7 +438,7 @@ def internaAlterarEmpresa(request, id):
             if form.is_valid():
                 form.save()
                 messages.success(request, 'A empresa foi alterada com sucesso!')
-                return redirect('internaCadastrarEmpresas')
+                return redirect('internaListarEmpresas')
         else:
             form = EmpresasForm(instance=empresa)
         paginaAtual = {'nome': 'Alterar Empresa'}
@@ -560,7 +560,7 @@ def internaAlterarAluno(request, id):
             if form.is_valid():
                 user = form.save()
                 messages.success(request, 'O Aluno foi alterado com sucesso!')
-                return redirect('internaCadastroAluno')
+                return redirect('internaListarAlunos')
         else:
             form = CustomAlunoForm(user=request.user, instance=instancia)
         paginaAtual = {'nome': 'Alterar Aluno'}
@@ -652,7 +652,7 @@ def internaAlterarProfessor(request, id):
             if form.is_valid():
                 user = form.save()
                 messages.success(request, 'O Professor foi alterado com sucesso!')
-                return redirect('internaCadastroProfessor')
+                return redirect('internaListarProfessores')
         else:
             form = CustomProfessorForm(user=request.user, instance=instancia)
         paginaAtual = {'nome': 'Alterar Professor'}
@@ -749,7 +749,7 @@ def internaAlterarTurma(request, id):
                     instance.empresa = usuario.empresa
                 instance.save()
                 messages.success(request, 'A turma foi alterada com sucesso!')
-                return redirect('internaCadastrarTurma')
+                return redirect('internaListarTurmas')
         else:
             form = TurmasForm(user=request.user, instance=instancia)
         paginaAtual = {'nome': 'Alterar turma'}
@@ -845,7 +845,7 @@ def internaAlterarTipoCurso(request, id):
                     instance.empresa = usuario.empresa
                 instance.save()
                 messages.success(request, 'A turma foi alterada com sucesso!')
-                return redirect('internaCadastrarTipoCurso')
+                return redirect('internaListarTiposCurso')
         else:
             form = TipoCursoForm(user=request.user, instance=instancia)
         paginaAtual = {'nome': 'Alterar Tipo de Curso'}
@@ -941,7 +941,7 @@ def internaAlterarCurso(request, id):
                     instance.empresa = usuario.empresa
                 instance.save()
                 messages.success(request, 'O curso ou matéria foi alterada com sucesso!')
-                return redirect('internaCadastrarCurso')
+                return redirect('internaListarCursos')
         else:
             form = CursosForm(user=request.user, instance=instancia)
         paginaAtual = {'nome': 'Alterar Curso ou Matéria'}
@@ -990,10 +990,12 @@ def internaCadastrarCapitulo(request):
                 return redirect('internaCadastrarCapitulo')
         else:
             form = CapitulosForm(user=request.user)
+        paginaAtual = {'nome': 'Cadastrar Capítulo'}
+        
         context = {
             'form': form,
             'title': "Cadastrar Capítulo",
-            'paginaAtual': 'Cadastrar Capítulo',
+            'paginaAtual': paginaAtual,
             'usuario': usuario,
             'responsabilidades': responsabilidades,
         }
@@ -1011,6 +1013,53 @@ def internaCadastrarCapitulo(request):
         log_erro = LogErro(
             usuario=request.user if request.user.is_authenticated else None,
             pagina_atual="internaCadastrarCapitulo",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro inesperado. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+    
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaAlterarCapitulo(request, id):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    instancia = get_object_or_404(Capitulos, pk=id)
+    try:
+        if request.method == 'POST':
+            form = CapitulosForm(user=request.user, data=request.POST, instance=instancia)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.save()
+                messages.success(request, 'O capítulo foi alterado com sucesso!')
+                return redirect('internaListarCapitulos')
+        else:
+            form = CapitulosForm(user=request.user, instance=instancia)
+        paginaAtual = {'nome': 'Alterar Capítulo'}
+        navegacao = [
+            {'nome': 'Listar Cursos', 'url': "internaListarCapitulos"},
+        ]
+        context = {
+            'form': form,
+            'title': "Alterar Capítulo",
+            'paginaAtual': paginaAtual,
+            'navegacao': navegacao,
+            'usuario': usuario,
+            'responsabilidades': responsabilidades,
+        }
+        return render(request, 'internas/dash.html', context)
+    except ValidationError as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaAlterarCapitulo",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+    except Exception as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaAlterarCapitulo",
             mensagem_erro=str(e),
         )
         log_erro.save()
@@ -1031,10 +1080,12 @@ def internaCadastrarAula(request):
                 return redirect('internaCadastrarAula')
         else:
             form = AulasForm(user=request.user)
+        paginaAtual = {'nome': 'Cadastrar Aula'}
+        
         context = {
             'form': form,
             'title': "Cadastrar Aula",
-            'paginaAtual': 'Cadastrar Aula',
+            'paginaAtual': paginaAtual,
             'usuario': usuario,
             'responsabilidades': responsabilidades,
         }
@@ -1057,7 +1108,54 @@ def internaCadastrarAula(request):
         log_erro.save()
         messages.error(request, 'Houve um erro inesperado. Por favor, abra um chamado.')
         return redirect('internaTableauGeral')
-    
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaAlterarAula(request, id):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    instancia = get_object_or_404(Aulas, pk=id)
+    try:
+        if request.method == 'POST':
+            form = AulasForm(user=request.user, data=request.POST, instance=instancia)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.save()
+                messages.success(request, 'A aula foi alterada com sucesso!')
+                return redirect('internaListarAulas')
+        else:
+            form = AulasForm(user=request.user, instance=instancia)
+        paginaAtual = {'nome': 'Alterar Aula'}
+        navegacao = [
+            {'nome': 'Listar Aulas', 'url': "internaListarAulas"},
+        ]
+        context = {
+            'form': form,
+            'title': "Alterar Aula",
+            'paginaAtual': paginaAtual,
+            'navegacao': navegacao,
+            'usuario': usuario,
+            'responsabilidades': responsabilidades,
+        }
+        return render(request, 'internas/dash.html', context)
+    except ValidationError as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaAlterarAula",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+    except Exception as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaAlterarAula",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro inesperado. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+
 @responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
 def internaCadastrarApostila(request):
     usuario = request.user
@@ -1072,10 +1170,11 @@ def internaCadastrarApostila(request):
                 return redirect('internaCadastrarApostila')
         else:
             form = ApostilasForm(user=request.user)
+        paginaAtual = {'nome': 'Cadastrar Apostila'}
         context = {
             'form': form,
             'title': "Cadastrar Apostila",
-            'paginaAtual': 'Cadastrar Apostila',
+            'paginaAtual': paginaAtual,
             'usuario': usuario,
             'responsabilidades': responsabilidades,
         }
@@ -1093,6 +1192,53 @@ def internaCadastrarApostila(request):
         log_erro = LogErro(
             usuario=request.user if request.user.is_authenticated else None,
             pagina_atual="internaCadastrarApostila",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro inesperado. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+    
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaAlterarApostila(request, id):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    instancia = get_object_or_404(Apostilas, pk=id)
+    try:
+        if request.method == 'POST':
+            form = ApostilasForm(user=request.user, data=request.POST, files=request.FILES, instance=instancia)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.save()
+                messages.success(request, 'A apostila foi alterada com sucesso!')
+                return redirect('internaListarApostilas')
+        else:
+            form = ApostilasForm(user=request.user, instance=instancia)
+        paginaAtual = {'nome': 'Alterar Apostila'}
+        navegacao = [
+            {'nome': 'Listar Apostilas', 'url': "internaListarApostilas"},
+        ]
+        context = {
+            'form': form,
+            'title': "Alterar Apostila",
+            'paginaAtual': paginaAtual,
+            'navegacao': navegacao,
+            'usuario': usuario,
+            'responsabilidades': responsabilidades,
+        }
+        return render(request, 'internas/dash.html', context)
+    except ValidationError as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaAlterarApostila",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+    except Exception as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaAlterarApostila",
             mensagem_erro=str(e),
         )
         log_erro.save()
@@ -1113,10 +1259,12 @@ def internaCadastrarTema(request):
                 return redirect('internaCadastrarTema')
         else:
             form = TemasForm(user=request.user)
+        paginaAtual = {'nome': 'Cadastrar Tema'}
+        
         context = {
             'form': form,
             'title': "Cadastrar Tema",
-            'paginaAtual': 'Cadastrar Tema',
+            'paginaAtual': paginaAtual,
             'usuario': usuario,
             'responsabilidades': responsabilidades,
         }
@@ -1134,6 +1282,53 @@ def internaCadastrarTema(request):
         log_erro = LogErro(
             usuario=request.user if request.user.is_authenticated else None,
             pagina_atual="internaCadastrarTema",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro inesperado. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaAlterarTema(request, id):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    instancia = get_object_or_404(Temas, pk=id)
+    try:
+        if request.method == 'POST':
+            form = TemasForm(user=request.user, data=request.POST, instance=instancia)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.save()
+                messages.success(request, 'O tema foi alterado com sucesso!')
+                return redirect('internaListarTemas')
+        else:
+            form = TemasForm(user=request.user, instance=instancia)
+        paginaAtual = {'nome': 'Alterar Tema'}
+        navegacao = [
+            {'nome': 'Listar Temas', 'url': "internaListarTemas"},
+        ]
+        context = {
+            'form': form,
+            'title': "Alterar Tema",
+            'paginaAtual': paginaAtual,
+            'navegacao': navegacao,
+            'usuario': usuario,
+            'responsabilidades': responsabilidades,
+        }
+        return render(request, 'internas/dash.html', context)
+    except ValidationError as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaAlterarTema",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+    except Exception as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaAlterarTema",
             mensagem_erro=str(e),
         )
         log_erro.save()

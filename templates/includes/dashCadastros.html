@@ -115,7 +115,7 @@
     });
 }
 </script>
-{% elif request.resolver_match.url_name == 'internaCadastrarCapitulo' %}
+{% elif request.resolver_match.url_name == 'internaCadastrarCapitulo' or request.resolver_match.url_name == 'internaAlterarCapitulo' %}
 <script>
     function limparFormulario(event) {
     event.preventDefault();
@@ -124,6 +124,54 @@
     'id_capitulo',
     'id_objetivo',
     'id_curso',
+    ];
+
+    campos.forEach(campo => {
+        document.getElementById(campo).value = "";
+    });
+}
+</script>
+{% elif request.resolver_match.url_name == 'internaCadastrarAula' or request.resolver_match.url_name == 'internaAlterarAula' %}
+<script>
+    function limparFormulario(event) {
+    event.preventDefault();
+
+    const campos = [
+    'id_aula',
+    'id_objetivo',
+    'id_capitulo',
+    ];
+
+    campos.forEach(campo => {
+        document.getElementById(campo).value = "";
+    });
+}
+</script>
+{% elif request.resolver_match.url_name == 'internaCadastrarApostila' or request.resolver_match.url_name == 'internaAlterarApostila' %}
+<script>
+    function limparFormulario(event) {
+    event.preventDefault();
+
+    const campos = [
+    'id_apostila',
+    'id_arquivo',
+    'id_curso',
+    ];
+
+    campos.forEach(campo => {
+        document.getElementById(campo).value = "";
+    });
+}
+</script>
+{% elif request.resolver_match.url_name == 'internaCadastrarTema' or request.resolver_match.url_name == 'internaAlterarTema' %}
+<script>
+    function limparFormulario(event) {
+    event.preventDefault();
+
+    const campos = [
+    'id_tema',
+    'id_texto',
+    'id_aula',
     ];
 
     campos.forEach(campo => {

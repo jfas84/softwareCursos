@@ -39,18 +39,31 @@ urlpatterns = [
     # Internas Empresas
     path('tableau/cadastro/tipo-de-curso', login_required(views.internaCadastrarTipoCurso), name='internaCadastrarTipoCurso'),
     path('tableau/alterar/tipo-de-curso/<int:id>/', login_required(views.internaAlterarTipoCurso), name='internaAlterarTipoCurso'),
+    
     path('tableau/cadastro/professor', login_required(views.internaCadastroProfessor), name='internaCadastroProfessor'),
     path('tableau/alterar/professor/<int:id>/', login_required(views.internaAlterarProfessor), name='internaAlterarProfessor'),
+    
     path('tableau/cadastro/aluno', login_required(views.internaCadastroAluno), name='internaCadastroAluno'),
     path('tableau/alterar/aluno/<int:id>/', login_required(views.internaAlterarAluno), name='internaAlterarAluno'),
+    
     path('tableau/cadastro/turma', login_required(views.internaCadastrarTurma), name='internaCadastrarTurma'),
     path('tableau/alterar/turma/<int:id>/', login_required(views.internaAlterarTurma), name='internaAlterarTurma'),
+    
     path('tableau/cadastro/curso', login_required(views.internaCadastrarCurso), name='internaCadastrarCurso'),
     path('tableau/alterar/curso/<int:id>/', login_required(views.internaAlterarCurso), name='internaAlterarCurso'),
+    
+    path('tableau/alterar/capitulo/<int:id>/', login_required(views.internaAlterarCapitulo), name='internaAlterarCapitulo'),
     path('tableau/cadastro/capitulo', login_required(views.internaCadastrarCapitulo), name='internaCadastrarCapitulo'),
+    
     path('tableau/cadastro/aula', login_required(views.internaCadastrarAula), name='internaCadastrarAula'),
+    path('tableau/alterar/aula/<int:id>/', login_required(views.internaAlterarAula), name='internaAlterarAula'),
+    
     path('tableau/cadastro/apostila', login_required(views.internaCadastrarApostila), name='internaCadastrarApostila'),
+    path('tableau/alterar/apostila/<int:id>/', login_required(views.internaAlterarApostila), name='internaAlterarApostila'),
+    
     path('tableau/cadastro/tema', login_required(views.internaCadastrarTema), name='internaCadastrarTema'),
+    path('tableau/alterar/tema/<int:id>/', login_required(views.internaAlterarTema), name='internaAlterarTema'),
+    
     path('tableau/cadastro/questao', login_required(views.internaCadastrarQuestao), name='internaCadastrarQuestao'),
     path('tableau/cadastro/video-aula', login_required(views.internaCadastrarVideoAula), name='internaCadastrarVideoAula'),
     path('tableau/listar/turmas', login_required(views.internaListarTurmas), name='internaListarTurmas'),

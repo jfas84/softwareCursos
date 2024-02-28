@@ -288,6 +288,12 @@
                     {% elif request.resolver_match.url_name == 'internaAlterarProfessor' or request.resolver_match.url_name == 'internaAlterarAluno' or request.resolver_match.url_name == 'internaAlterarTipoCurso' %}
                         {% include 'includes/dashCadastros.html' %}
 
+                    {% elif request.resolver_match.url_name == 'internaAlterarCapitulo' or request.resolver_match.url_name == 'internaAlterarAula' or request.resolver_match.url_name == 'internaAlterarApostila' %}
+                        {% include 'includes/dashCadastros.html' %}
+                        
+                    {% elif request.resolver_match.url_name == 'internaAlterarTema' %}
+                        {% include 'includes/dashCadastros.html' %}
+
                     {% elif request.resolver_match.url_name == 'internaListarUsuarios' or request.resolver_match.url_name == 'internaListarEmpresas' or request.resolver_match.url_name == 'internaListarTurmas' %}
                         {% include 'includes/dashListar.html' %}
 
