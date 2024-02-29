@@ -80,6 +80,7 @@ urlpatterns = [
     path('tableau/alterar/questao/<int:id>/', login_required(views.internaAlterarQuestao), name='internaAlterarQuestao'),
     path('tableau/listar/questoes', login_required(views.internaListarQuestoes), name='internaListarQuestoes'),
     path('tableau/aula/prova-conhecimento/<int:id>/', login_required(views.internaListarQuestoesAula), name='internaListarQuestoesAula'),
+    path('tableau/aula/prova-conhecimento/resultado/<int:id>/', login_required(views.internaVerificarNota), name='internaVerificarNota'),
     
     path('tableau/cadastro/video-aula', login_required(views.internaCadastrarVideoAula), name='internaCadastrarVideoAula'),
     path('tableau/alterar/video-aula/<int:id>/', login_required(views.internaAlterarVideoAula), name='internaAlterarVideoAula'),

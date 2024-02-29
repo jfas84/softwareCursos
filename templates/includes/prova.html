@@ -1,9 +1,9 @@
 {% load static %}
 {% load bootstrap4 %}
-<form method="post" action="#">
+<form method="post" action="{% url 'internaVerificarNota' aula.id %}">
     {% csrf_token %}
     {% for dado in dados %}
-    <div class="card">
+    <div class="card mb-3">
         <div class="card-body">
             <h5 class="card-title"><strong>Código da questão: {{ dado.id }} - </strong>{{ dado.pergunta }}</h5>
             {% if dado.imagem %}

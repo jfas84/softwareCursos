@@ -1426,6 +1426,43 @@ def internaAlterarQuestao(request, id):
         messages.error(request, 'Houve um erro inesperado. Por favor, abra um chamado.')
         return redirect('internaTableauGeral')
     
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR', 'ALUNO')
+def internaVerificarNota(request, id):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    aula = get_object_or_404(Aulas, pk=id)
+    if request.method == 'POST':
+        if request.method == 'POST':
+            questoes = Questoes.objects.filter(aula=aula)
+            pontuacao = 0
+            total_questoes = questoes.count()
+
+            for questao in questoes:
+                print(f'Questao: {questao}')
+                resposta_selecionada = request.POST.get(f'resposta_questao_{questao.id}')
+                print(f'resposta selecionada: {resposta_selecionada}')
+                if resposta_selecionada and resposta_selecionada == questao.resposta_correta:
+                    pontuacao += 1
+                    print(pontuacao)
+
+            nota = (pontuacao / total_questoes) * 100 if total_questoes else 0
+
+
+    return HttpResponse(nota)
+        # nota = (pontuacao / total_questoes) * 100
+        
+    # paginaAtual = {'nome': 'Cadastrar Questão'}
+
+    # context = {
+    #     'title': "Cadastrar Questão",
+    #     'paginaAtual': paginaAtual,
+    #     'nota': nota,
+    #     'usuario': usuario,
+    #     'responsabilidades': responsabilidades,
+    # }
+    # return render(request, 'internas/dash.html', context)
+    
+    
 @responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
 def internaCadastrarVideoAula(request):
     usuario = request.user
@@ -1812,6 +1849,7 @@ def internaListarQuestoesAula(request, id):
     context = {
         'title': 'Prova de Conhecimentos',
         'dados': dados,
+        'aula': aula,
         'paginaAtual': paginaAtual,
         'navegacao': navegacao,
         'usuario': usuario,
