@@ -179,7 +179,7 @@
     });
 }
 </script>
-{% elif request.resolver_match.url_name == 'internaCadastrarQuestao' %}
+{% elif request.resolver_match.url_name == 'internaCadastrarQuestao' or request.resolver_match.url_name == 'internaAlterarQuestao' %}
 <script>
     function limparFormulario(event) {
     event.preventDefault();
@@ -203,7 +203,7 @@
     });
 }
 </script>
-{% elif request.resolver_match.url_name == 'internaCadastrarVideoAula' %}
+{% elif request.resolver_match.url_name == 'internaCadastrarVideoAula' or request.resolver_match.url_name == 'internaAlterarVideoAula' %}
 <script>
     function limparFormulario(event) {
     event.preventDefault();

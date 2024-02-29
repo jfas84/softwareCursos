@@ -291,7 +291,7 @@
                     {% elif request.resolver_match.url_name == 'internaAlterarCapitulo' or request.resolver_match.url_name == 'internaAlterarAula' or request.resolver_match.url_name == 'internaAlterarApostila' %}
                         {% include 'includes/dashCadastros.html' %}
                         
-                    {% elif request.resolver_match.url_name == 'internaAlterarTema' %}
+                    {% elif request.resolver_match.url_name == 'internaAlterarTema' or request.resolver_match.url_name == 'internaAlterarQuestao' or request.resolver_match.url_name == 'internaAlterarVideoAula' %}
                         {% include 'includes/dashCadastros.html' %}
 
                     {% elif request.resolver_match.url_name == 'internaListarUsuarios' or request.resolver_match.url_name == 'internaListarEmpresas' or request.resolver_match.url_name == 'internaListarTurmas' %}
@@ -314,6 +314,9 @@
                     
                     {% elif request.resolver_match.url_name == 'internaCapituloAbrir' or request.resolver_match.url_name == 'internaAulaAbrir' %}
                         {% include 'includes/cursos.html' %}
+
+                    {% elif request.resolver_match.url_name == 'internaListarQuestoesAula' %}
+                        {% include 'includes/prova.html' %}
                     
                     {% endif %}
 

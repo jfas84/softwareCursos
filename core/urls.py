@@ -39,46 +39,52 @@ urlpatterns = [
     # Internas Empresas
     path('tableau/cadastro/tipo-de-curso', login_required(views.internaCadastrarTipoCurso), name='internaCadastrarTipoCurso'),
     path('tableau/alterar/tipo-de-curso/<int:id>/', login_required(views.internaAlterarTipoCurso), name='internaAlterarTipoCurso'),
+    path('tableau/listar/tipos-de-cursos', login_required(views.internaListarTiposCurso), name='internaListarTiposCurso'),
     
     path('tableau/cadastro/professor', login_required(views.internaCadastroProfessor), name='internaCadastroProfessor'),
     path('tableau/alterar/professor/<int:id>/', login_required(views.internaAlterarProfessor), name='internaAlterarProfessor'),
+    path('tableau/listar/professores', login_required(views.internaListarProfessores), name='internaListarProfessores'),
     
     path('tableau/cadastro/aluno', login_required(views.internaCadastroAluno), name='internaCadastroAluno'),
     path('tableau/alterar/aluno/<int:id>/', login_required(views.internaAlterarAluno), name='internaAlterarAluno'),
+    path('tableau/listar/alunos', login_required(views.internaListarAlunos), name='internaListarAlunos'),
     
     path('tableau/cadastro/turma', login_required(views.internaCadastrarTurma), name='internaCadastrarTurma'),
     path('tableau/alterar/turma/<int:id>/', login_required(views.internaAlterarTurma), name='internaAlterarTurma'),
+    path('tableau/listar/turmas', login_required(views.internaListarTurmas), name='internaListarTurmas'),
     
     path('tableau/cadastro/curso', login_required(views.internaCadastrarCurso), name='internaCadastrarCurso'),
     path('tableau/alterar/curso/<int:id>/', login_required(views.internaAlterarCurso), name='internaAlterarCurso'),
+    path('tableau/listar/cursos', login_required(views.internaListarCursos), name='internaListarCursos'),
+    path('tableau/dash/cursos/internos', login_required(views.internaDashCursosInternos), name='internaDashCursosInternos'),
+    path('tableau/dash/cursos/externos', login_required(views.internaDashCursosExternos), name='internaDashCursosExternos'),
     
     path('tableau/alterar/capitulo/<int:id>/', login_required(views.internaAlterarCapitulo), name='internaAlterarCapitulo'),
     path('tableau/cadastro/capitulo', login_required(views.internaCadastrarCapitulo), name='internaCadastrarCapitulo'),
+    path('tableau/listar/capitulos', login_required(views.internaListarCapitulos), name='internaListarCapitulos'),
     
     path('tableau/cadastro/aula', login_required(views.internaCadastrarAula), name='internaCadastrarAula'),
     path('tableau/alterar/aula/<int:id>/', login_required(views.internaAlterarAula), name='internaAlterarAula'),
+    path('tableau/listar/aulas', login_required(views.internaListarAulas), name='internaListarAulas'),
     
     path('tableau/cadastro/apostila', login_required(views.internaCadastrarApostila), name='internaCadastrarApostila'),
     path('tableau/alterar/apostila/<int:id>/', login_required(views.internaAlterarApostila), name='internaAlterarApostila'),
-    
+    path('tableau/listar/apostilas', login_required(views.internaListarApostilas), name='internaListarApostilas'),
+    path('tableau/baixarApostila/<int:apostila_id>', login_required(views.download_apostila), name='download_apostila'),
+         
     path('tableau/cadastro/tema', login_required(views.internaCadastrarTema), name='internaCadastrarTema'),
     path('tableau/alterar/tema/<int:id>/', login_required(views.internaAlterarTema), name='internaAlterarTema'),
+    path('tableau/listar/temas', login_required(views.internaListarTemas), name='internaListarTemas'),
     
     path('tableau/cadastro/questao', login_required(views.internaCadastrarQuestao), name='internaCadastrarQuestao'),
-    path('tableau/cadastro/video-aula', login_required(views.internaCadastrarVideoAula), name='internaCadastrarVideoAula'),
-    path('tableau/listar/turmas', login_required(views.internaListarTurmas), name='internaListarTurmas'),
-    path('tableau/listar/professores', login_required(views.internaListarProfessores), name='internaListarProfessores'),
-    path('tableau/listar/alunos', login_required(views.internaListarAlunos), name='internaListarAlunos'),
-    path('tableau/listar/tipos-de-cursos', login_required(views.internaListarTiposCurso), name='internaListarTiposCurso'),
-    path('tableau/listar/cursos', login_required(views.internaListarCursos), name='internaListarCursos'),
-    path('tableau/listar/capitulos', login_required(views.internaListarCapitulos), name='internaListarCapitulos'),
-    path('tableau/listar/aulas', login_required(views.internaListarAulas), name='internaListarAulas'),
-    path('tableau/listar/temas', login_required(views.internaListarTemas), name='internaListarTemas'),
-    path('tableau/listar/apostilas', login_required(views.internaListarApostilas), name='internaListarApostilas'),
+    path('tableau/alterar/questao/<int:id>/', login_required(views.internaAlterarQuestao), name='internaAlterarQuestao'),
     path('tableau/listar/questoes', login_required(views.internaListarQuestoes), name='internaListarQuestoes'),
+    path('tableau/aula/prova-conhecimento/<int:id>/', login_required(views.internaListarQuestoesAula), name='internaListarQuestoesAula'),
+    
+    path('tableau/cadastro/video-aula', login_required(views.internaCadastrarVideoAula), name='internaCadastrarVideoAula'),
+    path('tableau/alterar/video-aula/<int:id>/', login_required(views.internaAlterarVideoAula), name='internaAlterarVideoAula'),
     path('tableau/listar/video-aulas', login_required(views.internaListarVideoAulas), name='internaListarVideoAulas'),
-    path('tableau/dash/cursos/internos', login_required(views.internaDashCursosInternos), name='internaDashCursosInternos'),
-    path('tableau/dash/cursos/externos', login_required(views.internaDashCursosExternos), name='internaDashCursosExternos'),
+    
     
     
     

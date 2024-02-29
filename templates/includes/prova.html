@@ -1,0 +1,63 @@
+{% load static %}
+{% load bootstrap4 %}
+<form method="post" action="#">
+    {% csrf_token %}
+    {% for dado in dados %}
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title"><strong>Código da questão: {{ dado.id }} - </strong>{{ dado.pergunta }}</h5>
+            {% if dado.imagem %}
+            <img src="{{ dado.imagem.url }}" alt="Imagem" style="max-width: 100%; height: auto;">
+            {% endif %}
+            <div class="mt-5" style="display: flex; align-items: center; width: 100%;">
+                <div style="flex: 0 1 auto; margin-right: 10px;">
+                    <input class="form-check-input" type="radio" name="resposta_questao_{{ dado.id }}" id="resposta1_{{ dado.id }}" value="{{ dado.OPCAO_A }}">
+                    <label class="form-check-label" for="resposta1_{{ dado.id }}"></label>
+                </div>
+                <div style="flex: 1 1 auto;">
+                    <p style="margin: 0;">{{ dado.resposta1 }}</p>
+                </div>
+            </div>
+            <div class="mt-3" style="display: flex; align-items: center; width: 100%;">
+                <div style="flex: 0 1 auto; margin-right: 10px;">
+                    <input class="form-check-input" type="radio" name="resposta_questao_{{ dado.id }}" id="resposta2_{{ dado.id }}" value="{{ dado.OPCAO_B }}">
+                    <label class="form-check-label" for="resposta2_{{ dado.id }}"></label>
+                </div>
+                <div style="flex: 1 1 auto;">
+                    <p style="margin: 0;">{{ dado.resposta2 }}</p>
+                </div>
+            </div>
+            {% if dado.resposta3 %}
+            <div class="mt-3" style="display: flex; align-items: center; width: 100%;">
+                <div style="flex: 0 1 auto; margin-right: 10px;">
+                    <input class="form-check-input" type="radio" name="resposta_questao_{{ dado.id }}" id="resposta3_{{ dado.id }}" value="{{ dado.OPCAO_C }}">
+                    <label class="form-check-label" for="resposta3_{{ dado.id }}"></label>
+                </div>
+                <div style="flex: 1 1 auto;">
+                    <p style="margin: 0;">{{ dado.resposta3 }}</p>
+                </div>
+            </div>
+            <div class="mt-3" style="display: flex; align-items: center; width: 100%;">
+                <div style="flex: 0 1 auto; margin-right: 10px;">
+                    <input class="form-check-input" type="radio" name="resposta_questao_{{ dado.id }}" id="resposta4_{{ dado.id }}" value="{{ dado.OPCAO_D }}">
+                    <label class="form-check-label" for="resposta4_{{ dado.id }}"></label>
+                </div>
+                <div style="flex: 1 1 auto;">
+                    <p style="margin: 0;">{{ dado.resposta4 }}</p>
+                </div>
+            </div>
+            <div class="mt-3" style="display: flex; align-items: center; width: 100%;">
+                <div style="flex: 0 1 auto; margin-right: 10px;">
+                    <input class="form-check-input" type="radio" name="resposta_questao_{{ dado.id }}" id="resposta5_{{ dado.id }}" value="{{ dado.OPCAO_E }}">
+                    <label class="form-check-label" for="resposta5_{{ dado.id }}"></label>
+                </div>
+                <div style="flex: 1 1 auto;">
+                    <p style="margin: 0;">{{ dado.resposta5 }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-outline-success btn-rounded mb-2 me-4 mt-5">Enviar Respostas</button>
+</form>

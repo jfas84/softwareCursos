@@ -20,7 +20,7 @@ from django.conf import settings
 import os
 
 def download_apostila(request, apostila_id):
-    apostila = get_object_or_404(Apostilas, id=apostila_id)
+    apostila = get_object_or_404(Apostilas, curso=apostila_id)
     # Verificar a autorização do usuário aqui, se necessário
     # Entregar o arquivo usando FileResponse
     response = FileResponse(apostila.arquivo.open('rb'))
@@ -1349,10 +1349,12 @@ def internaCadastrarQuestao(request):
                 return redirect('internaCadastrarQuestao')
         else:
             form = QuestoesForm(user=request.user)
+        paginaAtual = {'nome': 'Cadastrar Questão'}
+
         context = {
             'form': form,
             'title': "Cadastrar Questão",
-            'paginaAtual': 'Cadastrar Questão',
+            'paginaAtual': paginaAtual,
             'usuario': usuario,
             'responsabilidades': responsabilidades,
         }
@@ -1377,6 +1379,54 @@ def internaCadastrarQuestao(request):
         return redirect('internaTableauGeral')
     
 @responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaAlterarQuestao(request, id):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    instancia = get_object_or_404(Questoes, pk=id)
+    try:
+        if request.method == 'POST':
+            form = QuestoesForm(user=request.user, data=request.POST, files=request.FILES, instance=instancia)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.save()
+                messages.success(request, 'A questão foi alterada com sucesso!')
+                return redirect('internaListarQuestoes')
+        else:
+            form = QuestoesForm(user=request.user, instance=instancia)
+        paginaAtual = {'nome': 'Alterar Questão'}
+        navegacao = [
+            {'nome': 'Listar Questões', 'url': "internaListarQuestoes"},
+        ]
+
+        context = {
+            'form': form,
+            'title': "Alterar Questão",
+            'paginaAtual': paginaAtual,
+            'usuario': usuario,
+            'navegacao': navegacao,
+            'responsabilidades': responsabilidades,
+        }
+        return render(request, 'internas/dash.html', context)
+    except ValidationError as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaAlterarQuestao",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+    except Exception as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaAlterarQuestao",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro inesperado. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+    
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
 def internaCadastrarVideoAula(request):
     usuario = request.user
     responsabilidades = obter_responsabilidades_usuario(usuario)
@@ -1390,10 +1440,12 @@ def internaCadastrarVideoAula(request):
                 return redirect('internaCadastrarVideoAula')
         else:
             form = VideoAulasForm(user=request.user)
+        paginaAtual = {'nome': 'Cadastrar Vídeo Aula'}
+
         context = {
             'form': form,
             'title': "Cadastrar Vídeo Aula",
-            'paginaAtual': 'Cadastrar Vídeo Aula',
+            'paginaAtual': paginaAtual,
             'usuario': usuario,
             'responsabilidades': responsabilidades,
         }
@@ -1411,6 +1463,53 @@ def internaCadastrarVideoAula(request):
         log_erro = LogErro(
             usuario=request.user if request.user.is_authenticated else None,
             pagina_atual="internaCadastrarVideoAula",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro inesperado. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+    
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaAlterarVideoAula(request, id):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    instancia = get_object_or_404(VideoAulas, pk=id)
+    try:
+        if request.method == 'POST':
+            form = VideoAulasForm(user=request.user, data=request.POST, instance=instancia)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.save()
+                messages.success(request, 'A video aula foi alterada com sucesso!')
+                return redirect('internaListarVideoAulas')
+        else:
+            form = VideoAulasForm(user=request.user, instance=instancia)
+        paginaAtual = {'nome': 'Alterar Vídeo Aula'}
+        navegacao = [
+            {'nome': 'Listar Vídeo Aulas', 'url': "internaListarVideoAulas"},
+        ]
+        context = {
+            'form': form,
+            'title': "Alterar Vídeo Aula",
+            'paginaAtual': paginaAtual,
+            'navegacao': navegacao,
+            'usuario': usuario,
+            'responsabilidades': responsabilidades,
+        }
+        return render(request, 'internas/dash.html', context)
+    except ValidationError as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaAlterarVideoAula",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+    except Exception as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaAlterarVideoAula",
             mensagem_erro=str(e),
         )
         log_erro.save()
@@ -1687,6 +1786,39 @@ def internaListarQuestoes(request):
     }
     return render(request, 'internas/dash.html', context)
 
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR', 'ALUNO')
+def internaListarQuestoesAula(request, id):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    aula = get_object_or_404(Aulas, pk=id)
+    acesso = ['GESTORGERAL', 'COLABORADORSEDE']
+    if usuario.empresa == aula.capitulo.curso.empresa or any(responsabilidade in acesso for responsabilidade in responsabilidades):
+        dados = Questoes.objects.filter(aula=aula)
+    else:
+        messages.warning(request, "Você não tem acesso a essa prova de conhecimentos.")
+        return redirect(reverse('internaCapituloAbrir', args=[aula.capitulo.id]))
+
+    paginaAtual = {'nome': 'Prova de Conhecimentos'}
+    if aula.capitulo.curso.externo:
+        navegacao = [
+            {'nome': 'Dash Cursos ou Matérias', 'url': "internaDashCursosExternos"},
+            {'nome': 'Capítulos', 'url': 'internaCursoAbrir', 'dados': aula.capitulo.curso.id },
+        ]
+    else:
+        navegacao = [
+            {'nome': 'Dash Cursos ou Matérias', 'url': "internaDashCursosInternos"},
+            {'nome': 'Capítulos', 'url': 'internaCursoAbrir', 'dados': aula.capitulo.curso.id },
+        ]
+    context = {
+        'title': 'Prova de Conhecimentos',
+        'dados': dados,
+        'paginaAtual': paginaAtual,
+        'navegacao': navegacao,
+        'usuario': usuario,
+        'responsabilidades': responsabilidades,
+    }
+    return render(request, 'internas/dash.html', context)
+
 @responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
 def internaListarVideoAulas(request):
     usuario = request.user
@@ -1696,9 +1828,9 @@ def internaListarVideoAulas(request):
     dados = None
 
     if any(responsabilidade in acesso for responsabilidade in responsabilidades):
-        dados = VideoAulas.objects.all().order_by('aula__capitulo__curso__curso', 'aula__capitulo__capitulo', 'aula__aula')
+        dados = VideoAulas.objects.all().order_by('tema__aula__capitulo__curso__curso', 'tema__aula__capitulo__capitulo', 'tema__aula__aula', 'tema__tema')
     elif usuario.empresa:
-        dados = VideoAulas.objects.filter(aula__capitulo__curso__empresa=usuario.empresa).order_by('aula__capitulo__curso__curso', 'aula__capitulo__capitulo', 'aula__aula')
+        dados = VideoAulas.objects.filter(aula__capitulo__curso__empresa=usuario.empresa).order_by('tema__aula__capitulo__curso__curso', 'tema__aula__capitulo__capitulo', 'tema__aula__aula', 'tema__tema')
     
     if dados is None:
         dados = VideoAulas.objects.none()
@@ -1828,13 +1960,19 @@ def internaCapituloAbrir(request, id):
         dados = instancia
     else:
         messages.warning(request, "Você não tem acesso a esse capítulo.")
-        return redirect(reverse('internaCursoAbrir', args=[capitulo.curso.id]))
+        return redirect(reverse('internaCursoAbrir', args=[capitulo.curso.id]))    
 
     paginaAtual = {'nome': 'Aulas'}
-    navegacao = [
-        {'nome': 'Dash Cursos ou Matérias', 'url': "internaDashCursosExternos"},
-        {'nome': 'Capítulos', 'url': 'internaCursoAbrir', 'dados': capitulo.curso.id },
-    ]
+    if capitulo.curso.externo:
+        navegacao = [
+            {'nome': 'Dash Cursos ou Matérias', 'url': "internaDashCursosExternos"},
+            {'nome': 'Capítulos', 'url': 'internaCursoAbrir', 'dados': capitulo.curso.id },
+        ]
+    else:
+        navegacao = [
+            {'nome': 'Dash Cursos ou Matérias', 'url': "internaDashCursosInternos"},
+            {'nome': 'Capítulos', 'url': 'internaCursoAbrir', 'dados': capitulo.curso.id },
+        ]
     context = {
         'title': 'Aulas',
         'dados': dados,
@@ -1894,12 +2032,20 @@ def internaAulaAbrir(request, id):
         return redirect(reverse('internaCapituloAbrir', args=[aula.capitulo.id]))
 
     paginaAtual = {'nome': 'Temas'}
-    navegacao = [
-        {'nome': 'Dash Cursos ou Matérias', 'url': "internaDashCursosExternos"},
-        {'nome': 'Capítulos', 'url': 'internaCursoAbrir', 'dados': aula.capitulo.curso.id },
-        {'nome': 'Aulas', 'url': 'internaCapituloAbrir', 'dados': aula.capitulo.id },
+    if aula.capitulo.curso.externo:
+        navegacao = [
+            {'nome': 'Dash Cursos ou Matérias', 'url': "internaDashCursosExternos"},
+            {'nome': 'Capítulos', 'url': 'internaCursoAbrir', 'dados': aula.capitulo.curso.id },
+            {'nome': 'Aulas', 'url': 'internaCapituloAbrir', 'dados': aula.capitulo.id },
 
-    ]
+        ]
+    else:
+        navegacao = [
+            {'nome': 'Dash Cursos ou Matérias', 'url': "internaDashCursosInternos"},
+            {'nome': 'Capítulos', 'url': 'internaCursoAbrir', 'dados': aula.capitulo.curso.id },
+            {'nome': 'Aulas', 'url': 'internaCapituloAbrir', 'dados': aula.capitulo.id },
+
+        ]
     context = {
         'title': 'Aulas',
         'dados': dados,
