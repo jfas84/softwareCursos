@@ -1479,29 +1479,17 @@ def internaListarBoletim(request):
         else:
             # Se o curso não está na lista, adicionar curso, capítulo, aula e notas
             boletim_aluno.append({"curso": b.curso, "capitulos": [{"capitulo": b.capitulo, "aulas": [{"aula": b.aula, "notas": list(b.notas.all())}]}]})
-    
-    pprint(boletim_aluno)
-    return HttpResponse(boletim_aluno)
-    # dados = None
 
-    # if any(responsabilidade in acesso for responsabilidade in responsabilidades):
-    #     dados = Turmas.objects.all()
-    # elif usuario.empresa:
-    #     dados = Turmas.objects.filter(empresa=usuario.empresa)
-    
-    # if dados is None:
-    #     dados = Turmas.objects.none()
+    paginaAtual = {'nome': 'Boletim'}
 
-    # paginaAtual = {'nome': 'Listar Turmas'}
-
-    # context = {
-    #     'title': 'Listar Turmas',
-    #     'dados': dados,
-    #     'paginaAtual': paginaAtual,
-    #     'usuario': usuario,
-    #     'responsabilidades': responsabilidades,
-    # }
-    # return render(request, 'internas/dash.html', context)
+    context = {
+        'title': 'Listar Turmas',
+        'dados': boletim_aluno,
+        'paginaAtual': paginaAtual,
+        'usuario': usuario,
+        'responsabilidades': responsabilidades,
+    }
+    return render(request, 'internas/dash.html', context)
     
 @responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
 def internaCadastrarVideoAula(request):

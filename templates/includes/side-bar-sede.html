@@ -187,6 +187,25 @@
                     </li>
                 </ul>
             </li>
+            <li class="menu">
+                <a href="#boletim" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle">
+                    <div class="">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+                            <path d="M3 2v20h18V2H3zm6 8h8M9 12h8M9 16h6"></path>
+                          </svg>
+                          
+                        <span>Boletim</span>
+                    </div>
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </div>
+                </a>
+                <ul class="dropdown-menu submenu list-unstyled" id="boletim" data-bs-parent="#accordionExample">
+                    <li>
+                        <a href="{% url 'internaListarBoletim' %}"> Notas </a>
+                    </li>
+                </ul>
+            </li>
 
             <!-- <li class="menu menu-heading">
                 <div class="heading"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg><span>USER INTERFACE</span></div>
