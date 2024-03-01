@@ -120,22 +120,21 @@ class FrequenciaAulasAdmin(admin.ModelAdmin):
 
 @admin.register(Notas)
 class NotasAdmin(admin.ModelAdmin):
-    list_display = ('aluno', 'capitulo', 'valor')
-    list_filter = ('capitulo',)
-    search_fields = ('aluno__username', 'capitulo__capitulo')
-    raw_id_fields = ('aluno', 'capitulo')
+    list_display = ('aluno', 'aula', 'valor')
+    list_filter = ('aula',)
+    search_fields = ('aluno__username', 'aula__capitulo__capitulo')
+    raw_id_fields = ('aluno', 'aula')
 
 @admin.register(Boletim)
 class BoletimAdmin(admin.ModelAdmin):
-    list_display = ('aluno', 'calcular_media')
+    list_display = ('aluno', 'curso', 'capitulo', 'aula', 'listar_notas')
     search_fields = ('aluno__nome',)
     raw_id_fields = ('aluno',)
 
-    def calcular_media(self, obj):
-        return obj.calcular_media()
+    def listar_notas(self, obj):
+        return ", ".join([str(nota.valor) for nota in obj.notas.all()])
 
-    calcular_media.short_description = 'Média'
-    calcular_media.admin_order_field = 'notas__valor'
+    listar_notas.short_description = 'Notas'
 
 @admin.register(Inscricoes)
 class InscricoesAdmin(admin.ModelAdmin):

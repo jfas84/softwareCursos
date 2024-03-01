@@ -26,6 +26,7 @@ urlpatterns = [
     path('tableau/capitulo/<int:id>/', login_required(views.internaCapituloAbrir), name='internaCapituloAbrir'),
     path('tableau/frequencia/<int:id>/', login_required(views.internaCadastrarFrequenciaAula), name='internaCadastrarFrequenciaAula'),
     path('tableau/aula/<int:id>/', login_required(views.internaAulaAbrir), name='internaAulaAbrir'),
+    path('tableau/boletim/', login_required(views.internaListarBoletim), name='internaListarBoletim'),
     
     # Internas Sede
     path('tableau/cadastro/usuario', login_required(views.internaCadastroInterno), name='internaCadastroInterno'),

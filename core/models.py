@@ -182,7 +182,7 @@ class Capitulos(models.Model):
         verbose_name_plural = 'Capítulo'
 
     def __str__(self):
-        return f"{self.curso} - {self.capitulo}"
+        return self.capitulo
 
 class Aulas(models.Model):
     aula = models.CharField('Aula', max_length=100)
@@ -194,7 +194,7 @@ class Aulas(models.Model):
         verbose_name_plural = 'Aulas'
 
     def __str__(self):
-        return f'{self.capitulo} - {self.aula}'
+        return self.aula
 
 class Temas(models.Model):
     tema = models.CharField('Tema', max_length=100)
@@ -206,7 +206,7 @@ class Temas(models.Model):
         verbose_name_plural = 'Temas'
 
     def __str__(self):
-        return f'{self.aula.capitulo.curso.curso} - {self.aula.capitulo.capitulo} - {self.aula.aula} - {self.tema}'
+        return self.tema
 
 class Apostilas(models.Model):
     apostila = models.CharField('Apostila', max_length=100)
@@ -293,23 +293,34 @@ class FrequenciaAulas(models.Model):
 
 class Notas(models.Model):
     aluno = models.ForeignKey(CustomUsuario, on_delete=models.CASCADE)
-    capitulo = models.ForeignKey(Capitulos, on_delete=models.CASCADE)
+    aula = models.ForeignKey(Aulas, on_delete=models.CASCADE)
     valor = models.DecimalField(max_digits=5, decimal_places=2)
+    
+    class Meta:
+        verbose_name = 'Nota'
+        verbose_name_plural = 'Notas'
 
     def __str__(self):
-        return f"{self.aluno} - {self.aula}: {self.valor}"
+        return f"{self.valor}"
 
 class Boletim(models.Model):
     aluno = models.ForeignKey(CustomUsuario, on_delete=models.CASCADE)
+    curso = models.ForeignKey(Cursos, on_delete=models.CASCADE)  # Adicione este campo para o curso
+    capitulo = models.ForeignKey(Capitulos, on_delete=models.CASCADE)  # Adicione este campo para o capítulo
+    aula = models.ForeignKey(Aulas, on_delete=models.CASCADE)  # Adicione este campo para a aula
     notas = models.ManyToManyField(Notas)
 
     def calcular_media(self):
         notas = self.notas.all()
         total = sum(nota.valor for nota in notas)
         return total / len(notas) if notas else 0
+    
+    class Meta:
+        verbose_name = 'Boletim'
+        verbose_name_plural = 'Boletins'
 
     def __str__(self):
-        return f"Boletim de {self.aluno}"
+        return f"Boletim de {self.aluno} - Curso: {self.curso}, Capítulo: {self.capitulo.capitulo}, Aula: {self.aula.aula}"
 
 class Inscricoes(models.Model):
     usuario = models.ForeignKey(CustomUsuario, on_delete=models.CASCADE)

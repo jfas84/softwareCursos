@@ -1,5 +1,6 @@
 from datetime import timezone
 import datetime
+from pprint import pprint
 from django.db import transaction
 from django.db.models import Q, Count
 from django.core.mail import send_mail
@@ -1431,6 +1432,7 @@ def internaVerificarNota(request, id):
     usuario = request.user
     responsabilidades = obter_responsabilidades_usuario(usuario)
     aula = get_object_or_404(Aulas, pk=id)
+    nota_existente = Notas.objects.filter(aluno=usuario, aula=aula).exists()
     if request.method == 'POST':
         if request.method == 'POST':
             questoes = Questoes.objects.filter(aula=aula)
@@ -1438,30 +1440,68 @@ def internaVerificarNota(request, id):
             total_questoes = questoes.count()
 
             for questao in questoes:
-                print(f'Questao: {questao}')
                 resposta_selecionada = request.POST.get(f'resposta_questao_{questao.id}')
-                print(f'resposta selecionada: {resposta_selecionada}')
                 if resposta_selecionada and resposta_selecionada == questao.resposta_correta:
                     pontuacao += 1
-                    print(pontuacao)
-
             nota = (pontuacao / total_questoes) * 100 if total_questoes else 0
+            if not nota_existente:
+                nova_nota = Notas(aluno=usuario, aula=aula, valor=nota)
+                nova_nota.save()
 
+            messages.success(request, f'A sua nota nesta avaliação foi {nota}.')
+            return redirect(reverse('internaCapituloAbrir', args=[aula.capitulo.id]))
+ 
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR', 'ALUNO')
+def internaListarBoletim(request):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    acesso = ['GESTORGERAL', 'COLABORADORSEDE']
+    boletim = Boletim.objects.filter(aluno=usuario)
+    
+    boletim_aluno = []
 
-    return HttpResponse(nota)
-        # nota = (pontuacao / total_questoes) * 100
+    # Iterar sobre cada boletim do aluno
+    for b in boletim:
+        # Verificar se o curso já está na lista boletim_aluno
+        curso_existente = next((item for item in boletim_aluno if item["curso"] == b.curso), None)
         
-    # paginaAtual = {'nome': 'Cadastrar Questão'}
+        if curso_existente:
+            # Se o curso já está na lista, adicionar capítulo, aula e notas
+            capitulo_existente = next((item for item in curso_existente["capitulos"] if item["capitulo"] == b.capitulo), None)
+            if capitulo_existente:
+                aula_existente = next((item for item in capitulo_existente["aulas"] if item["aula"] == b.aula), None)
+                if aula_existente:
+                    aula_existente["notas"].extend(list(b.notas.all()))
+                else:
+                    capitulo_existente["aulas"].append({"aula": b.aula, "notas": list(b.notas.all())})
+            else:
+                curso_existente["capitulos"].append({"capitulo": b.capitulo, "aulas": [{"aula": b.aula, "notas": list(b.notas.all())}]})
+        else:
+            # Se o curso não está na lista, adicionar curso, capítulo, aula e notas
+            boletim_aluno.append({"curso": b.curso, "capitulos": [{"capitulo": b.capitulo, "aulas": [{"aula": b.aula, "notas": list(b.notas.all())}]}]})
+    
+    pprint(boletim_aluno)
+    return HttpResponse(boletim_aluno)
+    # dados = None
+
+    # if any(responsabilidade in acesso for responsabilidade in responsabilidades):
+    #     dados = Turmas.objects.all()
+    # elif usuario.empresa:
+    #     dados = Turmas.objects.filter(empresa=usuario.empresa)
+    
+    # if dados is None:
+    #     dados = Turmas.objects.none()
+
+    # paginaAtual = {'nome': 'Listar Turmas'}
 
     # context = {
-    #     'title': "Cadastrar Questão",
+    #     'title': 'Listar Turmas',
+    #     'dados': dados,
     #     'paginaAtual': paginaAtual,
-    #     'nota': nota,
     #     'usuario': usuario,
     #     'responsabilidades': responsabilidades,
     # }
     # return render(request, 'internas/dash.html', context)
-    
     
 @responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
 def internaCadastrarVideoAula(request):
