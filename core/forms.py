@@ -392,11 +392,29 @@ class VideoAulasForm(forms.ModelForm):
         }
 
 class InscricoesForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super(InscricoesForm, self).__init__(*args, **kwargs)
+        acesso_geral = ['GESTORGERAL', 'COLABORADORSEDE']
+        responsabilidades = obter_responsabilidades_usuario(user)
+
+        if user and user.is_authenticated:
+            if any(responsabilidade in acesso_geral for responsabilidade in responsabilidades):
+                usuario = CustomUsuario.objects.all().order_by('nome')
+                self.fields['usuario'].queryset = usuario
+                curso = Cursos.objects.all().order_by('curso')
+                self.fields['curso'].queryset = curso
+            else:
+                usuario = CustomUsuario.objects.filter(empresa=user.empresa).order_by('nome')
+                self.fields['usuario'].queryset = usuario
+                curso = Cursos.objects.filter(empresa=user.empresa).order_by('curso')
+                self.fields['curso'].queryset = curso
+
     class Meta:
         model = Inscricoes
         fields = ['usuario', 'curso', 'pago']
         labels = {
-            'usuario': 'Usuário',
+            'usuario': 'Aluno',
             'curso': 'Curso',
             'pago': 'Pago'
         }

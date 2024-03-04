@@ -253,4 +253,20 @@
     });
 }
 </script>
+{% elif request.resolver_match.url_name == 'internaCadastroAluno' or request.resolver_match.url_name == 'internaCadastroProfessor' or request.resolver_match.url_name == 'internaAlterarProfessor' or request.resolver_match.url_name == 'internaAlterarAluno' %}
+<script>
+    function limparFormulario(event) {
+    event.preventDefault();
+
+    const campos = [
+    'id_usuario',
+    'id_curso',
+    'id_pago',
+    ];
+
+    campos.forEach(campo => {
+        document.getElementById(campo).value = "";
+    });
+}
+</script>
 {% endif %}

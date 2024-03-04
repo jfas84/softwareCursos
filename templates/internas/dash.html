@@ -229,7 +229,7 @@
         {% if 'GESTORGERAL' in responsabilidades or 'COLABORADORSEDE' in responsabilidades %}
         {% include 'includes/side-bar-sede.html' %}
         {% elif 'SECRETARIA' in responsabilidades or 'GESTORCURSO' in responsabilidades or 'PRODUTOR' in responsabilidades or 'PROFESSOR' in responsabilidades %}
-        {% include 'includes/side-bar-usuario-gestor-cond.html' %}
+        {% include 'includes/side-bar-usuario-gestor-curso.html' %}
         {% else %}
         {% include 'includes/side-bar-usuario-geral.html' %}
         {% endif %}
@@ -317,6 +317,12 @@
 
                     {% elif request.resolver_match.url_name == 'internaListarQuestoesAula' %}
                         {% include 'includes/prova.html' %}
+                    
+                    {% elif request.resolver_match.url_name == 'internaDadosPessoais' %}
+                        {% include 'includes/dadosPessoais.html' %}
+
+                    {% elif request.resolver_match.url_name == 'internaDadosPessoaisAtualizar' or request.resolver_match.url_name == 'internaInscreverAluno' %}
+                        {% include 'includes/dashCadastros.html' %}
                     
                     {% endif %}
 

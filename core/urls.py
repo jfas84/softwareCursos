@@ -87,6 +87,7 @@ urlpatterns = [
     path('tableau/alterar/video-aula/<int:id>/', login_required(views.internaAlterarVideoAula), name='internaAlterarVideoAula'),
     path('tableau/listar/video-aulas', login_required(views.internaListarVideoAulas), name='internaListarVideoAulas'),
     
+    path('tableau/inscrever/aluno', login_required(views.internaInscreverAluno), name='internaInscreverAluno'),
     
     
     
