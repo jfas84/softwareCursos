@@ -1490,6 +1490,48 @@ def internaListarBoletim(request):
         'responsabilidades': responsabilidades,
     }
     return render(request, 'internas/dash.html', context)
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR', 'ALUNO')
+def internaVerBoletim(request, id):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    acesso = ['GESTORGERAL', 'COLABORADORSEDE']
+    aluno = get_object_or_404(CustomUsuario, pk=id)
+    if aluno.empresa == usuario.empresa or any(responsabilidade in acesso for responsabilidade in responsabilidades):
+        boletim = Boletim.objects.filter(aluno=aluno)
+    else:
+        boletim = Boletim.objects.none()
+    boletim_aluno = []
+
+    for b in boletim:
+        curso_existente = next((item for item in boletim_aluno if item["curso"] == b.curso), None)
+        
+        if curso_existente:
+            capitulo_existente = next((item for item in curso_existente["capitulos"] if item["capitulo"] == b.capitulo), None)
+            if capitulo_existente:
+                aula_existente = next((item for item in capitulo_existente["aulas"] if item["aula"] == b.aula), None)
+                if aula_existente:
+                    aula_existente["notas"].extend(list(b.notas.all()))
+                else:
+                    capitulo_existente["aulas"].append({"aula": b.aula, "notas": list(b.notas.all())})
+            else:
+                curso_existente["capitulos"].append({"capitulo": b.capitulo, "aulas": [{"aula": b.aula, "notas": list(b.notas.all())}]})
+        else:
+            boletim_aluno.append({"curso": b.curso, "capitulos": [{"capitulo": b.capitulo, "aulas": [{"aula": b.aula, "notas": list(b.notas.all())}]}]})
+
+    paginaAtual = {'nome': 'Boletim'}
+    navegacao = [
+                {'nome': 'Listar Alunos', 'url': "internaListarAlunos"},
+            ]
+    context = {
+        'title': 'Boletim',
+        'dados': boletim_aluno,
+        'navegacao': navegacao,
+        'paginaAtual': paginaAtual,
+        'usuario': usuario,
+        'responsabilidades': responsabilidades,
+    }
+    return render(request, 'internas/dash.html', context)
     
 @responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
 def internaCadastrarVideoAula(request):

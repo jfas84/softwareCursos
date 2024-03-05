@@ -309,6 +309,9 @@
                     {% elif request.resolver_match.url_name == 'internaListarVideoAulas' or request.resolver_match.url_name == 'internaListarBoletim' or request.resolver_match.url_name == 'internaListarAlunosMatricula'  %}
                         {% include 'includes/dashListar.html' %}
 
+                    {% elif request.resolver_match.url_name == 'internaVerBoletim' %}
+                        {% include 'includes/dashListar.html' %}
+
                     {% elif request.resolver_match.url_name == 'internaDashCursosInternos' or request.resolver_match.url_name == 'internaDashCursosExternos' or request.resolver_match.url_name == 'internaCursoAbrir' or request.resolver_match.url_name == 'internaListarCursosMatricula' %}
                         {% include 'includes/cursos.html' %}
                     
