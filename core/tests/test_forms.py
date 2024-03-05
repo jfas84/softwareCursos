@@ -2,7 +2,7 @@ from unittest.mock import patch
 from django.test import TestCase
 from model_mommy import mommy
 from django.contrib.auth import get_user_model
-from core.forms import CustomUsuarioChangeForm, CustomUsuarioCreateForm, LoginCadastroInternoForm, RegistrationForm  
+from core.forms import CustomUsuarioChangeForm, CustomUsuarioCreateForm, RegistrationForm  
 from core.models import CustomUsuario
 
 class RegistrationFormTestCase(TestCase):
