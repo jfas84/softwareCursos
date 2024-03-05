@@ -16,6 +16,21 @@
     </div>
     {% endfor %}
 </div>
+{% elif request.resolver_match.url_name == 'internaListarCursosMatricula' %}
+<div class="row">
+    {% for dado in dados %}
+    <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 mx-auto">
+        <div class="card">
+            <img src="{% static 'src/assets/img/lightbox-3.jpeg' %}" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title mb-3">{{dado.curso}}</h5>
+                <p class="card-text">{{dado.resumo}}</p>
+                <a href="{% url 'internaListarAlunosMatricula' dado.id %}" class="btn btn-secondary mt-3">Matricular Alunos</a>
+            </div>
+        </div>  
+    </div>
+    {% endfor %}
+</div>
 {% elif request.resolver_match.url_name == 'internaCursoAbrir' %}
 <div class="row">     
     {% for dado in dados %}

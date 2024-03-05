@@ -306,10 +306,10 @@
                     {% elif request.resolver_match.url_name == 'internaListarTemas' or request.resolver_match.url_name == 'internaListarApostilas' or request.resolver_match.url_name == 'internaListarQuestoes'%}
                         {% include 'includes/dashListar.html' %}
 
-                    {% elif request.resolver_match.url_name == 'internaListarVideoAulas' or request.resolver_match.url_name == 'internaListarBoletim' %}
+                    {% elif request.resolver_match.url_name == 'internaListarVideoAulas' or request.resolver_match.url_name == 'internaListarBoletim' or request.resolver_match.url_name == 'internaListarAlunosMatricula'  %}
                         {% include 'includes/dashListar.html' %}
 
-                    {% elif request.resolver_match.url_name == 'internaDashCursosInternos' or request.resolver_match.url_name == 'internaDashCursosExternos' or request.resolver_match.url_name == 'internaCursoAbrir' %}
+                    {% elif request.resolver_match.url_name == 'internaDashCursosInternos' or request.resolver_match.url_name == 'internaDashCursosExternos' or request.resolver_match.url_name == 'internaCursoAbrir' or request.resolver_match.url_name == 'internaListarCursosMatricula' %}
                         {% include 'includes/cursos.html' %}
                     
                     {% elif request.resolver_match.url_name == 'internaCapituloAbrir' or request.resolver_match.url_name == 'internaAulaAbrir' %}

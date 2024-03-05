@@ -548,6 +548,46 @@
     </div>
     {% endfor %}
 </div>
+{% elif request.resolver_match.url_name == 'internaListarAlunosMatricula' %}
+<div class="row layout-spacing">
+    
+    <div class="col-lg-12">
+        <div class="statbox widget box box-shadow">
+            <div class="widget-content widget-content-area">
+                <table id="style-3" class="table style-3 dt-table-hover">
+                    <thead>
+                        <tr>
+                            <th class="checkbox-column text-center"> Código Id </th>
+                            <th class="text-center">Aluno</th>
+                            <th>E-mail</th>
+                            <th class="text-center dt-no-sorting">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for dado in dados %}
+                        <tr>
+                            <td class="checkbox-column text-center">{{dado.id}}</td>
+                            <td class="text-center">
+                                {{dado.nome}}
+                            </td>
+                            <td>{{dado.email}}</td>
+                            <td class="text-center">
+                                <ul class="table-controls">
+                                    {% if dado.id in matriculas %}
+                                    <li><a href="{% url 'internaMatricular' curso.id dado.id 'cancelar' %}" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Matriculado" data-original-title="Matriculado"><span class="badge badge-light-danger mb-2 me-4">Matriculado</span></a></li>
+                                    {% else %}
+                                    <li><a href="{% url 'internaMatricular' curso.id dado.id 'matricular' %}" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Matricular" data-original-title="Matricular"><span class="badge badge-light-success mb-2 me-4">Matricular</span></a></li>
+                                    {% endif %}
+                                </ul>
+                            </td>
+                        </tr>
+                        {% endfor %}  
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 {% endif %}
 
 

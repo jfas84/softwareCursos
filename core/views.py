@@ -1940,6 +1940,108 @@ def internaDashCursosInternos(request):
     return render(request, 'internas/dash.html', context)
 
 @responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaListarCursosMatricula(request):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    acesso = ['GESTORGERAL', 'COLABORADORSEDE']
+    dados = None
+    if any(responsabilidade in acesso for responsabilidade in responsabilidades):
+        dados = Cursos.objects.all()
+    elif usuario.empresa:
+        dados = Cursos.objects.filter(empresa=usuario.empresa)
+    
+    if dados is None:
+        dados = Cursos.objects.none()
+
+    paginaAtual = {'nome': 'Listar Cursos ou Matérias - Matrícula'}
+
+    context = {
+        'title': 'Listar Cursos ou Matérias - Matrícula',
+        'dados': dados,
+        'paginaAtual': paginaAtual,
+        'usuario': usuario,
+        'responsabilidades': responsabilidades,
+    }
+    return render(request, 'internas/dash.html', context)
+    
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaListarAlunosMatricula(request, id):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    acesso = ['GESTORGERAL', 'COLABORADORSEDE']
+    curso = get_object_or_404(Cursos, pk=id)
+    matriculas = Inscricoes.objects.filter(curso=curso).values_list('usuario__id', flat=True)
+    dados = None
+    if curso.empresa == usuario.empresa or any(responsabilidade in acesso for responsabilidade in responsabilidades):
+        if any(responsabilidade in acesso for responsabilidade in responsabilidades):
+            dados = CustomUsuario.objects.filter(
+                responsabilidades__descricao='ALUNO'
+            )
+        elif usuario.empresa:
+            dados = CustomUsuario.objects.filter(
+                empresa=usuario.empresa,
+                responsabilidades__descricao='ALUNO'
+            )
+        if dados is None:
+            dados = CustomUsuario.objects.none()
+
+        paginaAtual = {'nome': 'Alunos para Matrícula'}
+        navegacao = [
+                {'nome': 'Listar Cursos ou Matérias - Matrícula', 'url': "internaListarCursosMatricula"},
+            ]
+        context = {
+            'title': 'Alunos para Matrícula',
+            'dados': dados,
+            'curso': curso,
+            'matriculas': matriculas,
+            'paginaAtual': paginaAtual,
+            'navegacao': navegacao,
+            'usuario': usuario,
+            'responsabilidades': responsabilidades,
+        }
+        return render(request, 'internas/dash.html', context)
+    else:
+        messages.error(request, 'Esse curso não pertence a sua empresa.')
+        return redirect('internaTableauGeral')
+    
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaMatricular(request, curso, aluno, tipo):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    acesso = ['GESTORGERAL', 'COLABORADORSEDE']
+    curso_selecao = get_object_or_404(Cursos, pk=curso)
+    aluno_selecao = get_object_or_404(CustomUsuario, pk=aluno)
+    if tipo == 'matricular':
+        matricula = True
+    else:
+        matricula = False
+
+    if matricula:
+        if (curso_selecao.empresa == usuario.empresa or any(responsabilidade in acesso for responsabilidade in responsabilidades)) and (aluno_selecao.empresa == usuario.empresa or any(responsabilidade in acesso for responsabilidade in responsabilidades)):
+            matricula = Inscricoes.objects.create(
+                usuario=aluno_selecao,
+                curso=curso_selecao,
+                pago=True
+            )
+            messages.success(request, 'Aluno Matriculado.')
+            return redirect(reverse('internaListarAlunosMatricula', args=[curso_selecao.id]))  
+
+        else:
+            messages.error(request, 'Esse aluno não pertence a sua empresa.')
+            return redirect(reverse('internaListarAlunosMatricula', args=[curso_selecao.id]))
+    else:
+        if (curso_selecao.empresa == usuario.empresa or any(responsabilidade in acesso for responsabilidade in responsabilidades)) and (aluno_selecao.empresa == usuario.empresa or any(responsabilidade in acesso for responsabilidade in responsabilidades)):
+            matricula = get_object_or_404(Inscricoes, usuario=aluno_selecao, curso=curso_selecao)
+            matricula.delete()
+            messages.warning(request, 'Cancelada a Matrícula do Aluno.')
+            return redirect(reverse('internaListarAlunosMatricula', args=[curso_selecao.id]))  
+
+        else:
+            messages.error(request, 'Esse aluno não pertence a sua empresa.')
+            return redirect(reverse('internaListarAlunosMatricula', args=[curso_selecao.id]))  
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
 def internaInscreverAluno(request):
     usuario = request.user
     responsabilidades = obter_responsabilidades_usuario(usuario)
@@ -1982,21 +2084,22 @@ def internaInscreverAluno(request):
         return redirect('internaTableauGeral')
 
 
-
 # Internas Aluno
 @responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR', 'ALUNO')
 def internaDashCursosExternos(request):
     usuario = request.user
     responsabilidades = obter_responsabilidades_usuario(usuario)
     acesso = ['GESTORGERAL', 'COLABORADORSEDE']
-
+    acesso_cursos = ['GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR',]
     dados = None
 
     if any(responsabilidade in acesso for responsabilidade in responsabilidades):
         dados = Cursos.objects.filter(externo=True)
-    elif usuario.empresa:
+    elif usuario.empresa and any(responsabilidade in acesso_cursos for responsabilidade in responsabilidades):
         dados = Cursos.objects.filter(empresa=usuario.empresa, externo=True)
-    
+    elif usuario.empresa:
+        matriculas = Inscricoes.objects.filter(usuario=usuario)
+        dados = [inscricao.curso for inscricao in matriculas]
     if dados is None:
         dados = Cursos.objects.none()
 
@@ -2019,12 +2122,18 @@ def internaCursoAbrir(request, id):
     usuario = request.user
     responsabilidades = obter_responsabilidades_usuario(usuario)
     acesso = ['GESTORGERAL', 'COLABORADORSEDE']
+    acesso_cursos = ['GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR',]
+
     curso = get_object_or_404(Cursos, pk=id)
     instancia = Capitulos.objects.filter(curso=curso)
 
+    matricula_aluno = Inscricoes.objects.filter(usuario=usuario, curso=curso, pago=True).exists()
+
     if any(responsabilidade in acesso for responsabilidade in responsabilidades):
         dados = instancia
-    elif usuario.empresa == curso.empresa:
+    elif usuario.empresa == curso.empresa and any(responsabilidade in acesso_cursos for responsabilidade in responsabilidades):
+        dados = instancia
+    elif usuario.empresa == curso.empresa and matricula_aluno:
         dados = instancia
     else:
         messages.warning(request, "Você não tem acesso a esse curso ou matéria.")
