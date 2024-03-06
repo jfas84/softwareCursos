@@ -1,15 +1,23 @@
 import uuid
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.db.models import signals
+from django.forms import ValidationError
 from stdimage.models import StdImageField
 from django.template.defaultfilters import slugify
 from django.utils import timezone
+
+MAX_FILE_SIZE = 10 * 1024 * 1024
 
 def get_file_path(_instance, filename):
   ext = filename.split('.')[-1]
   filename = f'{uuid.uuid4()}.{ext}'
   return filename
+
+def validate_file_size(value):
+    if value.size > MAX_FILE_SIZE:
+        raise ValidationError("O tamanho máximo do arquivo é de 10 MB.")
 
 class Base(models.Model):
     criado = models.DateField('Data de Criação', auto_now_add=True) # aqui a data é adicionada quando o item é criado
@@ -210,7 +218,7 @@ class Temas(models.Model):
 
 class Apostilas(models.Model):
     apostila = models.CharField('Apostila', max_length=100)
-    arquivo = models.FileField('Arquivo', upload_to=get_file_path)
+    arquivo = models.FileField('Arquivo', upload_to=get_file_path, validators=[FileExtensionValidator(allowed_extensions=['pdf']), validate_file_size])
     curso = models.ForeignKey(Cursos, on_delete=models.CASCADE)
     slug = models.SlugField('Slug', max_length=100, blank=True, editable=False)
 
@@ -235,7 +243,6 @@ class Questoes(models.Model):
     resposta5 = models.TextField('Resposta 5', null=True, blank=True)
     certoErrado = models.BooleanField('Modelo Certo Errado?', default=False)
     aula = models.ForeignKey(Aulas, on_delete=models.SET_NULL, null=True, blank=True)
-    apostila = models.ForeignKey(Apostilas, on_delete=models.SET_NULL, null=True, blank=True)
     imagem = StdImageField('Imagem', upload_to=get_file_path, variations={'thumb': (225, 225)}, null=True, blank=True)
 
     OPCAO_A = 'resposta1'
@@ -289,7 +296,7 @@ class FrequenciaAulas(models.Model):
         verbose_name_plural = 'Frequência nas Aulas'
 
     def __str__(self):
-        return self.aula 
+        return self.aula.aula
 
 class Notas(models.Model):
     aluno = models.ForeignKey(CustomUsuario, on_delete=models.CASCADE)
@@ -332,4 +339,4 @@ class Inscricoes(models.Model):
         verbose_name_plural = 'Inscrições'
 
     def __str__(self):
-        return self.usuario
+        return self.usuario.nome

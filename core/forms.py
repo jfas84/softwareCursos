@@ -103,9 +103,9 @@ class CustomUsuarioForm(forms.ModelForm):
                 self.fields['responsabilidades'].queryset = Responsaveis.objects.all()
                 self.fields['turmas'].queryset = Turmas.objects.all()
             else:
-                self.fields['empresa'].queryset = Empresas.objects.get(pk=user.empresa.id)
-                self.fields['responsabilidades'].queryset = Responsaveis.objects.all()
-                self.fields['turmas'].queryset = Turmas.objects.all()
+                self.fields['empresa'].queryset = Empresas.objects.filter(pk=user.empresa.pk)
+                self.fields['responsabilidades'].queryset = Responsaveis.objects.filter(descricao__in=['PRODUTOR','GESTORCURSO','SECRETARIA'])
+                self.fields['turmas'].queryset = Turmas.objects.filter(empresa=user.empresa)
 
 class CustomAlunoForm(forms.ModelForm):
     class Meta:
@@ -124,7 +124,7 @@ class CustomAlunoForm(forms.ModelForm):
                 self.fields['responsabilidades'].queryset = Responsaveis.objects.filter(descricao='ALUNO')
                 self.fields['turmas'].queryset = Turmas.objects.all()
             else:
-                self.fields['empresa'].queryset = Empresas.objects.filter(empresa=user.empresa)
+                self.fields['empresa'].queryset = Empresas.objects.filter(pk=user.empresa.pk)
                 self.fields['responsabilidades'].queryset = Responsaveis.objects.filter(descricao='ALUNO')
                 self.fields['turmas'].queryset = Turmas.objects.filter(empresa=user.empresa)
 
@@ -145,7 +145,7 @@ class CustomProfessorForm(forms.ModelForm):
                 self.fields['responsabilidades'].queryset = Responsaveis.objects.filter(descricao='PROFESSOR')
                 self.fields['turmas'].queryset = Turmas.objects.all()
             else:
-                self.fields['empresa'].queryset = Empresas.objects.filter(empresa=user.empresa)
+                self.fields['empresa'].queryset = Empresas.objects.filter(pk=user.empresa.pk)
                 self.fields['responsabilidades'].queryset = Responsaveis.objects.filter(descricao='PROFESSOR')
                 self.fields['turmas'].queryset = Turmas.objects.filter(empresa=user.empresa)
 
@@ -208,10 +208,16 @@ class TipoCursoForm(forms.ModelForm):
 class CursosForm(forms.ModelForm):
     def __init__(self, user, *args, **kwargs):
         super(CursosForm, self).__init__(*args, **kwargs)
-        acesso = ['SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR']
+        acesso_geral = ['GESTORGERAL', 'COLABORADORSEDE']
         responsabilidades = obter_responsabilidades_usuario(user)
-        if any(responsabilidade in acesso for responsabilidade in responsabilidades):
-            self.fields.pop('empresa', None)
+
+        if user and user.is_authenticated:
+            if any(responsabilidade in acesso_geral for responsabilidade in responsabilidades):
+                empresas = Empresas.objects.all()
+                self.fields['empresa'].queryset = empresas
+            else:
+                self.fields.pop('empresa')
+
 
     class Meta:
         model = Cursos
@@ -263,12 +269,10 @@ class AulasForm(forms.ModelForm):
             'objetivo': 'Objetivo da Aula',
         }
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)  # Obtém o usuário, se disponível
+        user = kwargs.pop('user', None)
         super(AulasForm, self).__init__(*args, **kwargs)
         acesso_geral = ['GESTORGERAL', 'COLABORADORSEDE']
         responsabilidades = obter_responsabilidades_usuario(user)
-
-        # Filtra as opções do campo 'curso' com base na empresa do usuário
         if user and user.is_authenticated:
             if any(responsabilidade in acesso_geral for responsabilidade in responsabilidades):
                 capitulosEmpresa = Capitulos.objects.all().order_by('curso', 'capitulo')
@@ -324,12 +328,7 @@ class ApostilasForm(forms.ModelForm):
             'arquivo': 'Arquivo da Apostila',
             'curso': 'Referente ao Curso'
         }
-
-    def clean_arquivo(self):
-        arquivo = self.cleaned_data['arquivo']
-        return arquivo
-    
-    
+   
 
 class QuestoesForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -342,16 +341,12 @@ class QuestoesForm(forms.ModelForm):
             if any(responsabilidade in acesso_geral for responsabilidade in responsabilidades):
                 aulasEmpresa = Aulas.objects.all().order_by('capitulo__curso', 'capitulo', 'aula')
                 self.fields['aula'].queryset = aulasEmpresa
-                apostila = Apostilas.objects.all().order_by('curso')
-                self.fields['apostila'].queryset = apostila
             else:
                 aulasEmpresa = Aulas.objects.filter(capitulo__curso__empresa=user.empresa).order_by('capitulo__curso', 'capitulo', 'aula')
                 self.fields['aula'].queryset = aulasEmpresa
-                apostila = Apostilas.objects.filter(curso__empresa=user.empresa).order_by('curso')
-                self.fields['aula'].queryset = aulasEmpresa
     class Meta:
         model = Questoes
-        fields = ['pergunta', 'imagem', 'resposta1', 'resposta2', 'resposta3', 'resposta4', 'resposta5', 'certoErrado', 'aula', 'apostila', 'resposta_correta']
+        fields = ['pergunta', 'imagem', 'resposta1', 'resposta2', 'resposta3', 'resposta4', 'resposta5', 'certoErrado', 'aula', 'resposta_correta']
         labels = {
             'pergunta': 'Pergunta',
             'imagem': 'Imagem',
@@ -362,7 +357,6 @@ class QuestoesForm(forms.ModelForm):
             'resposta5': 'Resposta 5',
             'certoErrado': 'Modelo Certo Errado?',
             'aula': 'Aula',
-            'apostila': 'Apostila',
             'resposta_correta': 'Resposta Correta',
         }
 

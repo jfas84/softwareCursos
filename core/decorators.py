@@ -10,7 +10,6 @@ def responsabilidade_required(*responsabilidades):
             # Verificando se alguma das responsabilidades requeridas está na lista de responsabilidades do usuário
             if any(responsabilidade in user_responsabilidades for responsabilidade in responsabilidades):
                 return view_func(request, *args, **kwargs)
-            print('passou pelo decorator')
             return redirect('internaTableauGeral')
         return _wrapped_view
     return decorator

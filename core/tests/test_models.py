@@ -1,8 +1,42 @@
+import uuid
 from django.test import TestCase
+from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import SimpleUploadedFile
 from model_mommy import mommy
 from django.utils import timezone
 from django.contrib.auth import get_user_model
-from core.models import LogErro, Responsaveis
+from core.models import LogErro, Responsaveis, get_file_path, validate_file_size
+
+class GetFilePathTestCase(TestCase):
+  def setUp(self):
+    self.filename = f'{uuid.uuid4()}.png'
+
+  def test_get_file_path(self):
+    arquivo = get_file_path(None, 'teste.png')
+    self.assertTrue(len(arquivo), len(self.filename))
+
+class ValidateFileSizeTestCase(TestCase):
+    def test_valid_file_size(self):
+        file = SimpleUploadedFile("file.txt", b"file_content")
+        try:
+            validate_file_size(file)
+        except ValidationError:
+            self.fail("O tamanho máximo do arquivo é de 10 MB.")
+
+    def test_invalid_file_size(self):
+        file_size_in_bytes = 100 * 1024 * 1024  # 100 MB
+        file_content = b"file_content" * (file_size_in_bytes // len(b"file_content"))
+        file = SimpleUploadedFile("file.txt", file_content)
+
+        with self.assertRaises(ValidationError):
+            validate_file_size(file)
+
+class EmpresasTestCase(TestCase):
+  def setUp(self):
+    self.empresa = mommy.make('Empresas')
+
+  def test_str(self):
+    self.assertEquals(str(self.empresa), self.empresa.razaoSocial)
 
 class ResponsaveisModelTest(TestCase):
     def test_str_method_returns_descricao(self):
@@ -11,6 +45,13 @@ class ResponsaveisModelTest(TestCase):
         
         # Verifica se o método __str__ retorna a descrição correta
         self.assertEqual(str(responsavel), 'GESTORCURSO')
+
+class TurmasTestCase(TestCase):
+  def setUp(self):
+    self.turma = mommy.make('Turmas')
+
+  def test_str(self):
+    self.assertEquals(str(self.turma), self.turma.turma)
 
 class UsuarioManagerTestCase(TestCase):
     def test_create_user(self):
@@ -63,3 +104,93 @@ class LogErroModelTestCase(TestCase):
 
         expected_str = f"{log_erro.data} - {log_erro.usuario} - {log_erro.pagina_atual}"
         self.assertEqual(str(log_erro), expected_str)
+
+class TiposCursoTestCase(TestCase):
+  def setUp(self):
+    self.tipoCurso = mommy.make('TiposCurso')
+
+  def test_str(self):
+    self.assertEquals(str(self.tipoCurso), self.tipoCurso.descricao)
+
+class CursosTestCase(TestCase):
+  def setUp(self):
+    self.curso = mommy.make('Cursos')
+
+  def test_str(self):
+    self.assertEquals(str(self.curso), self.curso.curso)
+
+class CapitulosTestCase(TestCase):
+  def setUp(self):
+    self.capitulo = mommy.make('Capitulos')
+
+  def test_str(self):
+    self.assertEquals(str(self.capitulo), self.capitulo.capitulo)
+
+class AulasTestCase(TestCase):
+  def setUp(self):
+    self.aula = mommy.make('Aulas')
+
+  def test_str(self):
+    self.assertEquals(str(self.aula), self.aula.aula)
+
+class TemasTestCase(TestCase):
+  def setUp(self):
+    self.tema = mommy.make('Temas')
+
+  def test_str(self):
+    self.assertEquals(str(self.tema), self.tema.tema)
+
+class ApostilasTestCase(TestCase):
+  def setUp(self):
+    self.apostila = mommy.make('Apostilas')
+
+  def test_str(self):
+    self.assertEquals(str(self.apostila), self.apostila.apostila)
+
+class QuestoesTestCase(TestCase):
+  def setUp(self):
+    self.questao = mommy.make('Questoes')
+
+  def test_str(self):
+    self.assertEquals(str(self.questao), self.questao.pergunta)
+
+class VideoAulasTestCase(TestCase):
+  def setUp(self):
+    self.video = mommy.make('VideoAulas')
+
+  def test_str(self):
+    self.assertEquals(str(self.video), self.video.videoAula)
+
+class FrequenciaAulasTestCase(TestCase):
+  def setUp(self):
+    self.empresa = mommy.make('Empresas')
+    self.curso = mommy.make('Cursos', empresa=self.empresa)
+    self.user_regular = mommy.make('CustomUsuario', empresa=self.empresa)
+    self.capitulo = mommy.make('Capitulos', curso=self.curso)
+    self.aula = mommy.make('Aulas', capitulo=self.capitulo)
+    self.freq = mommy.make('FrequenciaAulas', aula=self.aula, aluno=self.user_regular)
+
+  def test_str(self):
+    self.assertEquals(str(self.freq), self.freq.aula.aula)
+
+class NotasTestCase(TestCase):
+  def setUp(self):
+    self.nota = mommy.make('Notas')
+
+  def test_str(self):
+    self.assertEquals(str(self.nota), str(self.nota.valor))
+
+class BoletimTestCase(TestCase):
+  def setUp(self):
+    self.boletim = mommy.make('Boletim')
+
+  def test_str(self):
+    str_espera = f"Boletim de {self.boletim.aluno} - Curso: {self.boletim.curso}, Capítulo: {self.boletim.capitulo.capitulo}, Aula: {self.boletim.aula.aula}"
+    self.assertEquals(str(self.boletim), str_espera)
+
+class InscricoesTestCase(TestCase):
+  def setUp(self):
+    self.inscricao = mommy.make('Inscricoes')
+
+  def test_str(self):
+    self.assertEquals(str(self.inscricao), self.inscricao.usuario.nome)
