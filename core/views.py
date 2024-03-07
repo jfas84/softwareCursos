@@ -33,7 +33,7 @@ def verificaUsuarioCurso(usuario, curso):
     curso = get_object_or_404(Cursos, pk=curso)
     if usuario.is_superuser:
         return True
-    elif usuario.colaboradorCentral:
+    elif usuario.aprovado:
         return True
     elif usuario.parceiro or usuario.colaboradorParceiro or usuario.assessor:
         if curso.empresa == usuario.empresa:
@@ -255,7 +255,6 @@ def internaCadastroInterno(request):
         if request.method == 'POST':
             form = CustomUsuarioForm(user=request.user, data=request.POST)
             if form.is_valid():
-                # Não é mais necessário criar um usuário separadamente, pois form.save() já faz isso.
                 user = form.save()
                 messages.success(request, 'O usuário foi criado com sucesso!')
                 return redirect('internaCadastroInterno')
