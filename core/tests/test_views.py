@@ -244,3 +244,60 @@ class InternaCadastroInternoTestCase(TestCase):
         self.assertEqual(len(messages), 1)
         self.assertEqual(messages[0].tags, 'error')
         self.assertEqual(messages[0].message, 'Houve um erro inesperado. Por favor, abra um chamado.')
+
+class InternaAlterarUsuarioTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.responsavel = mommy.make('Responsaveis', descricao='GESTORGERAL')
+        self.user = mommy.make('CustomUsuario', responsabilidades=[self.responsavel])
+        self.user_2 = mommy.make('CustomUsuario')
+
+
+    def test_internaAlterarUsuario(self):
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaAlterarUsuario', args=[self.user_2.id])
+        data = {
+            'nome': 'teste do teste',
+            'email': 'test@example.com',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302) 
+        url = reverse_lazy('internaAlterarUsuario', args=[self.user_2.id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        form = response.context['form']
+        self.assertIsInstance(form, CustomUsuarioForm)  
+        self.assertEqual(response.context['usuario'], self.user)
+    
+    @override_settings(ROOT_URLCONF='softwareCursos.urls')
+    @patch('core.views.LogErro')
+    def test_internaAlterarUsuario_validation_error(self, mock_log_erro):
+        data = {'nome': '...', 'email': '....'}
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaAlterarUsuario', args=[self.user_2.id])
+        with patch('core.views.CustomUsuarioForm') as mock_form:
+            mock_form_instance = mock_form.return_value
+            mock_form_instance.is_valid.side_effect = ValidationError('Erro de validação')
+            response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)
+        mock_log_erro.assert_called_once()
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].tags, 'error')
+        self.assertEqual(messages[0].message, 'Houve um erro. Por favor, abra um chamado.')
+    
+    @override_settings(ROOT_URLCONF='softwareCursos.urls')
+    @patch('core.views.LogErro')
+    def test_internaAlterarUsuario_unexpected_error(self, mock_log_erro):
+        data = {'nome': '...', 'email': '....'}
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaAlterarUsuario', args=[self.user_2.id])
+        with patch('core.views.CustomUsuarioForm') as mock_form:
+            mock_form.return_value.is_valid.side_effect = Exception('Erro inesperado')
+            response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)
+        mock_log_erro.assert_called_once()
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].tags, 'error')
+        self.assertEqual(messages[0].message, 'Houve um erro inesperado. Por favor, abra um chamado.')
