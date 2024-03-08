@@ -10,7 +10,7 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse, reverse_lazy
 from django.core.files.uploadedfile import SimpleUploadedFile
 from model_mommy import mommy
-from core.forms import CustomAlunoForm, CustomProfessorForm, CustomUsuarioChangeForm, CustomUsuarioForm, EmpresasForm
+from core.forms import CapitulosForm, CursosForm, CustomAlunoForm, CustomProfessorForm, CustomUsuarioChangeForm, CustomUsuarioForm, EmpresasForm, TipoCursoForm, TurmasForm
 from core.views import obter_responsabilidades_usuario
 
 
@@ -757,3 +757,661 @@ class InternaAlterarProfessorTestCase(TestCase):
         self.assertEqual(messages[0].tags, 'error')
         self.assertEqual(messages[0].message, 'Houve um erro inesperado. Por favor, abra um chamado.')
     
+class InternaCadastrarTurmaTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.responsavel = mommy.make('Responsaveis', descricao='GESTORGERAL')
+        self.responsavel_2 = mommy.make('Responsaveis', descricao='PROFESSOR')
+        self.empresa = mommy.make('Empresas')
+
+        self.user = mommy.make('CustomUsuario', responsabilidades=[self.responsavel])
+        self.user_2 = mommy.make('CustomUsuario', empresa=self.empresa, responsabilidades=[self.responsavel_2])
+
+
+    def test_internaCadastrarTurma_gestor(self):
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaCadastrarTurma')
+        data = {
+            'turma': 'teste do teste',
+            'empresa': self.empresa.id,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302) 
+        url = reverse_lazy('internaCadastrarTurma')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        form = response.context['form']
+        self.assertIsInstance(form, TurmasForm)  
+        self.assertEqual(response.context['usuario'], self.user)
+
+    def test_internaCadastrarTurma_professor(self):
+        self.client.force_login(self.user_2)
+        url = reverse_lazy('internaCadastrarTurma')
+        data = {
+            'turma': 'teste do teste',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302) 
+        url = reverse_lazy('internaCadastrarTurma')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        form = response.context['form']
+        self.assertIsInstance(form, TurmasForm)  
+        self.assertEqual(response.context['usuario'], self.user_2)
+    
+    @override_settings(ROOT_URLCONF='softwareCursos.urls')
+    @patch('core.views.LogErro')
+    def test_internaCadastrarTurma_validation_error(self, mock_log_erro):
+        data = {'turma': '...', 'empresa': '....'}
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaCadastrarTurma')
+        with patch('core.views.TurmasForm') as mock_form:
+            mock_form_instance = mock_form.return_value
+            mock_form_instance.is_valid.side_effect = ValidationError('Erro de validação')
+            response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)
+        mock_log_erro.assert_called_once()
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].tags, 'error')
+        self.assertEqual(messages[0].message, 'Houve um erro. Por favor, abra um chamado.')
+    
+    @override_settings(ROOT_URLCONF='softwareCursos.urls')
+    @patch('core.views.LogErro')
+    def test_internaCadastrarTurma_unexpected_error(self, mock_log_erro):
+        data = {'turma': '...', 'empresa': '....'}
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaCadastrarTurma')
+        with patch('core.views.TurmasForm') as mock_form:
+            mock_form.return_value.is_valid.side_effect = Exception('Erro inesperado')
+            response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)
+        mock_log_erro.assert_called_once()
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].tags, 'error')
+        self.assertEqual(messages[0].message, 'Houve um erro inesperado. Por favor, abra um chamado.')
+
+class InternaAlterarTurmaTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.responsavel = mommy.make('Responsaveis', descricao='GESTORGERAL')
+        self.responsavel_2 = mommy.make('Responsaveis', descricao='PROFESSOR')
+        self.empresa = mommy.make('Empresas')
+        self.turma = mommy.make('Turmas', empresa=self.empresa)
+
+        self.user = mommy.make('CustomUsuario', responsabilidades=[self.responsavel])
+        self.user_2 = mommy.make('CustomUsuario', empresa=self.empresa, responsabilidades=[self.responsavel_2])
+
+    def test_internaAlterarTurma_gestor(self):
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaAlterarTurma', args=[self.turma.id])
+        data = {
+            'turma': 'teste do teste',
+            'empresa': self.empresa.id,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302) 
+        url = reverse_lazy('internaAlterarTurma', args=[self.turma.id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        form = response.context['form']
+        self.assertIsInstance(form, TurmasForm)  
+        self.assertEqual(response.context['usuario'], self.user)
+
+    def test_internaAlterarTurma_professor(self):
+        self.client.force_login(self.user_2)
+        url = reverse_lazy('internaAlterarTurma', args=[self.turma.id])
+        data = {
+            'turma': 'teste do teste',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302) 
+        url = reverse_lazy('internaAlterarTurma', args=[self.turma.id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        form = response.context['form']
+        self.assertIsInstance(form, TurmasForm)  
+        self.assertEqual(response.context['usuario'], self.user_2)
+    
+    @override_settings(ROOT_URLCONF='softwareCursos.urls')
+    @patch('core.views.LogErro')
+    def test_internaAlterarTurma_validation_error(self, mock_log_erro):
+        data = {'turma': '...', 'empresa': '....'}
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaAlterarTurma', args=[self.turma.id])
+        with patch('core.views.TurmasForm') as mock_form:
+            mock_form_instance = mock_form.return_value
+            mock_form_instance.is_valid.side_effect = ValidationError('Erro de validação')
+            response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)
+        mock_log_erro.assert_called_once()
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].tags, 'error')
+        self.assertEqual(messages[0].message, 'Houve um erro. Por favor, abra um chamado.')
+    
+    @override_settings(ROOT_URLCONF='softwareCursos.urls')
+    @patch('core.views.LogErro')
+    def test_internaAlterarTurma_unexpected_error(self, mock_log_erro):
+        data = {'turma': '...', 'empresa': '....'}
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaAlterarTurma', args=[self.turma.id])
+        with patch('core.views.TurmasForm') as mock_form:
+            mock_form.return_value.is_valid.side_effect = Exception('Erro inesperado')
+            response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)
+        mock_log_erro.assert_called_once()
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].tags, 'error')
+        self.assertEqual(messages[0].message, 'Houve um erro inesperado. Por favor, abra um chamado.')
+
+class InternaCadastrarTipoCursoTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.responsavel = mommy.make('Responsaveis', descricao='GESTORGERAL')
+        self.responsavel_2 = mommy.make('Responsaveis', descricao='PROFESSOR')
+        self.empresa = mommy.make('Empresas')
+
+        self.user = mommy.make('CustomUsuario', responsabilidades=[self.responsavel])
+        self.user_2 = mommy.make('CustomUsuario', empresa=self.empresa, responsabilidades=[self.responsavel_2])
+
+
+    def test_internaCadastrarTipoCurso_gestor(self):
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaCadastrarTipoCurso')
+        data = {
+            'descricao': 'teste do teste',
+            'empresa': self.empresa.id,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302) 
+        url = reverse_lazy('internaCadastrarTipoCurso')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        form = response.context['form']
+        self.assertIsInstance(form, TipoCursoForm)  
+        self.assertEqual(response.context['usuario'], self.user)
+
+    def test_internaCadastrarTipoCurso_professor(self):
+        self.client.force_login(self.user_2)
+        url = reverse_lazy('internaCadastrarTipoCurso')
+        data = {
+            'descricao': 'teste do teste',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302) 
+        url = reverse_lazy('internaCadastrarTipoCurso')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        form = response.context['form']
+        self.assertIsInstance(form, TipoCursoForm)  
+        self.assertEqual(response.context['usuario'], self.user_2)
+    
+    @override_settings(ROOT_URLCONF='softwareCursos.urls')
+    @patch('core.views.LogErro')
+    def test_internaCadastrarTipoCurso_validation_error(self, mock_log_erro):
+        data = {'descricao': '...', 'empresa': '....'}
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaCadastrarTipoCurso')
+        with patch('core.views.TipoCursoForm') as mock_form:
+            mock_form_instance = mock_form.return_value
+            mock_form_instance.is_valid.side_effect = ValidationError('Erro de validação')
+            response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)
+        mock_log_erro.assert_called_once()
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].tags, 'error')
+        self.assertEqual(messages[0].message, 'Houve um erro. Por favor, abra um chamado.')
+    
+    @override_settings(ROOT_URLCONF='softwareCursos.urls')
+    @patch('core.views.LogErro')
+    def test_internaCadastrarTipoCurso_unexpected_error(self, mock_log_erro):
+        data = {'descricao': '...', 'empresa': '....'}
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaCadastrarTipoCurso')
+        with patch('core.views.TipoCursoForm') as mock_form:
+            mock_form.return_value.is_valid.side_effect = Exception('Erro inesperado')
+            response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)
+        mock_log_erro.assert_called_once()
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].tags, 'error')
+        self.assertEqual(messages[0].message, 'Houve um erro inesperado. Por favor, abra um chamado.')
+
+class InternaAlterarTipoCursoTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.responsavel = mommy.make('Responsaveis', descricao='GESTORGERAL')
+        self.responsavel_2 = mommy.make('Responsaveis', descricao='PROFESSOR')
+        self.empresa = mommy.make('Empresas')
+        self.tipo_curso = mommy.make('TiposCurso', empresa=self.empresa)
+
+        self.user = mommy.make('CustomUsuario', responsabilidades=[self.responsavel])
+        self.user_2 = mommy.make('CustomUsuario', empresa=self.empresa, responsabilidades=[self.responsavel_2])
+
+    def test_internaAlterarTipoCurso_gestor(self):
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaAlterarTipoCurso', args=[self.tipo_curso.id])
+        data = {
+            'descricao': 'teste do teste',
+            'empresa': self.empresa.id,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302) 
+        url = reverse_lazy('internaAlterarTipoCurso', args=[self.tipo_curso.id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        form = response.context['form']
+        self.assertIsInstance(form, TipoCursoForm)  
+        self.assertEqual(response.context['usuario'], self.user)
+
+    def test_internaAlterarTipoCurso_professor(self):
+        self.client.force_login(self.user_2)
+        url = reverse_lazy('internaAlterarTipoCurso', args=[self.tipo_curso.id])
+        data = {
+            'descricao': 'teste do teste',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302) 
+        url = reverse_lazy('internaAlterarTipoCurso', args=[self.tipo_curso.id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        form = response.context['form']
+        self.assertIsInstance(form, TipoCursoForm)  
+        self.assertEqual(response.context['usuario'], self.user_2)
+    
+    @override_settings(ROOT_URLCONF='softwareCursos.urls')
+    @patch('core.views.LogErro')
+    def test_internaAlterarTipoCurso_validation_error(self, mock_log_erro):
+        data = {'descricao': '...', 'empresa': '....'}
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaAlterarTipoCurso', args=[self.tipo_curso.id])
+        with patch('core.views.TipoCursoForm') as mock_form:
+            mock_form_instance = mock_form.return_value
+            mock_form_instance.is_valid.side_effect = ValidationError('Erro de validação')
+            response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)
+        mock_log_erro.assert_called_once()
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].tags, 'error')
+        self.assertEqual(messages[0].message, 'Houve um erro. Por favor, abra um chamado.')
+    
+    @override_settings(ROOT_URLCONF='softwareCursos.urls')
+    @patch('core.views.LogErro')
+    def test_internaAlterarTipoCurso_unexpected_error(self, mock_log_erro):
+        data = {'descricao': '...', 'empresa': '....'}
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaAlterarTipoCurso', args=[self.tipo_curso.id])
+        with patch('core.views.TipoCursoForm') as mock_form:
+            mock_form.return_value.is_valid.side_effect = Exception('Erro inesperado')
+            response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)
+        mock_log_erro.assert_called_once()
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].tags, 'error')
+        self.assertEqual(messages[0].message, 'Houve um erro inesperado. Por favor, abra um chamado.')
+
+class InternaCadastrarCursoTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.responsavel = mommy.make('Responsaveis', descricao='GESTORGERAL')
+        self.responsavel_2 = mommy.make('Responsaveis', descricao='PROFESSOR')
+        self.empresa = mommy.make('Empresas')
+
+        self.user = mommy.make('CustomUsuario', responsabilidades=[self.responsavel])
+        self.user_2 = mommy.make('CustomUsuario', empresa=self.empresa, responsabilidades=[self.responsavel_2])
+
+
+    def test_internaCadastrarCurso_gestor(self):
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaCadastrarCurso')
+        data = {
+            'curso': 'Nome do Curso ou Matéria',
+            'empresa': self.empresa.id,
+            'valor': '12.00',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302) 
+        url = reverse_lazy('internaCadastrarCurso')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        form = response.context['form']
+        self.assertIsInstance(form, CursosForm)  
+        self.assertEqual(response.context['usuario'], self.user)
+
+    def test_internaCadastrarCurso_professor(self):
+        self.client.force_login(self.user_2)
+        url = reverse_lazy('internaCadastrarCurso')
+        data = {
+            'curso': 'Nome do Curso ou Matéria',
+            'empresa': self.empresa.id,
+            'valor': '12.00',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302) 
+        url = reverse_lazy('internaCadastrarCurso')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        form = response.context['form']
+        self.assertIsInstance(form, CursosForm)  
+        self.assertEqual(response.context['usuario'], self.user_2)
+    
+    @override_settings(ROOT_URLCONF='softwareCursos.urls')
+    @patch('core.views.LogErro')
+    def test_internaCadastrarCurso_validation_error(self, mock_log_erro):
+        data = {
+            'curso': '...',
+            'valor': '...',
+            'externo': '...',
+            'tipoCurso': '...',
+            'resumo': '...',
+            'empresa': '...',
+        }
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaCadastrarCurso')
+        with patch('core.views.CursosForm') as mock_form:
+            mock_form_instance = mock_form.return_value
+            mock_form_instance.is_valid.side_effect = ValidationError('Erro de validação')
+            response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)
+        mock_log_erro.assert_called_once()
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].tags, 'error')
+        self.assertEqual(messages[0].message, 'Houve um erro. Por favor, abra um chamado.')
+    
+    @override_settings(ROOT_URLCONF='softwareCursos.urls')
+    @patch('core.views.LogErro')
+    def test_internaCadastrarCurso_unexpected_error(self, mock_log_erro):
+        data = {
+            'curso': '...',
+            'valor': '...',
+            'externo': '...',
+            'tipoCurso': '...',
+            'resumo': '...',
+            'empresa': '...',
+        }
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaCadastrarCurso')
+        with patch('core.views.CursosForm') as mock_form:
+            mock_form.return_value.is_valid.side_effect = Exception('Erro inesperado')
+            response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)
+        mock_log_erro.assert_called_once()
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].tags, 'error')
+        self.assertEqual(messages[0].message, 'Houve um erro inesperado. Por favor, abra um chamado.')
+
+class InternaAlterarCursoTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.responsavel = mommy.make('Responsaveis', descricao='GESTORGERAL')
+        self.responsavel_2 = mommy.make('Responsaveis', descricao='PROFESSOR')
+        self.empresa = mommy.make('Empresas')
+        self.curso = mommy.make('Cursos', empresa=self.empresa)
+
+        self.user = mommy.make('CustomUsuario', responsabilidades=[self.responsavel])
+        self.user_2 = mommy.make('CustomUsuario', empresa=self.empresa, responsabilidades=[self.responsavel_2])
+
+    def test_internaAlterarCurso_gestor(self):
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaAlterarCurso', args=[self.curso.id])
+        data = {
+            'curso': 'Nome do Curso ou Matéria',
+            'empresa': self.empresa.id,
+            'valor': '12.00',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302) 
+        url = reverse_lazy('internaAlterarCurso', args=[self.curso.id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        form = response.context['form']
+        self.assertIsInstance(form, CursosForm)  
+        self.assertEqual(response.context['usuario'], self.user)
+
+    def test_internaAlterarCurso_professor(self):
+        self.client.force_login(self.user_2)
+        url = reverse_lazy('internaAlterarCurso', args=[self.curso.id])
+        data = {
+            'curso': 'Nome do Curso ou Matéria',
+            'empresa': self.empresa.id,
+            'valor': '12.00',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302) 
+        url = reverse_lazy('internaAlterarCurso', args=[self.curso.id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        form = response.context['form']
+        self.assertIsInstance(form, CursosForm)  
+        self.assertEqual(response.context['usuario'], self.user_2)
+    
+    @override_settings(ROOT_URLCONF='softwareCursos.urls')
+    @patch('core.views.LogErro')
+    def test_internaAlterarCurso_validation_error(self, mock_log_erro):
+        data = {
+            'curso': '...',
+            'valor': '...',
+            'externo': '...',
+            'tipoCurso': '...',
+            'resumo': '...',
+            'empresa': '...',
+        }
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaAlterarCurso', args=[self.curso.id])
+        with patch('core.views.CursosForm') as mock_form:
+            mock_form_instance = mock_form.return_value
+            mock_form_instance.is_valid.side_effect = ValidationError('Erro de validação')
+            response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)
+        mock_log_erro.assert_called_once()
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].tags, 'error')
+        self.assertEqual(messages[0].message, 'Houve um erro. Por favor, abra um chamado.')
+    
+    @override_settings(ROOT_URLCONF='softwareCursos.urls')
+    @patch('core.views.LogErro')
+    def test_internaAlterarCurso_unexpected_error(self, mock_log_erro):
+        data = {
+            'curso': '...',
+            'valor': '...',
+            'externo': '...',
+            'tipoCurso': '...',
+            'resumo': '...',
+            'empresa': '...',
+        }
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaAlterarCurso', args=[self.curso.id])
+        with patch('core.views.CursosForm') as mock_form:
+            mock_form.return_value.is_valid.side_effect = Exception('Erro inesperado')
+            response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)
+        mock_log_erro.assert_called_once()
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].tags, 'error')
+        self.assertEqual(messages[0].message, 'Houve um erro inesperado. Por favor, abra um chamado.')
+
+class InternaCadastrarCapituloTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.responsavel = mommy.make('Responsaveis', descricao='GESTORGERAL')
+        self.responsavel_2 = mommy.make('Responsaveis', descricao='PROFESSOR')
+        self.empresa = mommy.make('Empresas')
+        self.curso = mommy.make('Cursos', empresa=self.empresa)
+
+        self.user = mommy.make('CustomUsuario', responsabilidades=[self.responsavel])
+        self.user_2 = mommy.make('CustomUsuario', empresa=self.empresa, responsabilidades=[self.responsavel_2])
+
+
+    def test_internaCadastrarCapitulo_gestor(self):
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaCadastrarCapitulo')
+        data = {
+            'capitulo': 'Capítulo',
+            'objetivo': 'Objetivo',
+            'curso': self.curso.id,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302) 
+        url = reverse_lazy('internaCadastrarCapitulo')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        form = response.context['form']
+        self.assertIsInstance(form, CapitulosForm)  
+        self.assertEqual(response.context['usuario'], self.user)
+
+    def test_internaCadastrarCapitulo_professor(self):
+        self.client.force_login(self.user_2)
+        url = reverse_lazy('internaCadastrarCapitulo')
+        data = {
+            'capitulo': 'Capítulo',
+            'objetivo': 'Objetivo',
+            'curso': self.curso.id,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302) 
+        url = reverse_lazy('internaCadastrarCapitulo')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        form = response.context['form']
+        self.assertIsInstance(form, CapitulosForm)  
+        self.assertEqual(response.context['usuario'], self.user_2)
+    
+    @override_settings(ROOT_URLCONF='softwareCursos.urls')
+    @patch('core.views.LogErro')
+    def test_internaCadastrarCapitulo_validation_error(self, mock_log_erro):
+        data = {
+            'capitulo': '...',
+            'objetivo': '...',
+            'curso': '...',
+        }
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaCadastrarCapitulo')
+        with patch('core.views.CapitulosForm') as mock_form:
+            mock_form_instance = mock_form.return_value
+            mock_form_instance.is_valid.side_effect = ValidationError('Erro de validação')
+            response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)
+        mock_log_erro.assert_called_once()
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].tags, 'error')
+        self.assertEqual(messages[0].message, 'Houve um erro. Por favor, abra um chamado.')
+    
+    @override_settings(ROOT_URLCONF='softwareCursos.urls')
+    @patch('core.views.LogErro')
+    def test_internaCadastrarCapitulo_unexpected_error(self, mock_log_erro):
+        data = {
+            'capitulo': '...',
+            'objetivo': '...',
+            'curso': '...',
+        }
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaCadastrarCapitulo')
+        with patch('core.views.CapitulosForm') as mock_form:
+            mock_form.return_value.is_valid.side_effect = Exception('Erro inesperado')
+            response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)
+        mock_log_erro.assert_called_once()
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].tags, 'error')
+        self.assertEqual(messages[0].message, 'Houve um erro inesperado. Por favor, abra um chamado.')
+
+
+class InternaAlterarCapituloTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.responsavel = mommy.make('Responsaveis', descricao='GESTORGERAL')
+        self.responsavel_2 = mommy.make('Responsaveis', descricao='PROFESSOR')
+        self.empresa = mommy.make('Empresas')
+        self.curso = mommy.make('Cursos', empresa=self.empresa)
+        self.capitulo = mommy.make('capitulos', curso=self.curso)
+
+        self.user = mommy.make('CustomUsuario', responsabilidades=[self.responsavel])
+        self.user_2 = mommy.make('CustomUsuario', empresa=self.empresa, responsabilidades=[self.responsavel_2])
+
+    def test_internaAlterarCapitulo_gestor(self):
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaAlterarCapitulo', args=[self.capitulo.id])
+        data = {
+            'capitulo': 'Capítulo',
+            'objetivo': 'Objetivo',
+            'curso': self.curso.id,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302) 
+        url = reverse_lazy('internaAlterarCapitulo', args=[self.capitulo.id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        form = response.context['form']
+        self.assertIsInstance(form, CapitulosForm)  
+        self.assertEqual(response.context['usuario'], self.user)
+
+    def test_internaAlterarCapitulo_professor(self):
+        self.client.force_login(self.user_2)
+        url = reverse_lazy('internaAlterarCapitulo', args=[self.capitulo.id])
+        data = {
+            'capitulo': 'Capítulo',
+            'objetivo': 'Objetivo',
+            'curso': self.curso.id,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302) 
+        url = reverse_lazy('internaAlterarCapitulo', args=[self.capitulo.id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        form = response.context['form']
+        self.assertIsInstance(form, CapitulosForm)  
+        self.assertEqual(response.context['usuario'], self.user_2)
+    
+    @override_settings(ROOT_URLCONF='softwareCursos.urls')
+    @patch('core.views.LogErro')
+    def test_internaAlterarCapitulo_validation_error(self, mock_log_erro):
+        data = {
+            'capitulo': '...',
+            'objetivo': '...',
+            'curso': '...',
+        }
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaAlterarCapitulo', args=[self.capitulo.id])
+        with patch('core.views.CapitulosForm') as mock_form:
+            mock_form_instance = mock_form.return_value
+            mock_form_instance.is_valid.side_effect = ValidationError('Erro de validação')
+            response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)
+        mock_log_erro.assert_called_once()
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].tags, 'error')
+        self.assertEqual(messages[0].message, 'Houve um erro. Por favor, abra um chamado.')
+    
+    @override_settings(ROOT_URLCONF='softwareCursos.urls')
+    @patch('core.views.LogErro')
+    def test_internaAlterarCapitulo_unexpected_error(self, mock_log_erro):
+        data = {
+            'capitulo': '...',
+            'objetivo': '...',
+            'curso': '...',
+        }
+        self.client.force_login(self.user)
+        url = reverse_lazy('internaAlterarCapitulo', args=[self.capitulo.id])
+        with patch('core.views.CapitulosForm') as mock_form:
+            mock_form.return_value.is_valid.side_effect = Exception('Erro inesperado')
+            response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)
+        mock_log_erro.assert_called_once()
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].tags, 'error')
+        self.assertEqual(messages[0].message, 'Houve um erro inesperado. Por favor, abra um chamado.')
