@@ -1165,14 +1165,14 @@ def internaCadastrarApostila(request):
     responsabilidades = obter_responsabilidades_usuario(usuario)
     try:
         if request.method == 'POST':
-            form = ApostilasForm(user=request.user, data=request.POST, files=request.FILES)
+            form = ApostilasForm(request.user, request.POST, request.FILES)
             if form.is_valid():
                 instance = form.save(commit=False)
                 instance.save()
                 messages.success(request, 'A apostila foi criada com sucesso!')
                 return redirect('internaCadastrarApostila')
         else:
-            form = ApostilasForm(user=request.user)
+            form = ApostilasForm(request.user)
         paginaAtual = {'nome': 'Cadastrar Apostila'}
         context = {
             'form': form,
