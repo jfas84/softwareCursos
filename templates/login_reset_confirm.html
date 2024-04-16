@@ -24,8 +24,8 @@
                                         <img src="{% static 'assets/img/logo.png' %}" alt="" height="80">
                                     </a>
                                 </div>      
-                                <h2>Acesse</h2>
-                                <p>Entre com seu e-mail e senha para logar.</p>
+                                <h2 class="text-center">Digite a nova senha</h2>
+                                <p class="text-center">Por favor, informe sua nova senha duas vezes para que possamos verificar se você a digitou corretamente.</p>
                             </div>
                             <form method="post">
                                 {% csrf_token %}
@@ -33,14 +33,12 @@
                                 {% buttons %}
                                 <div class="col-12 mt-4">
                                     <div class="mb-4">
-                                        <button class="btn btn-secondary w-100">Entrar</button>
-                                    </div>
-                                    <div class="mb-4">
-                                        <a href="{% url 'password_reset' %}" class="btn btn-warning w-100">Recuperar Senha</a>
+                                        <button class="btn btn-secondary w-100">Cadastrar Nova Senha</button>
                                     </div>
                                 </div>
                                 {% endbuttons %}
                             </form>
+                            {% comment %}
                             <!-- <div class="col-12 mb-4">
                                 <div class="">
                                     <div class="seperator">
@@ -79,9 +77,10 @@
 
                             <div class="col-12">
                                 <div class="text-center">
-                                    <p class="mb-0">Não está cadastrado?<a href="{% url 'externaCadastro' %}" class="text-warning"> Cadastre-se</a></p>
+                                    <p class="mb-0">Não está cadastrado?<a href="#" class="text-warning"> Cadastre-se</a></p>
                                 </div>
                             </div>
+                            {% endcomment %}
                             
                         </div>
                         

@@ -265,7 +265,7 @@
 
                     
                     {% if request.resolver_match.url_name == 'internaTableauGeral' %}
-                    <p>Ainda fazer</p>
+                    {% include 'internas/quadro-dash.html' %}
 
                     {% elif request.resolver_match.url_name == 'internaCadastroInterno' or request.resolver_match.url_name == 'internaImportarUsuarios' or request.resolver_match.url_name == 'internaCadastrarEmpresas' %}
                         {% include 'includes/dashCadastros.html' %}

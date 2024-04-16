@@ -56,35 +56,35 @@ def externaIndex(request):
 
     precos = [
         {
-            'titulo': '12 meses',
-            'de': '29,99',
-            'por': '20,99',
-            'antecipado_de': '359,88',
-            'antecipado_por': '251,88',
+            'titulo': 'Até 200 alunos',
+            'de': '6.000,00',
+            'por': '5.000,00',
+            'atualização_anual': '100,00',
+            'mensagem': 'Não há mensalidade',
             'class': 'table wow fadeInLeft',
         },
         {
-            'titulo': '24 meses',
-            'de': '29,99',
-            'por': '17,99',
-            'antecipado_de': '719,76',
-            'antecipado_por': '431,76',
+            'titulo': 'De 201 até 400 alunos',
+            'de': '12.000,00',
+            'por': '8.000,00',
+            'atualização_anual': '100,00',
+            'mensagem': 'Não há mensalidade',
             'id': 'active-tb',
             'class': 'table wow fadeInUp',
         },
         {
-            'titulo': '36 meses',
-            'de': '29,99',
-            'por': '14,99',
-            'antecipado_de': '1.079,64',
-            'antecipado_por': '539,64',
+            'titulo': 'Acima de 401 alunos',
+            'de': '18.000,00',
+            'por': '13.000,00',
+            'atualização_anual': '100,00',
+            'mensagem': 'Não há mensalidade',
             'class': 'table wow fadeInRight',
 
         }
     ]
     
     context = {
-        'title': "Software de Gestão Condominial",
+        'title': "Software de Gestão Escolar",
         'precos': precos,
     }
     
@@ -162,12 +162,15 @@ def internaTableauGeral(request):
         else:
             percentualEmpresaMes = 0
         usuarios = CustomUsuario.objects.all().count()
+        cursos = Cursos.objects.all().count()
+        alunos = CustomUsuario.objects.filter(responsabilidades__descricao='ALUNO').count()
         context = {
         'title': "Meu Condomínio",
         'paginaAtual': paginaAtual,
         'usuario': usuario,
         'empresas': empresas,
-        'usuarios': usuarios,
+        'cursos': cursos,
+        'alunos': alunos,
         'percentualEmpresaMes': percentualEmpresaMes,
         'responsabilidades': responsabilidades,
         }
