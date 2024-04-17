@@ -812,7 +812,7 @@ def internaCadastrarTipoCurso(request):
                 if any(responsabilidade in acesso for responsabilidade in responsabilidades):
                     instance.empresa = usuario.empresa
                 instance.save()
-                messages.success(request, 'A turma foi criada com sucesso!')
+                messages.success(request, 'O Tipo de Curso foi criado com sucesso!')
                 return redirect('internaCadastrarTipoCurso')
         else:
             form = TipoCursoForm(user=request.user)
@@ -859,7 +859,7 @@ def internaAlterarTipoCurso(request, id):
                 if any(responsabilidade in acesso for responsabilidade in responsabilidades):
                     instance.empresa = usuario.empresa
                 instance.save()
-                messages.success(request, 'A turma foi alterada com sucesso!')
+                messages.success(request, 'O Tipo de Curso foi alterado com sucesso!')
                 return redirect('internaListarTiposCurso')
         else:
             form = TipoCursoForm(user=request.user, instance=instancia)
