@@ -165,7 +165,7 @@ def internaTableauGeral(request):
         cursos = Cursos.objects.all().count()
         alunos = CustomUsuario.objects.filter(responsabilidades__descricao='ALUNO').count()
         context = {
-        'title': "Meu Condomínio",
+        'title': "Minha Escola",
         'paginaAtual': paginaAtual,
         'usuario': usuario,
         'empresas': empresas,
@@ -173,19 +173,31 @@ def internaTableauGeral(request):
         'alunos': alunos,
         'percentualEmpresaMes': percentualEmpresaMes,
         'responsabilidades': responsabilidades,
+        'acesso': acesso,
         }
-    else:
+    elif any(responsabilidade in acesso for responsabilidade in responsabilidades):
         empresas = 0
         percentualEmpresaMes = 0
         usuarios = CustomUsuario.objects.all().count()
+        cursos = Cursos.objects.filter(empresa=usuario.empresa).count()
+        alunos = CustomUsuario.objects.filter(empresa=usuario.empresa, responsabilidades__descricao='ALUNO').count()
         context = {
-        'title': "Meu Condomínio",
+        'title': "Minha Escola",
         'paginaAtual': paginaAtual,
         'usuario': usuario,
         'empresas': empresas,
+        'cursos': cursos,
+        'alunos': alunos,
         'usuarios': usuarios,
         'percentualEmpresaMes': percentualEmpresaMes,
         'responsabilidades': responsabilidades,
+        'acesso': True,
+        }
+    else:
+        context = {
+        'title': "Minha Escola",
+        'paginaAtual': paginaAtual,
+        'usuario': usuario,
         }
 
     return render(request, 'internas/dash.html', context)
