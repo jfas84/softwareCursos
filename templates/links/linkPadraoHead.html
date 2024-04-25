@@ -39,10 +39,7 @@
 <link href="{% static 'src/assets/css/light/apps/invoice-preview.css' %}" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" type="text/css" href="{% static 'src/assets/css/light/elements/alert.css'%}">
 
-<link href="{% static 'src/plugins/src/fullcalendar/fullcalendar.min.css' %}" rel="stylesheet" type="text/css" />
-<link href="{% static 'src/plugins/css/light/fullcalendar/custom-fullcalendar.css' %}" rel="stylesheet" type="text/css" />
 <link href="{% static 'src/assets/css/light/components/modal.css' %}" rel="stylesheet" type="text/css" />
-<link href="{% static 'src/plugins/css/dark/fullcalendar/custom-fullcalendar.css' %}" rel="stylesheet" type="text/css" />
 <link href="{% static 'src/assets/css/light/components/list-group.css' %}" rel="stylesheet" type="text/css">
 <link href="{% static 'src/assets/css/light/users/user-profile.css' %}" rel="stylesheet" type="text/css" />
 
@@ -71,11 +68,4 @@
       height: 100%;
     }
   </style>
-{% endif  %}
-{% if request.resolver_match.url_name == 'dashReservas' %}
-<style>
-    .fc--button {
-    display: none !important;
-    }
-   </style> 
 {% endif  %}

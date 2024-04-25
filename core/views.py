@@ -2289,7 +2289,7 @@ def internaCadastrarFrequenciaAula(request, id):
 @responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR', 'ALUNO')
 def internaAulaAbrir(request, id):
     """
-    Essa função mostra os temas da aula que foi aberta e abaixo de cada tema 
+    Essa função mostra os temas da aula que foram abertas e abaixo de cada tema 
     temos as vídeo aulas
     """
     usuario = request.user

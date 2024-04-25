@@ -5,7 +5,9 @@
     {% for dado in dados %}
     <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 mx-auto">
         <div class="card">
+            {% if dado.imagem.url %}
             <img src="{{ dado.imagem.url }}" class="card-img-top" alt="...">
+            {% endif %}
             <div class="card-body">
                 <h5 class="card-title mb-3">{{dado.curso}}</h5>
                 <p class="card-text">{{dado.resumo}}</p>
@@ -71,10 +73,8 @@
       </div>
 
       <div id="default_{{dado.id}}" class="collapse" aria-labelledby="{{dado.id}}" data-bs-parent="#toggleAccordion">
-        <div class="card-body">
-              <p class="">
-                {{dado.objetivo}}
-              </p> 
+        <div class="card-body" style="overflow: auto;">
+                <p style="white-space: pre-wrap;">{{dado.objetivo}}</p>
               <a href="{% url 'internaAlterarAula' dado.id %}" class="btn btn-warning mt-4">Alterar</a>
               <a href="{% url 'internaAulaAbrir' dado.id %}" class="btn btn-primary mt-4">Abrir</a>
               {% if dado.id in frequencias %}
@@ -102,10 +102,8 @@
     </div>
 
     <div id="default_{{dado.id}}" class="collapse" aria-labelledby="{{dado.id}}" data-bs-parent="#toggleAccordion">
-    <div class="card-body">
-            <p class="">
-            {{dado.texto}}
-            </p>
+    <div class="card-body" >
+            <p style="white-space: pre-wrap;">{{dado.texto}}</p>
             {% for videoAula in videoAulas %}
             {% if videoAula.tema.id == dado.id %}
             <div class="container-fluid mt-5">
