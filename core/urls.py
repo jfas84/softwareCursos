@@ -1,6 +1,6 @@
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
-from .views import CustomPasswordResetView, CustomPasswordResetConfirmView
+from .views import CustomPasswordResetView, CustomPasswordResetConfirmView, serve_video
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
 from core import views
@@ -93,6 +93,7 @@ urlpatterns = [
     path('tableau/matricula/curso-materia/selecao-alunos/<int:id>/', login_required(views.internaListarAlunosMatricula), name='internaListarAlunosMatricula'),
     path('tableau/matricular/<int:curso>/<int:aluno>/<str:tipo>/', login_required(views.internaMatricular), name='internaMatricular'),
     
+    path('video/<str:video_name>/', serve_video, name='serve_video'),
 ]
 
 urlpatterns += [

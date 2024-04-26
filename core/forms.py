@@ -377,12 +377,13 @@ class VideoAulasForm(forms.ModelForm):
                 self.fields['tema'].queryset = temasEmpresa
     class Meta:
         model = VideoAulas
-        fields = ['videoAula', 'tema', 'linkVimeo', 'idYouTube'] 
+        fields = ['videoAula', 'tema', 'linkVimeo', 'idYouTube', 'video_arquivo'] 
         labels = {
             'videoAula': 'Nome da Videoaula',
             'tema': 'Tema associado', 
             'linkVimeo': 'Link do Vimeo',
             'idYouTube': 'Id do You Tube',
+            'video_arquivo': 'Vídeo Aula',
         }
 
 class InscricoesForm(forms.ModelForm):

@@ -279,6 +279,7 @@ class VideoAulas(models.Model):
     tema = models.ForeignKey(Temas, on_delete=models.SET_NULL, null=True, blank=True)
     linkVimeo = models.URLField('Link do Vimeo', max_length=250, blank=True, null=True)
     idYouTube = models.CharField('Id do You Tube', max_length=100, blank=True, null=True)
+    video_arquivo = models.FileField('Arquivo de Vídeo', upload_to=get_file_path, blank=True, null=True)
 
     class Meta:
         verbose_name = 'Vídeo Aula'

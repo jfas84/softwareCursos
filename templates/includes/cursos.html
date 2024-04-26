@@ -106,25 +106,33 @@
     <div class="card-body" >
             <p style="white-space: pre-wrap;">{{dado.texto}}</p>
             {% for videoAula in videoAulas %}
-            {% if videoAula.tema.id == dado.id %}
-            <div class="container-fluid mt-5">
-                <div class="row">
-                  <div class="col-12 mx-auto">
-                    <p>{{videoAula.videoAula}}</p>
-                    <div id="video-container">
-                      <div class="video-wrapper">
-                        {% if videoAula.idYouTube %}
-                        <iframe src="https://www.youtube.com/embed/{{videoAula.idYouTube}}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        {% else %}
-                        <iframe src="{{videoAula.linkVimeo}}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        {% endif %}
+              {% if videoAula.tema.id == dado.id %}
+                  <div class="container-fluid mt-5">
+                      <div class="row">
+                          <div class="col-12 mx-auto">
+                              <p>{{ videoAula.videoAula }}</p>
+                              <div id="video-container">
+                                {% if videoAula.video_arquivo %}
+                                    <video id="my-video" class="video-js" controls preload="auto">
+                                      <source src="{{ videoAula.video_arquivo.url }}" type="video/mp4">
+                                      Seu navegador não suporta o elemento de vídeo.
+                                  </video>
+                                {% endif %}
+                                {% comment %}
+                                  <div class="video-wrapper">
+                                      {% if videoAula.idYouTube %}
+                                          <iframe src="https://www.youtube.com/embed/{{ videoAula.idYouTube }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                      {% elif videoAula.linkVimeo %}
+                                          <iframe src="{{ videoAula.linkVimeo }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                      {% endif %}
+                                  </div>{% endcomment %}
+                              </div>
+                          </div>
                       </div>
-                    </div>
                   </div>
-                </div>
-            </div>
-            {% endif %}
-            {% endfor %}
+              {% endif %}
+          {% endfor %}
+
     </div>
     </div>
 </div>

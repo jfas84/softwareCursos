@@ -1553,7 +1553,7 @@ def internaCadastrarVideoAula(request):
     responsabilidades = obter_responsabilidades_usuario(usuario)
     try:
         if request.method == 'POST':
-            form = VideoAulasForm(user=request.user, data=request.POST)
+            form = VideoAulasForm(user=request.user, data=request.POST, files=request.FILES)
             if form.is_valid():
                 instance = form.save(commit=False)
                 instance.save()
@@ -2341,3 +2341,21 @@ def internaCriarNovaNota(request, aula_id):
     # Opcional: Adiciona a nova nota ao boletim do aluno
     boletim, criado = Boletim.objects.get_or_create(aluno=aluno)
     boletim.notas.add(nova_nota)
+
+def serve_video(request, video_name):
+    video_path = os.path.join('/media', video_name)
+    
+    # Verifique se o arquivo de vídeo existe
+    if not os.path.exists(video_path):
+        print('não existe')
+        return HttpResponse(status=404)
+    
+    # Defina os cabeçalhos corretos para streaming de vídeo
+    response = HttpResponse(content_type='application/vnd.apple.mpegurl')
+    response['Content-Disposition'] = 'inline'
+    
+    # Abra o arquivo de vídeo e transmita os dados
+    with open(video_path, 'rb') as video_file:
+        response.write(video_file.read())
+    
+    return response
