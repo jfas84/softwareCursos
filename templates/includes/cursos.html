@@ -11,6 +11,7 @@
             <div class="card-body">
                 <h5 class="card-title mb-3">{{dado.curso}}</h5>
                 <p class="card-text">{{dado.resumo}}</p>
+                <a href="{% url 'checkout' dado.id %}" class="btn btn-info mt-3">Comprar</a>
                 <a href="{% url 'internaCursoAbrir' dado.id %}" class="btn btn-secondary mt-3">Abrir</a>
                 <a href="{% url 'download_apostila' dado.id %}" class="btn btn-success mt-3">Apostila</a>
             </div>

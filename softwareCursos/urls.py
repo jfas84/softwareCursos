@@ -9,6 +9,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('', include('core.urls')),
+    path('', include('pagamento.urls')),
+    path('', include('paypal.standard.ipn.urls')),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 admin.site.site_header = 'SGE Negocioteca'

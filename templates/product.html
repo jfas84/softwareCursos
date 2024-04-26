@@ -1,0 +1,45 @@
+{% extends 'internas/base-dash.html' %}
+{% load bootstrap4 %}
+{% block content %}
+{% load static %}
+<body class="layout-boxed enable-secondaryNav">
+    <!-- BEGIN LOADER -->
+    <div id="load_screen"> <div class="loader"> <div class="loader-content">
+        <div class="spinner-grow align-self-center"></div>
+    </div></div></div>
+    <!--  END LOADER -->
+<div class="main-container" id="container">
+
+    <div class="overlay"></div>
+    <div class="search-overlay"></div>
+<div id="content" class="main-content">
+    <div class="layout-px-spacing">
+
+        <div class="middle-content container-xxl p-0">
+<h1>Products</h1>
+<div class="row">
+    {% for dado in products %}
+    <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 mx-auto">
+        <div class="card">
+            {% if dado.imagem.url %}
+            <a href="{% url 'checkout' dado.id %}">
+            <img src="{{ dado.imagem.url }}" class="card-img-top" alt="...">
+            </a>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title mb-3">{{dado.curso}}</h5>
+                <p class="card-text">{{dado.valor}}</p>
+                <a href="{% url 'checkout' dado.id %}" class="btn btn-secondary mt-3">Comprar</a>
+            </div>
+        </div>  
+    </div>
+    {% endfor %}
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+{% endblock %}

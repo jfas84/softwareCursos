@@ -35,7 +35,9 @@ INSTALLED_APPS = [
     'ckeditor',
     'bootstrap_datepicker_plus',
     'ckeditor_uploader',
+    'paypal.standard.ipn',
     'core',
+    'pagamento',
 ]
 
 MIDDLEWARE = [
@@ -147,7 +149,8 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 # Verificar na documentação como chamar os arquivos static no deploy
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # usado durante a produção
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # usado durante a produção
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # usado durante a produção
+MEDIA_ROOT = '../sge.negocioteca.com.br/media/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
@@ -185,6 +188,10 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+PAYPAL_RECEIVER_EMAIL = 'sb-4rkkp29838036@business.example.com'
+PAYPAL_TEST = True
+# PAYPAL_BUY_BUTTON_IMAGE = 'https://res.cloudinary.com/the-proton-guy/image/upload/v1685882223/paypal-PhotoRoom_v9pay7.png'
 
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'internaTableauGeral'
