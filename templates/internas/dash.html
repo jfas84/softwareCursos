@@ -326,6 +326,9 @@
 
                     {% elif request.resolver_match.url_name == 'internaDadosPessoaisAtualizar' or request.resolver_match.url_name == 'internaInscreverAluno' %}
                         {% include 'includes/dashCadastros.html' %}
+
+                    {% elif request.resolver_match.url_name == 'checkout' %}
+                        {% include 'includes/venda.html' %}
                     
                     {% endif %}
 

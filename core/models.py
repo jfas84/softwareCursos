@@ -333,7 +333,8 @@ class Inscricoes(models.Model):
     usuario = models.ForeignKey(CustomUsuario, on_delete=models.CASCADE)
     curso = models.ForeignKey(Cursos, on_delete=models.CASCADE)
     pago = models.BooleanField("Pago?", default=False)
-
+    codigo_pg = models.CharField('Código Pagamento', max_length=100, null=True, blank=True)
+    
     class Meta:
         verbose_name = 'Inscrição'
         verbose_name_plural = 'Inscrições'

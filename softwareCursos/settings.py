@@ -191,6 +191,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 PAYPAL_RECEIVER_EMAIL = 'sb-4rkkp29838036@business.example.com'
 PAYPAL_TEST = True
+# PAYPAL_RECEIVER_EMAIL = 'j.fas@outlook.com'
+# PAYPAL_CLIENT_ID='ARvOFbvCnFO_k956oWYb1olOFc2BpLXfX5JYu_GkoQ2Wx7lDtAYExAUzWCbmp0769O72REN0gbgjyF30'
+# PAYPAL_CLIENT_SECRET='EBhp1EW5-jv8BToMeLcVNSyv6wVaiefxODcqQSTXiDyc2WrRdnfZgoO9fB8o3pvDgGhxmPrv_bmB_EtL'
 # PAYPAL_BUY_BUTTON_IMAGE = 'https://res.cloudinary.com/the-proton-guy/image/upload/v1685882223/paypal-PhotoRoom_v9pay7.png'
 
 LOGIN_URL = 'login'
