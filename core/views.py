@@ -59,27 +59,27 @@ def externaIndex(request):
     precos = [
         {
             'titulo': 'Até 200 alunos',
-            'de': '6.000,00',
-            'por': '5.000,00',
+            'de': '1.000,00',
+            'por': '200,00',
             'atualização_anual': '100,00',
-            'mensagem': 'Não há mensalidade',
+            'mensagem': 'Realizamos a implantação',
             'class': 'table wow fadeInLeft',
         },
         {
             'titulo': 'De 201 até 400 alunos',
-            'de': '12.000,00',
-            'por': '8.000,00',
+            'de': '3.000,00',
+            'por': '1.000,00',
             'atualização_anual': '100,00',
-            'mensagem': 'Não há mensalidade',
+            'mensagem': 'Realizamos a implantação',
             'id': 'active-tb',
             'class': 'table wow fadeInUp',
         },
         {
             'titulo': 'Acima de 401 alunos',
-            'de': '18.000,00',
-            'por': '13.000,00',
+            'de': '5.000,00',
+            'por': '2.000,00',
             'atualização_anual': '100,00',
-            'mensagem': 'Não há mensalidade',
+            'mensagem': 'Realizamos a implantação',
             'class': 'table wow fadeInRight',
 
         }
