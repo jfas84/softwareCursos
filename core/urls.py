@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from core import views
 
 urlpatterns = [
+    path('index', views.externaIndex, name='externaIndex'),
     path('', views.externaIndex, name='externaIndex'),
     path('politica-privacidade/', views.externaPrivacidade, name='externaPrivacidade'),
     path('termos-condicoes/', views.externaTermosCondicoes, name='externaTermosCondicoes'),

@@ -54,6 +54,8 @@ def obter_responsabilidades_usuario(usuario):
 
 def externaIndex(request):
 
+    dados = Cursos.objects.filter(externo=False)
+
     precos = [
         {
             'titulo': 'Até 200 alunos',
@@ -86,6 +88,7 @@ def externaIndex(request):
     context = {
         'title': "Software de Gestão Escolar",
         'precos': precos,
+        'dados': dados,
     }
     
     return render(request, 'index.html', context)

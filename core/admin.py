@@ -1,9 +1,14 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Apostilas, Aulas, Boletim, Capitulos, Cursos, CustomUsuario, FrequenciaAulas, Inscricoes, LogErro, Notas, Questoes, Responsaveis, Temas, TiposCurso, VideoAulas
+from .models import Apostilas, Aulas, Boletim, Capitulos, Cursos, CustomUsuario, Empresas, FrequenciaAulas, Inscricoes, LogErro, Notas, Questoes, Responsaveis, Temas, TiposCurso, VideoAulas
 from .forms import CustomUsuarioCreateForm, CustomUsuarioChangeForm
 from django.template.defaultfilters import slugify
 
+@admin.register(Empresas)
+class EmpresasAdmin(admin.ModelAdmin):
+    list_display = ('razaoSocial', 'cnpj', 'endereco', 'cidade', 'estado', 'email', 'comissao_percentual')
+    search_fields = ('razaoSocial', 'cnpj', 'endereco', 'cidade', 'estado', 'email')
+    list_filter = ('estado', 'dataFundacao')
 
 @admin.register(Responsaveis)
 class ResponsaveisAdmin(admin.ModelAdmin):

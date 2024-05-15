@@ -43,6 +43,7 @@ class Empresas(Base):
     contato = models.CharField('Contato', max_length=300, blank=True, null=True)
     logo = StdImageField('Logomarca', upload_to=get_file_path, variations={'thumb': (225, 225)}, null=True, blank=True)
     data = models.DateField(verbose_name="Data de Criação", auto_now_add=True)
+    comissao_percentual = models.DecimalField('Percentual de Comissão', max_digits=5, decimal_places=2, default=0)
 
 
     def __str__(self) -> str:
