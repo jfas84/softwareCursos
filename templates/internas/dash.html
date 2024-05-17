@@ -309,7 +309,7 @@
                     {% elif request.resolver_match.url_name == 'internaListarVideoAulas' or request.resolver_match.url_name == 'internaListarBoletim' or request.resolver_match.url_name == 'internaListarAlunosMatricula'  %}
                         {% include 'includes/dashListar.html' %}
 
-                    {% elif request.resolver_match.url_name == 'internaVerBoletim' %}
+                    {% elif request.resolver_match.url_name == 'internaVerBoletim' or request.resolver_match.url_name == 'internaListarComissoesMesCorrente' or request.resolver_match.url_name == 'internaListarComissoesMesSelecao' %}
                         {% include 'includes/dashListar.html' %}
 
                     {% elif request.resolver_match.url_name == 'internaDashCursosInternos' or request.resolver_match.url_name == 'internaDashCursosExternos' or request.resolver_match.url_name == 'internaCursoAbrir' or request.resolver_match.url_name == 'internaListarCursosMatricula' %}
@@ -329,6 +329,9 @@
 
                     {% elif request.resolver_match.url_name == 'checkout' %}
                         {% include 'includes/venda.html' %}
+                    
+                    {% elif request.resolver_match.url_name == 'internaListarComissoesAno' or request.resolver_match.url_name == 'internaListarComissoesMes' %}
+                        {% include 'internas/quadro-comissoes.html' %}
                     
                     {% endif %}
 

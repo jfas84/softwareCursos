@@ -2144,9 +2144,12 @@ def internaListarComissoesMesCorrente(request):
 
     if any(responsabilidade in acesso for responsabilidade in responsabilidades):
         dados = Positivador.objects.filter(Q(data_pagamento__year=ano) & Q(data_pagamento__month=mes))
+        receita_mes_atual = Positivador.objects.filter(Q(data_pagamento__year=ano) & Q(data_pagamento__month=mes)).aggregate(Sum('receita_matriz'))
+        soma_receita = receita_mes_atual['receita_matriz__sum']
     elif usuario.empresa:
         dados = Positivador.objects.filter(Q(empresa=usuario.empresa) & Q(data_pagamento__year=ano) & Q(data_pagamento__month=mes))
-
+        receita_mes_atual = Positivador.objects.filter(Q(empresa=usuario.empresa) & Q(data_pagamento__year=ano) & Q(data_pagamento__month=mes)).aggregate(Sum('receita_parceiro'))
+        soma_receita = receita_mes_atual['receita_parceiro__sum']
     if dados is None:
         dados = Positivador.objects.none()
 
@@ -2155,6 +2158,7 @@ def internaListarComissoesMesCorrente(request):
     context = {
         'title': 'Comissão Mês Atual',
         'dados': dados,
+        'soma_receita': soma_receita,
         'paginaAtual': paginaAtual,
         'usuario': usuario,
         'responsabilidades': responsabilidades,
@@ -2200,20 +2204,32 @@ def internaListarComissoesMes(request, ano):
     elif usuario.empresa:
         meses = Positivador.objects.filter(empresa=usuario.empresa, data_pagamento__year=ano).annotate(month=ExtractMonth('data_pagamento')).values_list('month', flat=True).distinct()
         meses = list(meses)
+    
+    dados_meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+    meses_str = {}
+    for mes in meses:
+        mes = mes - 1
+        meses_str[dados_meses[mes]] = mes + 1
 
     paginaAtual = {'nome': 'Comissão Mês'}
 
+    navegacao = [
+            {'nome': 'Comissão Ano', 'url': "internaListarComissoesAno"},
+        ]
+    
     context = {
         'title': 'Comissão Mês',
-        'meses': meses,
+        'ano': ano,
+        'meses_str': meses_str,
         'paginaAtual': paginaAtual,
+        'navegacao': navegacao,
         'usuario': usuario,
         'responsabilidades': responsabilidades,
     }
     return render(request, 'internas/dash.html', context)
 
 @responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
-def internaListarComissoesMesAnterior(request, ano, mes):
+def internaListarComissoesMesSelecao(request, ano, mes):
     usuario = request.user
     responsabilidades = obter_responsabilidades_usuario(usuario)
     acesso = ['GESTORGERAL', 'COLABORADORSEDE']
@@ -2225,18 +2241,27 @@ def internaListarComissoesMesAnterior(request, ano, mes):
 
     if any(responsabilidade in acesso for responsabilidade in responsabilidades):
         dados = Positivador.objects.filter(Q(data_pagamento__year=ano_selecionado) & Q(data_pagamento__month=mes_selecionado))
+        receita_mes_atual = Positivador.objects.filter(Q(data_pagamento__year=ano_selecionado) & Q(data_pagamento__month=mes_selecionado)).aggregate(Sum('receita_matriz'))
+        soma_receita = receita_mes_atual['receita_matriz__sum']
     elif usuario.empresa:
         dados = Positivador.objects.filter(Q(empresa=usuario.empresa) & Q(data_pagamento__year=ano_selecionado) & Q(data_pagamento__month=mes_selecionado))
-
+        receita_mes_atual = Positivador.objects.filter(Q(empresa=usuario.empresa) & Q(data_pagamento__year=ano_selecionado) & Q(data_pagamento__month=mes_selecionado)).aggregate(Sum('receita_parceiro'))
+        soma_receita = receita_mes_atual['receita_parceiro__sum']
     if dados is None:
         dados = Positivador.objects.none()
 
     paginaAtual = {'nome': 'Relatório de Comissão'}
+    navegacao = [
+            {'nome': 'Comissão Ano', 'url': "internaListarComissoesAno"},
+            {'nome': 'Comissão Mês', 'url': "internaListarComissoesMes", 'dados': ano},
+        ]
 
     context = {
         'title': 'Relatório de Comissão',
         'dados': dados,
+        'soma_receita': soma_receita,
         'paginaAtual': paginaAtual,
+        'navegacao': navegacao,
         'usuario': usuario,
         'responsabilidades': responsabilidades,
     }

@@ -1,0 +1,38 @@
+{% load static %}
+{% load bootstrap4 %}
+{% if request.resolver_match.url_name == 'internaListarComissoesAno' %}
+<div class="row layout-top-spacing">
+    {% for ano in anos %}
+    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+        <div class="widget widget-card-five">
+            <div class="widget-content">
+                <div class="account-box">
+                    <div class="text-center">
+                        <a href="{% url 'internaListarComissoesMes' ano %}" style="font-size: large;">{{ano}}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% elif request.resolver_match.url_name == 'internaListarComissoesMes' %}
+<div class="row layout-top-spacing">
+    {% for str, mes in meses_str.items %}
+    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+        <div class="widget widget-card-five">
+            <div class="widget-content">
+                <div class="account-box">
+                    <div class="text-center">
+                        <a href="{% url 'internaListarComissoesMesSelecao' ano mes %}" style="font-size: large;">
+                            {{str}}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+    

@@ -96,6 +96,12 @@ urlpatterns = [
     path('tableau/matricula/curso-materia/selecao-alunos/<int:id>/', login_required(views.internaListarAlunosMatricula), name='internaListarAlunosMatricula'),
     path('tableau/matricular/<int:curso>/<int:aluno>/<str:tipo>/', login_required(views.internaMatricular), name='internaMatricular'),
     
+    path('tableau/comissoes/mes-atual', login_required(views.internaListarComissoesMesCorrente), name='internaListarComissoesMesCorrente'),
+    path('tableau/comissoes/anos', login_required(views.internaListarComissoesAno), name='internaListarComissoesAno'),
+    path('tableau/comissoes/meses/<int:ano>/', login_required(views.internaListarComissoesMes), name='internaListarComissoesMes'),
+    path('tableau/comissoes/mes/<int:ano>/<int:mes>/', login_required(views.internaListarComissoesMesSelecao), name='internaListarComissoesMesSelecao'),
+
+
     path('video/<str:video_name>/', serve_video, name='serve_video'),
 ]
 
