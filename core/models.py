@@ -343,3 +343,18 @@ class Inscricoes(models.Model):
 
     def __str__(self):
         return self.usuario.nome
+    
+class Positivador(models.Model):
+    empresa = models.ForeignKey(Empresas, on_delete=models.SET_NULL, null=True, blank=True)
+    usuario = models.ForeignKey(CustomUsuario, on_delete=models.SET_NULL, null=True, blank=True)
+    curso = models.ForeignKey(Cursos, on_delete=models.SET_NULL, null=True, blank=True)
+    data_pagamento = models.DateField('Data do Pagamento', auto_now_add=True)
+    receita_parceiro = models.DecimalField('Valor da Comissão', max_digits=8, decimal_places=2, default=0)
+    receita_matriz = models.DecimalField('Receita Sede', max_digits=8, decimal_places=2, default=0)
+
+    class Meta:
+        verbose_name = 'Positivador'
+        verbose_name_plural = 'Positivador'
+
+
+

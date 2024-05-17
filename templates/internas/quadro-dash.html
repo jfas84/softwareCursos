@@ -1,7 +1,7 @@
 {% load static %}
 {% load bootstrap4 %}
 <div class="row layout-top-spacing">
-    {% if usuario.is_superuser %}
+    {% if 'GESTORGERAL' in responsabilidades or 'COLABORADORSEDE' in responsabilidades %}
     <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
         <div class="widget widget-card-five">
             <div class="widget-content">
@@ -28,6 +28,32 @@
             </div>
         </div>
     </div>
+    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+        <div class="widget widget-card-five">
+            <div class="widget-content">
+                <div class="account-box">
+
+                    <div class="info-box">
+                        <div class="icon">
+                            <span>
+                                <img src="{% static 'src/assets/img/money-bag.png' %}" alt="apartamentos">
+                            </span>
+                        </div>
+
+                        <div class="balance-info">
+                            <h6>Receita Mês Atual Sede</h6>
+                            <p>R$ {{soma_receita_matriz}}</p>
+                        </div>
+                    </div>
+
+                    <div class="card-bottom-section">
+                        <!-- <div><span class="badge badge-light-success">+ 13.6% <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></span></div> -->
+                        <a href="{% url 'internaListarCursos' %}" class="">Ver</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
         <div class="widget widget-card-five">
@@ -37,19 +63,19 @@
                     <div class="info-box">
                         <div class="icon">
                             <span>
-                                <img src="{% static 'src/assets/img/apartamentos.png' %}" alt="apartamentos">
+                                <img src="{% static 'src/assets/img/money-bag.png' %}" alt="usuarios">
                             </span>
                         </div>
 
                         <div class="balance-info">
-                            <h6>Total Cursos</h6>
-                            <p>{{cursos}}</p>
+                            <h6>Receita Mês Anterior Sede</h6>
+                            <p>R$ {{soma_receita_matriz_mes_anterior}}</p>
                         </div>
                     </div>
 
                     <div class="card-bottom-section">
                         <!-- <div><span class="badge badge-light-success">+ 13.6% <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></span></div> -->
-                        <a href="{% url 'internaListarCursos' %}" class="">Ver</a>
+                        <a href="{% url 'internaListarAlunos' %}" class="">Ver</a>
                     </div>
                 </div>
             </div>
@@ -82,8 +108,7 @@
             </div>
         </div>
     </div>
-    {% endif %}
-    {% if acesso %}
+
     <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
         <div class="widget widget-card-five">
             <div class="widget-content">
@@ -105,6 +130,62 @@
                     <div class="card-bottom-section">
                         <!-- <div><span class="badge badge-light-success">+ 13.6% <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></span></div> -->
                         <a href="{% url 'internaListarCursos' %}" class="">Ver</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% elif 'SECRETARIA' in responsabilidades or 'GESTORCURSO' in responsabilidades or 'PROFESSOR' in responsabilidades %}
+
+    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+        <div class="widget widget-card-five">
+            <div class="widget-content">
+                <div class="account-box">
+
+                    <div class="info-box">
+                        <div class="icon">
+                            <span>
+                                <img src="{% static 'src/assets/img/money-bag.png' %}" alt="apartamentos">
+                            </span>
+                        </div>
+
+                        <div class="balance-info">
+                            <h6>Receita Mês Atual</h6>
+                            <p>R$ {{soma_receita_parceiro}}</p>
+                        </div>
+                    </div>
+
+                    <div class="card-bottom-section">
+                        <!-- <div><span class="badge badge-light-success">+ 13.6% <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></span></div> -->
+                        <a href="{% url 'internaListarCursos' %}" class="">Ver</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+        <div class="widget widget-card-five">
+            <div class="widget-content">
+                <div class="account-box">
+
+                    <div class="info-box">
+                        <div class="icon">
+                            <span>
+                                <img src="{% static 'src/assets/img/money-bag.png' %}" alt="usuarios">
+                            </span>
+                        </div>
+
+                        <div class="balance-info">
+                            <h6>Receita Mês Anterior</h6>
+                            <p>R$ {{soma_receita_parceiro_mes_anterior}}</p>
+                        </div>
+                    </div>
+
+                    <div class="card-bottom-section">
+                        <!-- <div><span class="badge badge-light-success">+ 13.6% <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></span></div> -->
+                        <a href="{% url 'internaListarAlunos' %}" class="">Ver</a>
                     </div>
                 </div>
             </div>
@@ -137,5 +218,60 @@
             </div>
         </div>
     </div>
+
+    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+        <div class="widget widget-card-five">
+            <div class="widget-content">
+                <div class="account-box">
+
+                    <div class="info-box">
+                        <div class="icon">
+                            <span>
+                                <img src="{% static 'src/assets/img/apartamentos.png' %}" alt="apartamentos">
+                            </span>
+                        </div>
+
+                        <div class="balance-info">
+                            <h6>Total Cursos</h6>
+                            <p>{{cursos}}</p>
+                        </div>
+                    </div>
+
+                    <div class="card-bottom-section">
+                        <!-- <div><span class="badge badge-light-success">+ 13.6% <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></span></div> -->
+                        <a href="{% url 'internaListarCursos' %}" class="">Ver</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+        <div class="widget widget-card-five">
+            <div class="widget-content">
+                <div class="account-box">
+
+                    <div class="info-box">
+                        <div class="icon">
+                            <span>
+                                <img src="{% static 'src/assets/img/apartamentos.png' %}" alt="apartamentos">
+                            </span>
+                        </div>
+
+                        <div class="balance-info">
+                            <h6>Total Matrículas</h6>
+                            <p>{{matriculas}}</p>
+                        </div>
+                    </div>
+
+                    <div class="card-bottom-section">
+                        <!-- <div><span class="badge badge-light-success">+ 13.6% <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></span></div> -->
+                        <a href="{% url 'internaDashCursosExternos' %}" class="">Ver</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     {% endif %}
+
 </div>

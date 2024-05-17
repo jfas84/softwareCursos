@@ -1,5 +1,7 @@
-from django.shortcuts import render
-from core.models import Cursos, CustomUsuario, Inscricoes
+from decimal import Decimal
+from django.http import HttpResponseBadRequest
+from django.shortcuts import get_object_or_404, redirect, render
+from core.models import Cursos, CustomUsuario, Empresas, Inscricoes, Positivador, Responsaveis
 from paypal.standard.forms import PayPalPaymentsForm
 from django.conf import settings
 import uuid
@@ -49,9 +51,21 @@ def CheckOut(request, product_id):
     return render(request, 'internas/dash.html', context)
 
 def PaymentSuccessful(request, product_id, usuario_id):
-    usuario = CustomUsuario.objects.get(id=usuario_id)
-    product = Cursos.objects.get(id=product_id)
     payer_id = request.GET.get('PayerID')
+    usuario = get_object_or_404(CustomUsuario, id=usuario_id)
+    product = get_object_or_404(Cursos, id=product_id)
+    empresa = get_object_or_404(Empresas, id=product.empresa.id)
+    valor_produto = float(product.valor)
+    comissao_percentual = float(empresa.comissao_percentual)
+
+    receita_parceiro = valor_produto * comissao_percentual
+    tributos_parceiro = receita_parceiro * 0.1733
+    receita_parceiro_liquida = receita_parceiro - tributos_parceiro
+    
+    receita_matriz = valor_produto - receita_parceiro
+    tributos_matriz = receita_matriz * 0.1733
+    receita_matriz_liquida = receita_matriz - tributos_matriz
+
     if payer_id:
         matricula = Inscricoes.objects.create(
                         usuario=usuario,
@@ -59,22 +73,28 @@ def PaymentSuccessful(request, product_id, usuario_id):
                         pago=True,
                         codigo_pg=payer_id,
                     )
+        positivador = Positivador.objects.create(
+                        empresa = empresa,
+                        usuario = usuario,
+                        curso = product,
+                        receita_parceiro = Decimal(receita_parceiro_liquida),
+                        receita_matriz = Decimal(receita_matriz_liquida),
+                        )
+        if not usuario.aprovado:
+            usuario.aprovado = True
+            usuario.save()
+        if not usuario.empresa:
+            usuario.empresa = empresa
+            aluno_responsabilidade = get_object_or_404(Responsaveis, descricao='ALUNO')
+            usuario.responsabilidades.add(aluno_responsabilidade)
+            usuario.save()
+
         messages.success(request, 'Aluno Matriculado, acesse seu curso.')
     else:
         messages.warning(request, 'Infelizmente não obtivemos o retorno do paypal com os dados do seu pagamento, pedimos antecipadamente desculpas, abra um chamado informando seus dados e o ocorrido que iremos verificar e liberar o seu acesso.')
-    paginaAtual = {'nome': 'Compra Realizada'}
-    navegacao = [
-                    {'nome': 'Listar Cursos', 'url': "internaDashCursosExternos"},
-                ]
-    context = {
-        'usuario': usuario,
-        'title': "Carrinho de Compras",
-        'paginaAtual': paginaAtual,
-        'navegacao': navegacao,
-        'product': product,        
-    }
 
-    return render(request, 'payment-success.html', context)
+    return redirect('internaTableauGeral')
+
 
 def paymentFailed(request, product_id, usuario_id):
     usuario = CustomUsuario.objects.get(id=usuario_id)

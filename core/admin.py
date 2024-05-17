@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Apostilas, Aulas, Boletim, Capitulos, Cursos, CustomUsuario, Empresas, FrequenciaAulas, Inscricoes, LogErro, Notas, Questoes, Responsaveis, Temas, TiposCurso, VideoAulas
+from .models import Apostilas, Aulas, Boletim, Capitulos, Cursos, CustomUsuario, Empresas, FrequenciaAulas, Inscricoes, LogErro, Notas, Positivador, Questoes, Responsaveis, Temas, TiposCurso, VideoAulas
 from .forms import CustomUsuarioCreateForm, CustomUsuarioChangeForm
 from django.template.defaultfilters import slugify
 
@@ -147,3 +147,9 @@ class InscricoesAdmin(admin.ModelAdmin):
     list_filter = ('curso', 'pago')
     search_fields = ('usuario__nome', 'curso__curso')
     raw_id_fields = ('usuario', 'curso')
+
+@admin.register(Positivador)
+class PositivadorAdmin(admin.ModelAdmin):
+    list_display = ['empresa', 'usuario', 'curso', 'data_pagamento', 'receita_parceiro', 'receita_matriz']
+    list_filter = ['data_pagamento']
+    search_fields = ['empresa__razaoSocial', 'usuario__nome', 'curso__curso']

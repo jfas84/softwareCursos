@@ -124,10 +124,12 @@
                     </div>
 
                     <div class="row">
-
+                        {% if request.resolver_match.url_name == 'descricaoProduto' %}
+                            {% include 'externas/descricao-produto.html' %}
+                        {% else %}
                         {% for dado in dados %}
                         <div class="col-xxl-2 col-xl-3 col-lg-3 col-md-4 col-sm-6 mb-4 card-container">
-                            <a class="card style-6" href="./app-ecommerce-product.html">
+                            <a class="card style-6" href="{% url 'descricaoProduto' dado.id %}">
                                 <span class="badge badge-primary">Novo</span>
                                 <img src="{{ dado.imagem.url }}" class="card-img-top" alt="..." width="180" height="auto">
                                 <div class="card-footer">
@@ -145,8 +147,8 @@
                                 </div>
                             </a>
                         </div>
-
                         {% endfor %}
+                        {% endif %}
                     </div>
 
                 </div>

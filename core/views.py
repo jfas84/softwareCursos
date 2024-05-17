@@ -2,7 +2,8 @@ from datetime import timezone
 import datetime
 from pprint import pprint
 from django.db import transaction
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Sum
+from django.db.models.functions import ExtractYear, ExtractMonth
 from django.core.mail import send_mail
 from django.contrib.auth import authenticate, login
 from django.shortcuts import get_object_or_404, render, redirect
@@ -11,7 +12,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.forms import ValidationError
 from .decorators import responsabilidade_required
-from .models import Apostilas, Aulas, Boletim, Capitulos, Cursos, CustomUsuario, Empresas, FrequenciaAulas, Inscricoes, LogErro, Notas, Questoes, Temas, TiposCurso, Turmas, VideoAulas
+from .models import Apostilas, Aulas, Boletim, Capitulos, Cursos, CustomUsuario, Empresas, FrequenciaAulas, Inscricoes, LogErro, Notas, Positivador, Questoes, Temas, TiposCurso, Turmas, VideoAulas
 from .forms import ApostilasForm, AulasForm, CapitulosForm, CursosForm, CustomAlunoForm, CustomProfessorForm, CustomUsuarioChangeForm, CustomUsuarioForm, EmpresasForm, InscricoesForm, QuestoesForm, RegistrationForm, TemasForm, TipoCursoForm, TurmasForm, UploadCSVUsuariosForm, VideoAulasForm
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.http import HttpResponse
@@ -54,7 +55,7 @@ def obter_responsabilidades_usuario(usuario):
 
 def externaIndex(request):
 
-    dados = Cursos.objects.filter(externo=False)
+    dados = Cursos.objects.filter(externo=True)
 
     precos = [
         {
@@ -91,6 +92,18 @@ def externaIndex(request):
         'dados': dados,
     }
     
+    return render(request, 'index.html', context)
+
+def descricaoProduto(request, product_id):
+    product = Cursos.objects.get(id=product_id)
+    valorNormal = round(float(product.valor) / 0.6, 2)
+    paginaAtual = {'nome': 'Curso'}
+    context = {
+        'title': "Carrinho de Compras",
+        'paginaAtual': paginaAtual,
+        'product': product,
+        'valorNormal': valorNormal,
+    }
     return render(request, 'index.html', context)
 
 def externaPrivacidade(request):
@@ -139,6 +152,27 @@ def externaCadastro(request):
     
     return render(request, 'cadastro.html', context)
 
+def externaCadastroProduto(request, id):
+    produto = Cursos.objects.get(id=id)
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = CustomUsuario(username=form.cleaned_data['email'])
+            form = RegistrationForm(request.POST, instance=user)
+            user = form.save()
+            authenticated_user = authenticate(username=user.username, password=form.cleaned_data['password1'])
+            login(request, authenticated_user)
+            return redirect(reverse('checkout', args=[produto.id]))
+    else:
+        form = RegistrationForm()
+    
+    context = {
+        'form': form,
+        'title': "Cadastro",
+    }
+    
+    return render(request, 'cadastro.html', context)
+
 # Internas acesso geral
 def internaTableauGeral(request):
     """
@@ -155,6 +189,16 @@ def internaTableauGeral(request):
     hoje = datetime.date.today()
     mes = hoje.month
     ano = hoje.year
+
+    if hoje.month == 1:  # Se o mês atual for janeiro
+        data_mes_anterior = hoje.replace(year=hoje.year - 1, month=12)
+    else:
+        data_mes_anterior = hoje.replace(month=hoje.month - 1)
+
+    # Extrai o ano e o mês do mês anterior
+    ano_mes_anterior = data_mes_anterior.year
+    mes_anterior = data_mes_anterior.month
+
     paginaAtual = {'nome': 'Minha escola'}
 
     if any(responsabilidade in acesso_geral for responsabilidade in responsabilidades):
@@ -167,16 +211,26 @@ def internaTableauGeral(request):
         usuarios = CustomUsuario.objects.all().count()
         cursos = Cursos.objects.all().count()
         alunos = CustomUsuario.objects.filter(responsabilidades__descricao='ALUNO').count()
+
+        receita_mes_atual = Positivador.objects.filter(Q(data_pagamento__year=ano) & Q(data_pagamento__month=mes)).aggregate(Sum('receita_matriz'))
+        soma_receita_matriz = receita_mes_atual['receita_matriz__sum']
+
+        receita_mes_anterior = Positivador.objects.filter(Q(data_pagamento__year=ano_mes_anterior) & Q(data_pagamento__month=mes_anterior)).aggregate(Sum('receita_matriz'))
+        soma_receita_matriz_mes_anterior = receita_mes_anterior['receita_matriz__sum']
+        if soma_receita_matriz_mes_anterior == None:
+            soma_receita_matriz_mes_anterior = 0
+
         context = {
         'title': "Minha Escola",
         'paginaAtual': paginaAtual,
+        'soma_receita_matriz': soma_receita_matriz,
+        'soma_receita_matriz_mes_anterior': soma_receita_matriz_mes_anterior,
         'usuario': usuario,
         'empresas': empresas,
         'cursos': cursos,
         'alunos': alunos,
         'percentualEmpresaMes': percentualEmpresaMes,
         'responsabilidades': responsabilidades,
-        'acesso': acesso,
         }
     elif any(responsabilidade in acesso for responsabilidade in responsabilidades):
         empresas = 0
@@ -184,23 +238,36 @@ def internaTableauGeral(request):
         usuarios = CustomUsuario.objects.all().count()
         cursos = Cursos.objects.filter(empresa=usuario.empresa).count()
         alunos = CustomUsuario.objects.filter(empresa=usuario.empresa, responsabilidades__descricao='ALUNO').count()
+        
+        receita_mes_atual = Positivador.objects.filter(Q(empresa=usuario.empresa) & Q(data_pagamento__year=ano) & Q(data_pagamento__month=mes)).aggregate(Sum('receita_parceiro'))
+        soma_receita_parceiro = receita_mes_atual['receita_parceiro__sum']
+
+        receita_mes_anterior = Positivador.objects.filter(Q(empresa=usuario.empresa) & Q(data_pagamento__year=ano_mes_anterior) & Q(data_pagamento__month=mes_anterior)).aggregate(Sum('receita_parceiro'))
+        soma_receita_parceiro_mes_anterior = receita_mes_anterior['receita_parceiro__sum']
+        if soma_receita_parceiro_mes_anterior == None:
+            soma_receita_parceiro_mes_anterior = 0
+        
+        
         context = {
         'title': "Minha Escola",
         'paginaAtual': paginaAtual,
         'usuario': usuario,
         'empresas': empresas,
+        'soma_receita_parceiro': soma_receita_parceiro,
+        'soma_receita_parceiro_mes_anterior': soma_receita_parceiro_mes_anterior,
         'cursos': cursos,
         'alunos': alunos,
         'usuarios': usuarios,
         'percentualEmpresaMes': percentualEmpresaMes,
         'responsabilidades': responsabilidades,
-        'acesso': True,
         }
     else:
+        matriculas = Inscricoes.objects.filter(usuario=usuario).count()
         context = {
         'title': "Minha Escola",
         'paginaAtual': paginaAtual,
         'usuario': usuario,
+        'matriculas': matriculas,
         }
 
     return render(request, 'internas/dash.html', context)
@@ -2063,6 +2130,117 @@ def internaListarAlunosMatricula(request, id):
     else:
         messages.error(request, 'Esse curso não pertence a sua empresa.')
         return redirect('internaTableauGeral')
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaListarComissoesMesCorrente(request):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    acesso = ['GESTORGERAL', 'COLABORADORSEDE']
+    hoje = datetime.date.today()
+    mes = hoje.month
+    ano = hoje.year
+
+    dados = None
+
+    if any(responsabilidade in acesso for responsabilidade in responsabilidades):
+        dados = Positivador.objects.filter(Q(data_pagamento__year=ano) & Q(data_pagamento__month=mes))
+    elif usuario.empresa:
+        dados = Positivador.objects.filter(Q(empresa=usuario.empresa) & Q(data_pagamento__year=ano) & Q(data_pagamento__month=mes))
+
+    if dados is None:
+        dados = Positivador.objects.none()
+
+    paginaAtual = {'nome': 'Comissão Mês Atual'}
+
+    context = {
+        'title': 'Comissão Mês Atual',
+        'dados': dados,
+        'paginaAtual': paginaAtual,
+        'usuario': usuario,
+        'responsabilidades': responsabilidades,
+    }
+    return render(request, 'internas/dash.html', context)
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaListarComissoesAno(request):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    acesso = ['GESTORGERAL', 'COLABORADORSEDE']
+    anos = None
+
+    if any(responsabilidade in acesso for responsabilidade in responsabilidades):
+        anos = Positivador.objects.annotate(year=ExtractYear('data_pagamento')).values_list('year', flat=True).distinct()
+        anos = list(anos)
+
+    elif usuario.empresa:
+        anos = Positivador.objects.filter(empresa=usuario.empresa).annotate(year=ExtractYear('data_pagamento')).values_list('year', flat=True).distinct()
+        anos = list(anos)
+
+    paginaAtual = {'nome': 'Comissão Ano'}
+
+    context = {
+        'title': 'Comissão Ano',
+        'anos': anos,
+        'paginaAtual': paginaAtual,
+        'usuario': usuario,
+        'responsabilidades': responsabilidades,
+    }
+    return render(request, 'internas/dash.html', context)
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaListarComissoesMes(request, ano):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    acesso = ['GESTORGERAL', 'COLABORADORSEDE']
+    meses = None
+
+    if any(responsabilidade in acesso for responsabilidade in responsabilidades):
+        meses = Positivador.objects.filter(data_pagamento__year=ano).annotate(month=ExtractMonth('data_pagamento')).values_list('month', flat=True).distinct()
+        meses = list(meses)
+    elif usuario.empresa:
+        meses = Positivador.objects.filter(empresa=usuario.empresa, data_pagamento__year=ano).annotate(month=ExtractMonth('data_pagamento')).values_list('month', flat=True).distinct()
+        meses = list(meses)
+
+    paginaAtual = {'nome': 'Comissão Mês'}
+
+    context = {
+        'title': 'Comissão Mês',
+        'meses': meses,
+        'paginaAtual': paginaAtual,
+        'usuario': usuario,
+        'responsabilidades': responsabilidades,
+    }
+    return render(request, 'internas/dash.html', context)
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaListarComissoesMesAnterior(request, ano, mes):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    acesso = ['GESTORGERAL', 'COLABORADORSEDE']
+    hoje = datetime.date.today()
+    data = hoje.replace(year=ano, month=mes)
+    ano_selecionado = data.year
+    mes_selecionado = data.month  
+    dados = None
+
+    if any(responsabilidade in acesso for responsabilidade in responsabilidades):
+        dados = Positivador.objects.filter(Q(data_pagamento__year=ano_selecionado) & Q(data_pagamento__month=mes_selecionado))
+    elif usuario.empresa:
+        dados = Positivador.objects.filter(Q(empresa=usuario.empresa) & Q(data_pagamento__year=ano_selecionado) & Q(data_pagamento__month=mes_selecionado))
+
+    if dados is None:
+        dados = Positivador.objects.none()
+
+    paginaAtual = {'nome': 'Relatório de Comissão'}
+
+    context = {
+        'title': 'Relatório de Comissão',
+        'dados': dados,
+        'paginaAtual': paginaAtual,
+        'usuario': usuario,
+        'responsabilidades': responsabilidades,
+    }
+    return render(request, 'internas/dash.html', context)
     
 @responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
 def internaMatricular(request, curso, aluno, tipo):
@@ -2151,6 +2329,7 @@ def internaDashCursosExternos(request):
     acesso = ['GESTORGERAL', 'COLABORADORSEDE']
     acesso_cursos = ['GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR',]
     dados = None
+    cursos = Cursos.objects.filter(externo=True)
 
     if any(responsabilidade in acesso for responsabilidade in responsabilidades):
         dados = Cursos.objects.filter(externo=True)
@@ -2167,6 +2346,7 @@ def internaDashCursosExternos(request):
     context = {
         'title': 'Dash Cursos ou Matérias - Externo',
         'dados': dados,
+        'cursos': cursos,
         'paginaAtual': paginaAtual,
         'usuario': usuario,
         'responsabilidades': responsabilidades,
@@ -2210,7 +2390,6 @@ def internaCursoAbrir(request, id):
         navegacao = [
             {'nome': 'Dash Cursos ou Matérias', 'url': "internaDashCursosInternos"},
         ]
-    print(dados)
     context = {
         'title': 'Capítulos',
         'dados': dados,

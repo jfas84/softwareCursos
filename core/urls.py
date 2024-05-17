@@ -7,6 +7,7 @@ from core import views
 
 urlpatterns = [
     path('index', views.externaIndex, name='externaIndex'),
+    path('produto/<int:product_id>/', views.descricaoProduto, name='descricaoProduto'),
     path('', views.externaIndex, name='externaIndex'),
     path('politica-privacidade/', views.externaPrivacidade, name='externaPrivacidade'),
     path('termos-condicoes/', views.externaTermosCondicoes, name='externaTermosCondicoes'),
@@ -18,6 +19,7 @@ urlpatterns = [
     path('password-reset/complete/', auth_views.PasswordResetCompleteView.as_view(template_name='login_reset_done_complete.html'), name='password_reset_complete'),
     # path('password-reset/set-password/', auth_views.SetPasswordView.as_view(), name='set_password'),
     path('cadastro/', views.externaCadastro, name='externaCadastro'),
+    path('cadastro/<int:id>/', views.externaCadastroProduto, name='externaCadastroProduto'),
         
     # Internas acesso geral
     path('tableau/', login_required(views.internaTableauGeral), name='internaTableauGeral'),
