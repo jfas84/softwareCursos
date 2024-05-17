@@ -49,13 +49,13 @@ class TiposCursoAdmin(admin.ModelAdmin):
 
 @admin.register(Cursos)
 class CursosAdmin(admin.ModelAdmin):
-    list_display = ('curso', 'valor', 'externo', 'ativo', 'tipoCurso', 'resumo', 'imagem_thumbnail')
-    search_fields = ('curso', 'resumo', 'empresa')
+    list_display = ('curso', 'valor', 'externo', 'ativo', 'tipoCurso', 'resumo', 'carga_horaria', 'imagem_thumbnail')
+    search_fields = ('curso', 'resumo', 'carga_horaria', 'empresa')
     list_filter = ('externo', 'ativo', 'tipoCurso', 'empresa')
 
     fieldsets = (
         (None, {
-            'fields': ('curso', 'valor', 'resumo', 'imagem', 'empresa')
+            'fields': ('curso', 'valor', 'resumo', 'imagem', 'carga_horaria', 'empresa')
         }),
         ('Detalhes', {
             'fields': ('externo', 'ativo', 'tipoCurso'),

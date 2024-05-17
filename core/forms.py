@@ -221,15 +221,17 @@ class CursosForm(forms.ModelForm):
 
     class Meta:
         model = Cursos
-        fields = ['empresa', 'curso', 'valor', 'externo', 'tipoCurso', 'resumo', 'imagem', 'ativo']
+        fields = ['empresa', 'curso', 'valor', 'externo', 'tipoCurso', 'resumo', 'imagem', 'carga_horaria', 'ativo']
         labels = {
             'curso': 'Nome do Curso ou Matéria',
             'valor': 'Valor do Curso',
             'externo': 'Curso é para cliente?',
             'tipoCurso': 'Tipo de Curso',
             'resumo': 'Resumo',
+            'carga_horaria': 'Carga Horária',
             'imagem': 'Imagem',
             'ativo': 'Ativo?',
+            
         }
         widgets = {
             'imagem': forms.ClearableFileInput(attrs={'accept': 'image/*'}),

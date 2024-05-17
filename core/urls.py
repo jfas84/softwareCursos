@@ -101,7 +101,9 @@ urlpatterns = [
     path('tableau/comissoes/meses/<int:ano>/', login_required(views.internaListarComissoesMes), name='internaListarComissoesMes'),
     path('tableau/comissoes/mes/<int:ano>/<int:mes>/', login_required(views.internaListarComissoesMesSelecao), name='internaListarComissoesMesSelecao'),
 
+    path('tableau/certificado/', login_required(views.emitirCertificado), name='emitirCertificado'),
 
+    
     path('video/<str:video_name>/', serve_video, name='serve_video'),
 ]
 

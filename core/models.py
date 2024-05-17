@@ -173,6 +173,8 @@ class Cursos(models.Model):
     resumo = models.CharField('Resumo', max_length=150, null=True, blank=True)
     imagem = StdImageField('Imagem', upload_to=get_file_path, variations={'thumb': (225, 225)}, null=True, blank=True)
     empresa = models.ForeignKey(Empresas, on_delete=models.SET_NULL, null=True, blank=True)
+    carga_horaria = models.IntegerField("Carga horária", null=True, blank=True)
+
     
     class Meta:
         verbose_name = 'Curso'

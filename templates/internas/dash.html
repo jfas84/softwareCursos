@@ -330,6 +330,9 @@
                     {% elif request.resolver_match.url_name == 'checkout' %}
                         {% include 'includes/venda.html' %}
                     
+                    {% elif request.resolver_match.url_name == 'emitirCertificado' %}
+                        {% include 'includes/certificado.html' %}
+                    
                     {% elif request.resolver_match.url_name == 'internaListarComissoesAno' or request.resolver_match.url_name == 'internaListarComissoesMes' %}
                         {% include 'internas/quadro-comissoes.html' %}
                     

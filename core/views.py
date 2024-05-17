@@ -2566,3 +2566,23 @@ def serve_video(request, video_name):
         response.write(video_file.read())
     
     return response
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR', 'ALUNO')
+def emitirCertificado(request):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    acesso = ['GESTORGERAL', 'COLABORADORSEDE']
+    # curso = get_object_or_404(Cursos, pk=curso)
+
+
+    context = {
+        'title': 'Aulas',
+        # 'dados': dados,
+        # 'paginaAtual': paginaAtual,
+        # 'navegacao': navegacao,
+        'usuario': usuario,
+        # 'frequencias': frequencias,
+        'responsabilidades': responsabilidades,
+    }
+    return render(request, 'internas/dash.html', context)
+
