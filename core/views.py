@@ -19,7 +19,7 @@ from .decorators import responsabilidade_required
 from .models import Apostilas, Aulas, Boletim, Capitulos, Certificados, Cursos, CustomUsuario, Empresas, FrequenciaAulas, Inscricoes, LogErro, Notas, Positivador, Questoes, Temas, TiposCurso, Turmas, VideoAulas
 from .forms import ApostilasForm, AulasForm, AulasSelecaoForm, CapitulosForm, CapitulosSelecaoForm, CursosForm, CustomAlunoForm, CustomProfessorForm, CustomUsuarioChangeForm, CustomUsuarioForm, EmpresasForm, InscricoesForm, QuestoesForm, RegistrationForm, TemasForm, TemasSelecaoForm, TipoCursoForm, TurmasForm, UploadCSVUsuariosForm, VideoAulasForm
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.template.loader import render_to_string
 from django.http import FileResponse
 from django.conf import settings
@@ -1717,7 +1717,7 @@ def internaListarBoletim(request):
     paginaAtual = {'nome': 'Boletim'}
 
     context = {
-        'title': 'Listar Turmas',
+        'title': 'Boletim',
         'dados': boletim_aluno,
         'paginaAtual': paginaAtual,
         'usuario': usuario,
@@ -2587,6 +2587,7 @@ def internaCapituloAbrir(request, id):
     capitulo = get_object_or_404(Capitulos, pk=id)
     instancia = Aulas.objects.filter(capitulo=capitulo).order_by('aula')
     frequencias = FrequenciaAulas.objects.filter(aluno=usuario).values_list('aula_id', flat=True)
+    notas = Notas.objects.filter(aluno=usuario).values_list('aula_id', flat=True)
     if any(responsabilidade in acesso for responsabilidade in responsabilidades):
         dados = instancia
     elif usuario.empresa == capitulo.curso.empresa:
@@ -2614,6 +2615,7 @@ def internaCapituloAbrir(request, id):
         'navegacao': navegacao,
         'usuario': usuario,
         'frequencias': frequencias,
+        'notas': notas,
         'responsabilidades': responsabilidades,
     }
     return render(request, 'internas/dash.html', context)
@@ -2804,27 +2806,30 @@ def visualizarMatriculas(request):
     """
     usuario = request.user
     responsabilidades = obter_responsabilidades_usuario(usuario)
-    acesso = ['GESTORGERAL', 'COLABORADORSEDE']
-    acesso_cursos = ['GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR',]
-    dados = None
     cursos = Cursos.objects.filter(externo=True)
 
-    if any(responsabilidade in acesso for responsabilidade in responsabilidades):
-        dados = Cursos.objects.filter(externo=True)
-    elif usuario.empresa and any(responsabilidade in acesso_cursos for responsabilidade in responsabilidades):
-        dados = Cursos.objects.filter(empresa=usuario.empresa, externo=True)
-    elif usuario.empresa:
-        matriculas = Inscricoes.objects.filter(usuario=usuario)
-        dados = [inscricao.curso for inscricao in matriculas]
-    if dados is None:
-        dados = Cursos.objects.none()
+    matriculas = Inscricoes.objects.filter(usuario=usuario, pago=True)
+    total_matriculas = matriculas.count()
+    curso_ids = matriculas.values_list('curso_id', flat=True)
+    cursos = Cursos.objects.filter(id__in=curso_ids)
 
-    paginaAtual = {'nome': 'Dash Cursos ou Matérias - Externo'}
+    cursos_total = []
+    for curso in cursos:
+        aulas = Aulas.objects.filter(capitulo__curso=curso)
+        aulas_ids = aulas.values_list('id', flat=True)
+        total_aulas = aulas.count()
+        notas = Notas.objects.filter(aula__id__in=aulas_ids).aggregate(Sum('valor'))
+        soma_notas = notas['valor__sum']
+        media = soma_notas / total_aulas
+        frequencia = FrequenciaAulas.objects.filter(aluno=usuario, aula__id__in=aulas_ids).count()
+        cursos_total.append((curso.curso, curso.carga_horaria, total_aulas, frequencia, media))
+
+    paginaAtual = {'nome': 'Matrícula Atual'}
 
     context = {
-        'title': 'Dash Cursos ou Matérias - Externo',
-        'dados': dados,
-        'cursos': cursos,
+        'title': 'Matrícula Atual',
+        'total_matriculas': total_matriculas,
+        'cursos_total': cursos_total,
         'paginaAtual': paginaAtual,
         'usuario': usuario,
         'responsabilidades': responsabilidades,

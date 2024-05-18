@@ -115,7 +115,9 @@
               {% else %}
               <a href="{% url 'internaCadastrarFrequenciaAula' dado.id %}"  class="btn btn-dark mt-4">Marcar como Concluído</a>
               {% endif %}
+              {% if dado.id not in notas %}
               <a href="{% url 'internaListarQuestoesAula' dado.id %}" class="btn btn-light-secondary mt-4">Prova de Conhecimentos</a>
+              {% endif %}
         </div>
       </div>
     </div>

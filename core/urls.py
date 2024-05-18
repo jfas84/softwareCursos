@@ -30,6 +30,7 @@ urlpatterns = [
     path('tableau/frequencia/<int:id>/', login_required(views.internaCadastrarFrequenciaAula), name='internaCadastrarFrequenciaAula'),
     path('tableau/aula/<int:id>/', login_required(views.internaAulaAbrir), name='internaAulaAbrir'),
     path('tableau/boletim/', login_required(views.internaListarBoletim), name='internaListarBoletim'),
+    path('tableau/matricula/', login_required(views.visualizarMatriculas), name='visualizarMatriculas'),
     path('tableau/boletim/aluno/<int:id>/', login_required(views.internaVerBoletim), name='internaVerBoletim'),
     
     # Internas Sede
