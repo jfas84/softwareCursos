@@ -1,6 +1,10 @@
 from datetime import timezone
 import datetime
+from io import BytesIO
+from django.core.files.base import ContentFile
+from xhtml2pdf import pisa
 from pprint import pprint
+import uuid
 from django.db import transaction
 from django.db.models import Q, Count, Sum
 from django.db.models.functions import ExtractYear, ExtractMonth
@@ -12,8 +16,8 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.forms import ValidationError
 from .decorators import responsabilidade_required
-from .models import Apostilas, Aulas, Boletim, Capitulos, Cursos, CustomUsuario, Empresas, FrequenciaAulas, Inscricoes, LogErro, Notas, Positivador, Questoes, Temas, TiposCurso, Turmas, VideoAulas
-from .forms import ApostilasForm, AulasForm, CapitulosForm, CursosForm, CustomAlunoForm, CustomProfessorForm, CustomUsuarioChangeForm, CustomUsuarioForm, EmpresasForm, InscricoesForm, QuestoesForm, RegistrationForm, TemasForm, TipoCursoForm, TurmasForm, UploadCSVUsuariosForm, VideoAulasForm
+from .models import Apostilas, Aulas, Boletim, Capitulos, Certificados, Cursos, CustomUsuario, Empresas, FrequenciaAulas, Inscricoes, LogErro, Notas, Positivador, Questoes, Temas, TiposCurso, Turmas, VideoAulas
+from .forms import ApostilasForm, AulasForm, AulasSelecaoForm, CapitulosForm, CapitulosSelecaoForm, CursosForm, CustomAlunoForm, CustomProfessorForm, CustomUsuarioChangeForm, CustomUsuarioForm, EmpresasForm, InscricoesForm, QuestoesForm, RegistrationForm, TemasForm, TemasSelecaoForm, TipoCursoForm, TurmasForm, UploadCSVUsuariosForm, VideoAulasForm
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.http import HttpResponse
 from django.template.loader import render_to_string
@@ -1103,6 +1107,55 @@ def internaCadastrarCapitulo(request):
         log_erro.save()
         messages.error(request, 'Houve um erro inesperado. Por favor, abra um chamado.')
         return redirect('internaTableauGeral')
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaCadastrarCapituloCurso(request, id):
+    usuario = request.user
+    curso_selecao = get_object_or_404(Cursos, pk=id)
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    try:
+        if request.method == 'POST':
+            form = CapitulosSelecaoForm(data=request.POST)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.curso = curso_selecao
+                instance.save()
+                messages.success(request, 'O capítulo foi criado com sucesso!')
+                return redirect(reverse('internaCursoAbrir', args=[curso_selecao.id]))
+        else:
+            form = CapitulosSelecaoForm()
+        paginaAtual = {'nome': 'Cadastrar Capítulo'}
+        navegacao = [
+            {'nome': 'Capítulos', 'url': 'internaCursoAbrir', 'dados': curso_selecao.id },
+
+        ]
+        context = {
+            'form': form,
+            'title': "Cadastrar Capítulo",
+            'paginaAtual': paginaAtual,
+            'navegacao': navegacao,
+            'usuario': usuario,
+            'responsabilidades': responsabilidades,
+        }
+        return render(request, 'internas/dash.html', context)
+    except ValidationError as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaCadastrarCapituloCurso",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+    except Exception as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaCadastrarCapituloCurso",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro inesperado. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
     
 @responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
 def internaAlterarCapitulo(request, id):
@@ -1188,6 +1241,55 @@ def internaCadastrarAula(request):
         log_erro = LogErro(
             usuario=request.user if request.user.is_authenticated else None,
             pagina_atual="internaCadastrarAula",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro inesperado. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+    
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaCadastrarAulaCapitulo(request, id):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    capitulo_selecao = get_object_or_404(Capitulos, pk=id)
+    try:
+        if request.method == 'POST':
+            form = AulasSelecaoForm(data=request.POST)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.capitulo = capitulo_selecao
+                instance.save()
+                messages.success(request, 'A aula foi criada com sucesso!')
+                return redirect(reverse('internaCapituloAbrir', args=[capitulo_selecao.id]))
+        else:
+            form = AulasSelecaoForm()
+        paginaAtual = {'nome': 'Cadastrar Aula'}
+        navegacao = [
+            {'nome': 'Aulas', 'url': 'internaCapituloAbrir', 'dados': capitulo_selecao.id },
+
+        ]
+        context = {
+            'form': form,
+            'title': "Cadastrar Aula",
+            'paginaAtual': paginaAtual,
+            'navegacao': navegacao,
+            'usuario': usuario,
+            'responsabilidades': responsabilidades,
+        }
+        return render(request, 'internas/dash.html', context)
+    except ValidationError as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaCadastrarAulaCapitulo",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+    except Exception as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaCadastrarAulaCapitulo",
             mensagem_erro=str(e),
         )
         log_erro.save()
@@ -1367,6 +1469,54 @@ def internaCadastrarTema(request):
         log_erro = LogErro(
             usuario=request.user if request.user.is_authenticated else None,
             pagina_atual="internaCadastrarTema",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro inesperado. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+    
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR')
+def internaCadastrarTemaSelecao(request, id):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    aula_selecao = get_object_or_404(Aulas, pk=id)
+    try:
+        if request.method == 'POST':
+            form = TemasSelecaoForm(data=request.POST)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.aula = aula_selecao
+                instance.save()
+                messages.success(request, 'O tema foi criado com sucesso!')
+                return redirect(reverse('internaAulaAbrir', args=[aula_selecao.id]))
+        else:
+            form = TemasSelecaoForm()
+        paginaAtual = {'nome': 'Cadastrar Tema'}
+        navegacao = [
+            {'nome': 'Temas', 'url': 'internaAulaAbrir', 'dados': aula_selecao.id },
+        ]
+        context = {
+            'form': form,
+            'title': "Cadastrar Tema",
+            'paginaAtual': paginaAtual,
+            'navegacao': navegacao,
+            'usuario': usuario,
+            'responsabilidades': responsabilidades,
+        }
+        return render(request, 'internas/dash.html', context)
+    except ValidationError as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaCadastrarTemaSelecao",
+            mensagem_erro=str(e),
+        )
+        log_erro.save()
+        messages.error(request, 'Houve um erro. Por favor, abra um chamado.')
+        return redirect('internaTableauGeral')
+    except Exception as e:
+        log_erro = LogErro(
+            usuario=request.user if request.user.is_authenticated else None,
+            pagina_atual="internaCadastrarTemaSelecao",
             mensagem_erro=str(e),
         )
         log_erro.save()
@@ -2418,6 +2568,7 @@ def internaCursoAbrir(request, id):
     context = {
         'title': 'Capítulos',
         'dados': dados,
+        'curso': curso,
         'paginaAtual': paginaAtual,
         'navegacao': navegacao,
         'usuario': usuario,
@@ -2434,7 +2585,7 @@ def internaCapituloAbrir(request, id):
     responsabilidades = obter_responsabilidades_usuario(usuario)
     acesso = ['GESTORGERAL', 'COLABORADORSEDE']
     capitulo = get_object_or_404(Capitulos, pk=id)
-    instancia = Aulas.objects.filter(capitulo=capitulo)
+    instancia = Aulas.objects.filter(capitulo=capitulo).order_by('aula')
     frequencias = FrequenciaAulas.objects.filter(aluno=usuario).values_list('aula_id', flat=True)
     if any(responsabilidade in acesso for responsabilidade in responsabilidades):
         dados = instancia
@@ -2458,6 +2609,7 @@ def internaCapituloAbrir(request, id):
     context = {
         'title': 'Aulas',
         'dados': dados,
+        'capitulo': capitulo,
         'paginaAtual': paginaAtual,
         'navegacao': navegacao,
         'usuario': usuario,
@@ -2531,6 +2683,7 @@ def internaAulaAbrir(request, id):
     context = {
         'title': 'Aulas',
         'dados': dados,
+        'aula': aula,
         'paginaAtual': paginaAtual,
         'navegacao': navegacao,
         'usuario': usuario,
@@ -2539,6 +2692,7 @@ def internaAulaAbrir(request, id):
     }
     return render(request, 'internas/dash.html', context)
 
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR', 'ALUNO')
 def internaCriarNovaNota(request, aula_id):
     aluno = get_object_or_404(CustomUsuario, pk=request.user.id)
     aula = get_object_or_404(Aulas, pk=aula_id)
@@ -2584,5 +2738,95 @@ def emitirCertificado(request):
         # 'frequencias': frequencias,
         'responsabilidades': responsabilidades,
     }
-    return render(request, 'internas/dash.html', context)
+    return render(request, 'internas/certificado.html', context)
 
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR', 'ALUNO')
+def gerar_certificado(aluno, cursos):
+    # Geração de código de autenticação
+    codigo_autenticacao = str(uuid.uuid4()).replace('-', '')[:25]
+    
+    # Prepare os dados dos cursos para renderização
+    curso_nomes = ", ".join([curso.nome for curso in cursos])
+    data_conclusao = max([curso.data_conclusao for curso in cursos])  # Supondo que você tenha uma data de conclusão em cada curso
+    
+    # Renderize o HTML com os dados do aluno e dos cursos
+    html_string = render_to_string('certificate_template.html', {
+        'aluno_nome': aluno.get_full_name(),
+        'curso_nome': curso_nomes,
+        'data_conclusao': data_conclusao,
+        'instituicao': "Pandora ddddd",  # Ajuste conforme necessário
+    })
+
+    # Converta HTML para PDF
+    pdf_file = BytesIO()
+    pisa_status = pisa.CreatePDF(html_string, dest=pdf_file)
+    pdf_file.seek(0)
+
+    if pisa_status.err:
+        return None
+
+    # Salve o PDF no modelo Certificados
+    pdf_content = ContentFile(pdf_file.read())
+    certificado = Certificados(aluno=aluno, codigo_autenticacao=codigo_autenticacao)
+    certificado.save()
+    certificado.cursos.set(cursos)
+    certificado.pdf.save(f'{aluno.username}_certificado.pdf', pdf_content)
+    certificado.save()
+
+    return certificado
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR', 'ALUNO')
+def emitir_certificado(request):
+    aluno = request.user
+    cursos = Cursos.objects.filter(alunos=aluno)  # Supondo que você tenha uma relação entre Cursos e Alunos
+    if not cursos:
+        # Trate o caso onde não há cursos
+        return redirect('pagina_erro')
+
+    certificado = gerar_certificado(aluno, cursos)
+    if certificado:
+        return redirect('download_certificado', certificado_id=certificado.id)
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR', 'ALUNO')
+def download_certificado(request, certificado_id):
+    certificado = get_object_or_404(Certificados, id=certificado_id, aluno=request.user)
+    response = HttpResponse(certificado.pdf, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{certificado.pdf.name}"'
+    return response
+
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR', 'ALUNO')
+def visualizarMatriculas(request):
+    """
+    Refazer toda essa view para colocar na área do boletim e criar um local onde o aluno possa ver todas as suas matrículas
+    e o status do curso, quando o aluno termina o curso aparece o butão para emitir o certificado, enquanto o aluno não encerra
+    a carga horária total, não consegue emitir o certificado do curso.
+    """
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    acesso = ['GESTORGERAL', 'COLABORADORSEDE']
+    acesso_cursos = ['GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR',]
+    dados = None
+    cursos = Cursos.objects.filter(externo=True)
+
+    if any(responsabilidade in acesso for responsabilidade in responsabilidades):
+        dados = Cursos.objects.filter(externo=True)
+    elif usuario.empresa and any(responsabilidade in acesso_cursos for responsabilidade in responsabilidades):
+        dados = Cursos.objects.filter(empresa=usuario.empresa, externo=True)
+    elif usuario.empresa:
+        matriculas = Inscricoes.objects.filter(usuario=usuario)
+        dados = [inscricao.curso for inscricao in matriculas]
+    if dados is None:
+        dados = Cursos.objects.none()
+
+    paginaAtual = {'nome': 'Dash Cursos ou Matérias - Externo'}
+
+    context = {
+        'title': 'Dash Cursos ou Matérias - Externo',
+        'dados': dados,
+        'cursos': cursos,
+        'paginaAtual': paginaAtual,
+        'usuario': usuario,
+        'responsabilidades': responsabilidades,
+    }
+    return render(request, 'internas/dash.html', context)

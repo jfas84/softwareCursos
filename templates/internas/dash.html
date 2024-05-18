@@ -293,6 +293,9 @@
                         
                     {% elif request.resolver_match.url_name == 'internaAlterarTema' or request.resolver_match.url_name == 'internaAlterarQuestao' or request.resolver_match.url_name == 'internaAlterarVideoAula' %}
                         {% include 'includes/dashCadastros.html' %}
+                    
+                    {% elif request.resolver_match.url_name == 'internaCadastrarCapituloCurso' or request.resolver_match.url_name == 'internaCadastrarAulaCapitulo' or request.resolver_match.url_name == 'internaCadastrarTemaSelecao' %}
+                        {% include 'includes/dashCadastros.html' %}
 
                     {% elif request.resolver_match.url_name == 'internaListarUsuarios' or request.resolver_match.url_name == 'internaListarEmpresas' or request.resolver_match.url_name == 'internaListarTurmas' %}
                         {% include 'includes/dashListar.html' %}
@@ -329,9 +332,6 @@
 
                     {% elif request.resolver_match.url_name == 'checkout' %}
                         {% include 'includes/venda.html' %}
-                    
-                    {% elif request.resolver_match.url_name == 'emitirCertificado' %}
-                        {% include 'includes/certificado.html' %}
                     
                     {% elif request.resolver_match.url_name == 'internaListarComissoesAno' or request.resolver_match.url_name == 'internaListarComissoesMes' %}
                         {% include 'internas/quadro-comissoes.html' %}

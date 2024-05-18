@@ -115,7 +115,7 @@
     });
 }
 </script>
-{% elif request.resolver_match.url_name == 'internaCadastrarCapitulo' or request.resolver_match.url_name == 'internaAlterarCapitulo' %}
+{% elif request.resolver_match.url_name == 'internaCadastrarCapitulo' or request.resolver_match.url_name == 'internaAlterarCapitulo' or request.resolver_match.url_name == 'internaCadastrarCapituloCurso' %}
 <script>
     function limparFormulario(event) {
     event.preventDefault();
@@ -131,7 +131,7 @@
     });
 }
 </script>
-{% elif request.resolver_match.url_name == 'internaCadastrarAula' or request.resolver_match.url_name == 'internaAlterarAula' %}
+{% elif request.resolver_match.url_name == 'internaCadastrarAula' or request.resolver_match.url_name == 'internaAlterarAula' or request.resolver_match.url_name == 'internaCadastrarAulaCapitulo' %}
 <script>
     function limparFormulario(event) {
     event.preventDefault();
@@ -163,7 +163,7 @@
     });
 }
 </script>
-{% elif request.resolver_match.url_name == 'internaCadastrarTema' or request.resolver_match.url_name == 'internaAlterarTema' %}
+{% elif request.resolver_match.url_name == 'internaCadastrarTema' or request.resolver_match.url_name == 'internaAlterarTema' or request.resolver_match.url_name == 'internaCadastrarTemaSelecao'  %}
 <script>
     function limparFormulario(event) {
     event.preventDefault();

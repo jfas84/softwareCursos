@@ -1,6 +1,11 @@
 {% load static %}
 {% load bootstrap4 %}
 {% if request.resolver_match.url_name == 'internaDashCursosInternos' or request.resolver_match.url_name == 'internaDashCursosExternos' %}
+{% if not "ALUNO" in responsabilidades %}
+<div class="col-12 mb-3 mt-1 d-flex justify-content-end">
+    <a href="{% url 'internaCadastrarCurso' %}" class="btn btn-outline-primary ">Criar Novo Curso</a>
+</div>
+{% endif %}
 <div class="row">
     {% for dado in dados %}
     <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 mx-auto">
@@ -50,6 +55,11 @@
     {% endfor %}
 </div>
 {% elif request.resolver_match.url_name == 'internaCursoAbrir' %}
+{% if not "ALUNO" in responsabilidades %}
+<div class="col-12 mb-3 mt-1 d-flex justify-content-end">
+    <a href="{% url 'internaCadastrarCapituloCurso' curso.id %}" class="btn btn-outline-primary ">Criar Capítulo</a>
+</div>
+{% endif %}
 <div class="row">     
     {% for dado in dados %}
     <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 mx-auto">
@@ -77,6 +87,11 @@
     {% endfor %}    
 </div>
 {% elif request.resolver_match.url_name == 'internaCapituloAbrir' %}
+{% if not "ALUNO" in responsabilidades %}
+<div class="col-12 mb-3 mt-1 d-flex justify-content-end">
+    <a href="{% url 'internaCadastrarAulaCapitulo' capitulo.id %}" class="btn btn-outline-primary ">Criar Nova Aula</a>
+</div>
+{% endif %}
 <div id="toggleAccordion" class="accordion">
     {% for dado in dados %}
     <div class="card">
@@ -90,8 +105,10 @@
 
       <div id="default_{{dado.id}}" class="collapse" aria-labelledby="{{dado.id}}" data-bs-parent="#toggleAccordion">
         <div class="card-body" style="overflow: auto;">
-                <p style="white-space: pre-wrap;">{{dado.objetivo}}</p>
+            <p style="white-space: pre-wrap;">{{dado.objetivo}}</p>
+            {% if not "ALUNO" in responsabilidades %}
               <a href="{% url 'internaAlterarAula' dado.id %}" class="btn btn-warning mt-4">Alterar</a>
+            {% endif %}
               <a href="{% url 'internaAulaAbrir' dado.id %}" class="btn btn-primary mt-4">Abrir</a>
               {% if dado.id in frequencias %}
               <button class="btn btn-success mt-4">Aula Concluída</button>
@@ -106,6 +123,11 @@
 
   </div>
 {% elif request.resolver_match.url_name == 'internaAulaAbrir' %}
+{% if not "ALUNO" in responsabilidades %}
+<div class="col-12 mb-3 mt-1 d-flex justify-content-end">
+    <a href="{% url 'internaCadastrarTemaSelecao' aula.id %}" class="btn btn-outline-primary ">Criar Novo Tema</a>
+</div>
+{% endif %}
 <div id="toggleAccordion" class="accordion">
 {% for dado in dados %}
 <div class="card">

@@ -1,0 +1,56 @@
+{% load bootstrap4 %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificado de Conclusão</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 20mm;
+            }
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        }
+        .certificate {
+            border: 5px solid #000;
+            padding: 30px;
+            height: 100vh;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .signature div {
+            border-top: 1px solid #000;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container certificate">
+        <h1 class="display-4">Certificado de Conclusão</h1>
+        <p class="lead">Este certificado é concedido a</p>
+        <p class="font-weight-bold h2">Jean Felipe Alves da Silva</p>
+        <p class="lead">por ter concluído com êxito o curso</p>
+        <p class="font-weight-bold h2">Curso Teste do Teste</p>
+        <div class="mt-4">
+            <p>Data de Conclusão: 05/05/1984</p>
+            <p>Instituição: Pandora ddddd</p>
+        </div>
+        <div class="row mt-5">
+            <div class="col-6 text-center">
+                <div>Assinatura do Instrutor</div>
+            </div>
+            <div class="col-6 text-center">
+                <div>Assinatura do Aluno</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

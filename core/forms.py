@@ -261,6 +261,14 @@ class CapitulosForm(forms.ModelForm):
                 cursos_da_empresa = Cursos.objects.filter(empresa=user.empresa)
                 self.fields['curso'].queryset = cursos_da_empresa
 
+class CapitulosSelecaoForm(forms.ModelForm):
+    class Meta:
+        model = Capitulos
+        fields = ['capitulo', 'objetivo']
+        labels = {
+            'capitulo': 'Capítulo',
+            'objetivo': 'Objetivo',
+        }
 
 class AulasForm(forms.ModelForm):
     class Meta:
@@ -282,6 +290,15 @@ class AulasForm(forms.ModelForm):
             else:
                 capitulosEmpresa = Capitulos.objects.filter(curso__empresa=user.empresa).order_by('curso', 'capitulo')
                 self.fields['capitulo'].queryset = capitulosEmpresa
+
+class AulasSelecaoForm(forms.ModelForm):
+    class Meta:
+        model = Aulas
+        fields = ['aula', 'objetivo']
+        labels = {
+            'aula': 'Título da Aula',
+            'objetivo': 'Objetivo da Aula',
+        }
 
 class TemasForm(forms.ModelForm):
     class Meta:
@@ -306,6 +323,14 @@ class TemasForm(forms.ModelForm):
                 aulasEmpresa = Aulas.objects.filter(capitulo__curso__empresa=user.empresa).order_by('capitulo__curso', 'capitulo', 'aula')
                 self.fields['aula'].queryset = aulasEmpresa
 
+class TemasSelecaoForm(forms.ModelForm):
+    class Meta:
+        model = Temas
+        fields = ['tema', 'texto']
+        labels = {
+            'tema': 'Nome do Tema',
+            'texto': 'Texto do Tema',
+        }   
 
 class ApostilasForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):

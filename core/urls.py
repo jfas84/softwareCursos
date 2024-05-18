@@ -66,9 +66,11 @@ urlpatterns = [
     
     path('tableau/alterar/capitulo/<int:id>/', login_required(views.internaAlterarCapitulo), name='internaAlterarCapitulo'),
     path('tableau/cadastro/capitulo', login_required(views.internaCadastrarCapitulo), name='internaCadastrarCapitulo'),
+    path('tableau/cadastro/capitulo/<int:id>/', login_required(views.internaCadastrarCapituloCurso), name='internaCadastrarCapituloCurso'),
     path('tableau/listar/capitulos', login_required(views.internaListarCapitulos), name='internaListarCapitulos'),
     
     path('tableau/cadastro/aula', login_required(views.internaCadastrarAula), name='internaCadastrarAula'),
+    path('tableau/cadastro/aula/<int:id>/', login_required(views.internaCadastrarAulaCapitulo), name='internaCadastrarAulaCapitulo'),
     path('tableau/alterar/aula/<int:id>/', login_required(views.internaAlterarAula), name='internaAlterarAula'),
     path('tableau/listar/aulas', login_required(views.internaListarAulas), name='internaListarAulas'),
     
@@ -78,6 +80,7 @@ urlpatterns = [
     path('tableau/baixarApostila/<int:apostila_id>', login_required(views.download_apostila), name='download_apostila'),
          
     path('tableau/cadastro/tema', login_required(views.internaCadastrarTema), name='internaCadastrarTema'),
+    path('tableau/cadastro/tema/<int:id>/', login_required(views.internaCadastrarTemaSelecao), name='internaCadastrarTemaSelecao'),
     path('tableau/alterar/tema/<int:id>/', login_required(views.internaAlterarTema), name='internaAlterarTema'),
     path('tableau/listar/temas', login_required(views.internaListarTemas), name='internaListarTemas'),
     

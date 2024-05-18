@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Apostilas, Aulas, Boletim, Capitulos, Cursos, CustomUsuario, Empresas, FrequenciaAulas, Inscricoes, LogErro, Notas, Positivador, Questoes, Responsaveis, Temas, TiposCurso, VideoAulas
+from .models import Apostilas, Aulas, Boletim, Capitulos, Certificados, Cursos, CustomUsuario, Empresas, FrequenciaAulas, Inscricoes, LogErro, Notas, Positivador, Questoes, Responsaveis, Temas, TiposCurso, VideoAulas
 from .forms import CustomUsuarioCreateForm, CustomUsuarioChangeForm
 from django.template.defaultfilters import slugify
 
@@ -153,3 +153,16 @@ class PositivadorAdmin(admin.ModelAdmin):
     list_display = ['empresa', 'usuario', 'curso', 'data_pagamento', 'receita_parceiro', 'receita_matriz']
     list_filter = ['data_pagamento']
     search_fields = ['empresa__razaoSocial', 'usuario__nome', 'curso__curso']
+
+@admin.register(Certificados)
+class CertificadosAdmin(admin.ModelAdmin):
+    list_display = ('aluno', 'data_conclusao', 'codigo_autenticacao')
+    search_fields = ('aluno__nome', 'codigo_autenticacao')
+    list_filter = ('data_conclusao', 'cursos')
+    filter_horizontal = ('cursos',)
+    readonly_fields = ('data_conclusao', 'data_geracao', 'codigo_autenticacao')
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:  # When editing an existing object
+            return self.readonly_fields + ('aluno',)
+        return self.readonly_fields

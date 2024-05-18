@@ -193,7 +193,7 @@ class Capitulos(models.Model):
         verbose_name_plural = 'Capítulo'
 
     def __str__(self):
-        return self.capitulo
+        return f'{self.capitulo} - {self.curso.curso}'
 
 class Aulas(models.Model):
     aula = models.CharField('Aula', max_length=100)
@@ -205,7 +205,7 @@ class Aulas(models.Model):
         verbose_name_plural = 'Aulas'
 
     def __str__(self):
-        return self.aula
+        return f'{self.aula} - {self.capitulo.capitulo} - {self.capitulo.curso.curso}'
 
 class Temas(models.Model):
     tema = models.CharField('Tema', max_length=100)
@@ -315,10 +315,10 @@ class Notas(models.Model):
         return f"{self.valor}"
 
 class Boletim(models.Model):
-    aluno = models.ForeignKey(CustomUsuario, on_delete=models.CASCADE)
-    curso = models.ForeignKey(Cursos, on_delete=models.CASCADE)  # Adicione este campo para o curso
-    capitulo = models.ForeignKey(Capitulos, on_delete=models.CASCADE)  # Adicione este campo para o capítulo
-    aula = models.ForeignKey(Aulas, on_delete=models.CASCADE)  # Adicione este campo para a aula
+    aluno = models.ForeignKey(CustomUsuario, on_delete=models.SET_NULL, null=True, blank=True)
+    curso = models.ForeignKey(Cursos, on_delete=models.SET_NULL, null=True, blank=True)
+    capitulo = models.ForeignKey(Capitulos, on_delete=models.SET_NULL, null=True, blank=True)  
+    aula = models.ForeignKey(Aulas, on_delete=models.SET_NULL, null=True, blank=True)
     notas = models.ManyToManyField(Notas)
 
     def calcular_media(self):
@@ -359,4 +359,13 @@ class Positivador(models.Model):
         verbose_name_plural = 'Positivador'
 
 
+class Certificados(models.Model):
+    aluno = models.ForeignKey(CustomUsuario, on_delete=models.SET_NULL, null=True, blank=True)
+    cursos = models.ManyToManyField(Cursos)
+    data_conclusao = models.DateField('Data de Conclusão', auto_now_add=True)
+    pdf = models.FileField(upload_to='certificados/')
+    data_geracao = models.DateTimeField(auto_now_add=True)
+    codigo_autenticacao = models.CharField('Código de autenticação', max_length=25)
 
+    def __str__(self):
+        return f"Certificado de {self.aluno} - {self.data_conclusao}"
