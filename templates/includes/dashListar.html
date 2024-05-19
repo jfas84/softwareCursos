@@ -660,18 +660,13 @@
                 <div class="info-box">
                     <div class="icon">
                         <span>
-                            <img src="{% static 'src/assets/img/money-bag.png' %}" alt="apartamentos">
+                            <img src="{% static 'src/assets/img/money-bag.png' %}" alt="">
                         </span>
                     </div>
                     <div class="row justify-content-end">
                     <div class="col-12 balance-info">
                         <h6 class="mt-2">Total de Cursos Matriculados</h6>
                         <p>{{total_matriculas}}</p>
-                    </div>
-                    <div class="col-12">
-                        <a href="{% url 'internaListarComissoesAno' %}" class="btn btn-outline-primary">Dash Comissões</a>
-                        <a href="{% url 'internaListarAlunos' %}" class="btn btn-outline-primary">Ver Alunos</a>
-                        <a href="{% url 'internaListarCursos' %}" class="btn btn-outline-primary">Ver cursos</a>
                     </div>
                 </div>
                 </div>
@@ -696,7 +691,7 @@
                             <th class="text-center">Total de Aulas</th>
                             <th class="text-center dt-no-sorting">Aulas Assistidas</th>
                             <th class="text-center dt-no-sorting">Nota Final</th>
-
+                            <th class="text-center dt-no-sorting">Certificado</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -709,6 +704,12 @@
                             <td class="text-center">{{dado.2}}</td>
                             <td class="text-center">{{dado.3}}</td>
                             <td class="text-center">{{dado.4}}</td>
+                            <td class="text-center">
+                                <ul class="table-controls">
+                                    <li><a href="{% url 'emitirCertificado' dado.5 %}" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Gerar" data-original-title="Gerar"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></a></li>
+                                    <li><a href="javascript:void(0);" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Donwload" data-original-title="Donwload"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a></li>
+                                </ul>
+                            </td>
                         </tr>
                         {% endfor %}  
                     </tbody>

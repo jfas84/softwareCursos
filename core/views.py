@@ -2724,16 +2724,16 @@ def serve_video(request, video_name):
     return response
 
 @responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR', 'ALUNO')
-def emitirCertificado(request):
+def emitirCertificado(request, id):
     usuario = request.user
     responsabilidades = obter_responsabilidades_usuario(usuario)
-    acesso = ['GESTORGERAL', 'COLABORADORSEDE']
-    # curso = get_object_or_404(Cursos, pk=curso)
-
+    curso = get_object_or_404(Cursos, pk=id)
+    codigo_autenticacao = str(uuid.uuid4()).replace('-', '')[:25]
 
     context = {
         'title': 'Aulas',
-        # 'dados': dados,
+        'curso': curso,
+        'codigo_autenticacao': codigo_autenticacao,
         # 'paginaAtual': paginaAtual,
         # 'navegacao': navegacao,
         'usuario': usuario,
@@ -2752,7 +2752,7 @@ def gerar_certificado(aluno, cursos):
     data_conclusao = max([curso.data_conclusao for curso in cursos])  # Supondo que você tenha uma data de conclusão em cada curso
     
     # Renderize o HTML com os dados do aluno e dos cursos
-    html_string = render_to_string('certificate_template.html', {
+    html_string = render_to_string('certificado.html', {
         'aluno_nome': aluno.get_full_name(),
         'curso_nome': curso_nomes,
         'data_conclusao': data_conclusao,
@@ -2800,9 +2800,9 @@ def download_certificado(request, certificado_id):
 @responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR', 'ALUNO')
 def visualizarMatriculas(request):
     """
-    Refazer toda essa view para colocar na área do boletim e criar um local onde o aluno possa ver todas as suas matrículas
-    e o status do curso, quando o aluno termina o curso aparece o butão para emitir o certificado, enquanto o aluno não encerra
-    a carga horária total, não consegue emitir o certificado do curso.
+    Essa view apresenta todas as matrículas de determinado usuário logado, alem disso, apresenta a nota do usuário no curso, essa nota é calculada da seguinte
+    forma, é feito o somatório de todas as aulas existentes, somada todas as notas de todas as avaliações e assim calculada a média aritimética das notas.
+    Com esse calculo é dado a média para o aluno.
     """
     usuario = request.user
     responsabilidades = obter_responsabilidades_usuario(usuario)
@@ -2822,7 +2822,7 @@ def visualizarMatriculas(request):
         soma_notas = notas['valor__sum']
         media = soma_notas / total_aulas
         frequencia = FrequenciaAulas.objects.filter(aluno=usuario, aula__id__in=aulas_ids).count()
-        cursos_total.append((curso.curso, curso.carga_horaria, total_aulas, frequencia, media))
+        cursos_total.append((curso.curso, curso.carga_horaria, total_aulas, frequencia, media, curso.id))
 
     paginaAtual = {'nome': 'Matrícula Atual'}
 
