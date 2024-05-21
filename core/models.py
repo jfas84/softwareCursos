@@ -174,6 +174,7 @@ class Cursos(models.Model):
     imagem = StdImageField('Imagem', upload_to=get_file_path, variations={'thumb': (225, 225)}, null=True, blank=True)
     empresa = models.ForeignKey(Empresas, on_delete=models.SET_NULL, null=True, blank=True)
     carga_horaria = models.IntegerField("Carga horária", null=True, blank=True)
+    conteudoProgramatico = models.TextField("Conteúdo Programático", null=True, blank=True)
 
     
     class Meta:
@@ -363,7 +364,6 @@ class Certificados(models.Model):
     aluno = models.ForeignKey(CustomUsuario, on_delete=models.SET_NULL, null=True, blank=True)
     cursos = models.ManyToManyField(Cursos)
     data_conclusao = models.DateField('Data de Conclusão', auto_now_add=True)
-    pdf = models.FileField(upload_to='certificados/')
     data_geracao = models.DateTimeField(auto_now_add=True)
     codigo_autenticacao = models.CharField('Código de autenticação', max_length=25)
 

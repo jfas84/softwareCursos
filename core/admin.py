@@ -55,7 +55,7 @@ class CursosAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': ('curso', 'valor', 'resumo', 'imagem', 'carga_horaria', 'empresa')
+            'fields': ('curso', 'valor', 'resumo', 'imagem', 'carga_horaria', 'empresa', 'conteudoProgramatico')
         }),
         ('Detalhes', {
             'fields': ('externo', 'ativo', 'tipoCurso'),

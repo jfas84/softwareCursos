@@ -2727,13 +2727,41 @@ def serve_video(request, video_name):
 def emitirCertificado(request, id):
     usuario = request.user
     responsabilidades = obter_responsabilidades_usuario(usuario)
-    curso = get_object_or_404(Cursos, pk=id)
     codigo_autenticacao = str(uuid.uuid4()).replace('-', '')[:25]
+    curso = get_object_or_404(Cursos, pk=id)
+
+    verificaCertificado = Certificados.objects.filter(aluno=usuario, cursos=curso).exists()
+    if verificaCertificado:
+        messages.warning(request, "Seu certificado já foi emitido.")
+        return redirect('visualizarMatriculas')
+    else:
+        certificado = Certificados.objects.create(
+            aluno=usuario,
+            codigo_autenticacao=codigo_autenticacao,
+        )
+        certificado.cursos.add(curso)
+        messages.success(request, "Certificado emitido com sucesso.")
+        return redirect('visualizarMatriculas')
+
+@responsabilidade_required('GESTORGERAL', 'COLABORADORSEDE', 'SECRETARIA', 'GESTORCURSO', 'PRODUTOR', 'PROFESSOR', 'ALUNO')
+def visualizarCertificado(request, id):
+    usuario = request.user
+    responsabilidades = obter_responsabilidades_usuario(usuario)
+    curso = get_object_or_404(Cursos, pk=id)
+
+    certificado = get_object_or_404(Certificados, aluno=usuario, cursos=curso)
+    cursos_relacionados = certificado.cursos.all()
+    mais_de_um_curso = False
+    if len(cursos_relacionados) > 1:
+        mais_de_um_curso = True
+    else:
+        mais_de_um_curso = False
 
     context = {
-        'title': 'Aulas',
-        'curso': curso,
-        'codigo_autenticacao': codigo_autenticacao,
+        'title': 'Certificado',
+        'certificado': certificado,
+        'cursos_relacionados': cursos_relacionados,
+        'mais_de_um_curso': mais_de_um_curso,
         # 'paginaAtual': paginaAtual,
         # 'navegacao': navegacao,
         'usuario': usuario,
