@@ -2762,10 +2762,7 @@ def visualizarCertificado(request, id):
         'certificado': certificado,
         'cursos_relacionados': cursos_relacionados,
         'mais_de_um_curso': mais_de_um_curso,
-        # 'paginaAtual': paginaAtual,
-        # 'navegacao': navegacao,
         'usuario': usuario,
-        # 'frequencias': frequencias,
         'responsabilidades': responsabilidades,
     }
     return render(request, 'internas/certificado.html', context)

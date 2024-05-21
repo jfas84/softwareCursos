@@ -14,6 +14,6 @@ urlpatterns = [
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-admin.site.site_header = 'SGE Negocioteca'
-admin.site.site_title = "Negocioteca Adm"
-admin.site.index_title = 'Sistema de gerenciamento de Escolar'
+admin.site.site_header = 'ENASP'
+admin.site.site_title = "ENASP"
+admin.site.index_title = 'ENASP'
