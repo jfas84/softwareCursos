@@ -15,7 +15,7 @@ SECRET_KEY = 'django-insecure-c0=nj&vg4x^$h!o6!@8zg=w5p+yd859wm!re%@0v5gv#d6^t=u
 DEBUG = True
 # DEBUG = False
 
-# ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'sge.negocioteca.com.br', 'www.sge.negocioteca.com.br']
+# ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'enasp.com.br', 'www.enasp.com.br']
 ALLOWED_HOSTS = ["*"]
 
 
@@ -94,7 +94,7 @@ DATABASES = {
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'ninhodef_softwareCursos',
+#         'NAME': 'ninhodef_enasp',
 #         'USER': 'ninhodef_jean',
 #         'PASSWORD': 'Sofi@2607Gisele1602',
 #         'HOST': 'localhost',
@@ -214,5 +214,5 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 # CSRF_COOKIE_HTTPONLY = True
 # X_FRAME_OPTIONS = 'DENY'
 
-# Na hora da publicação devemos incluir esse recurso abaixo, avisando que o sistema não roda em http.
+# # Na hora da publicação devemos incluir esse recurso abaixo, avisando que o sistema não roda em http.
 # SECURE_SSL_REDIRECT = True
