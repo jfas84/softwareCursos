@@ -80,8 +80,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'ninhodef_softwareCursos',
         'USER': 'jean',
-        'PASSWORD': 'sofia2607',
-        # 'PASSWORD': '345275',
+        # 'PASSWORD': 'sofia2607',
+        'PASSWORD': '345275',
         'HOST': 'localhost', # porém na produção irá mudar
         'PORT': '3306', # Porém na porta pode haver mudanças
     },
